@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Mappers\BasePropertyAssignmentBehavior.cs" />
+    <Compile Include="Mappers\CollectionMapping.cs" />
     <Compile Include="Tables\Cell.cs" />
     <Compile Include="Mappers\CollectionPropertyAssignmentBehavior.cs" />
     <Compile Include="Tables\Column.cs" />
@@ -92,10 +93,6 @@
     <ProjectReference Include="..\LinFu.DynamicProxy\LinFu.DynamicProxy.VS2008.csproj">
       <Project>{859EF99C-D959-4485-B24E-05AEAB9B54CF}</Project>
       <Name>LinFu.DynamicProxy.VS2008</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LinFu.Lazy\LinFu.Lazy.csproj">
-      <Project>{4E321CDD-D178-4303-B35E-C8A8B01E3F53}</Project>
-      <Name>LinFu.Lazy</Name>
     </ProjectReference>
     <ProjectReference Include="..\LinFu.Reflection\LinFu.Reflection\LinFu.Reflection.VS2008.csproj">
       <Project>{CD5E9841-5A3C-47E4-BADC-9CA297AA7948}</Project>
