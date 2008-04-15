@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simple.IoC.Loaders;
 
-namespace LinFu.Persist.Mappers
+namespace LinFu.Persist
 {
+    [Implements(typeof(ICollectionMapping), LifecycleType.OncePerRequest)]
     public class CollectionMapping : ICollectionMapping
     {
         public string PropertyName

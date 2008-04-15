@@ -14,7 +14,7 @@ namespace LinFu.Persist
             : base(mapping)
         {
         }
-        public virtual ITypeConverter TypeConverter
+        public virtual IValueConverter ValueConverter
         {
             get;
             set;
@@ -24,7 +24,7 @@ namespace LinFu.Persist
             var targetTable = currentRow.Table;
             bool result = base.CanModify(targetProperty, currentRow);
 
-            var converter = TypeConverter;
+            var converter = ValueConverter;
 
             if (converter == null)
                 return false;
@@ -34,7 +34,7 @@ namespace LinFu.Persist
             string columnName = PropertyMapping.ColumnName;
 
             var targetColumn = columns[columnName];
-            if (TypeConverter != null && !TypeConverter.CanConvertTo(targetProperty.PropertyType, targetColumn.DataType))
+            if (ValueConverter != null && !ValueConverter.CanConvertTo(targetProperty.PropertyType, targetColumn.DataType))
                 return false;
 
             return result;
@@ -57,8 +57,8 @@ namespace LinFu.Persist
         private object Convert(object propertyValue, Type propertyType, object value)
         {
             Type valueType = propertyValue.GetType();
-            if (!propertyType.IsAssignableFrom(valueType) && TypeConverter != null)
-                value = TypeConverter.ConvertTo(propertyType, propertyValue);
+            if (!propertyType.IsAssignableFrom(valueType) && ValueConverter != null)
+                value = ValueConverter.ConvertTo(propertyType, propertyValue);
             return value;
         }
     }

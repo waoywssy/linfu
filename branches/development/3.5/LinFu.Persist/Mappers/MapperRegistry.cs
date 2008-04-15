@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simple.IoC.Loaders;
 
 namespace LinFu.Persist
 {
+    [Implements(typeof(IMapperRegistry), LifecycleType.Singleton)]
     public class MapperRegistry : IMapperRegistry
     {
         private Dictionary<Type, IMapper> _entries = new Dictionary<Type, IMapper>();

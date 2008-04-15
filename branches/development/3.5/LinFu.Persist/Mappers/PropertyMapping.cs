@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simple.IoC.Loaders;
 
 namespace LinFu.Persist
 {
+    [Implements(typeof(IPropertyMapping), LifecycleType.OncePerRequest)]
     public class PropertyMapping : IPropertyMapping
     {
         public Type ColumnType

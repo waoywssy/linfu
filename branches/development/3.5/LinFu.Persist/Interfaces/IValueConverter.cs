@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LinFu.Persist
 {
-    public interface ITypeConverter
+    public interface IValueConverter
     {
         bool CanConvertTo(Type targetType, Type sourceType);
         object ConvertTo(Type targetType, object value);

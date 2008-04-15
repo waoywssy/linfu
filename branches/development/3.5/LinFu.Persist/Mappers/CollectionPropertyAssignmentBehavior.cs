@@ -89,15 +89,10 @@ namespace LinFu.Persist
             _dynamic.Target = target;
             object targetCollection = _dynamic.Properties[targetProperty.Name];
 
-            //// Reassign the dynamic object to the target collection and
-            //// add the items to the target collection
-            //_dynamic.Target = targetCollection;
 
-            //foreach (var item in items)
-            //{
-            //    _dynamic.Methods["Add"](item);
-            //}
 
+            // HACK: Call the AddItem<T> method using the
+            // current item type
             MethodInfo addItemDefinition = typeof(CollectionPropertyAssignmentBehavior).GetMethod("AddItems", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             MethodInfo addItemMethod = addItemDefinition.MakeGenericMethod(itemType);
             addItemMethod.Invoke(this, new object[] { targetCollection, items });

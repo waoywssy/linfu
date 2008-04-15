@@ -45,8 +45,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Linq\Expressions\CompoundExpressionVisitor.cs" />
+    <Compile Include="SamplePropertyMappingRegistry.cs" />
+    <Compile Include="SqlTable.cs" />
+    <Compile Include="Tables\DefaultIndexer.cs" />
+    <Compile Include="Linq\Expressions\ExpressionVisitor.cs" />
+    <Compile Include="Extensions\CastingExtensions.cs" />
+    <Compile Include="Interfaces\IQueryInterpreter.cs" />
+    <Compile Include="Interfaces\IPropertyMappingRegistry.cs" />
+    <Compile Include="Interfaces\IRowIndexer.cs" />
+    <Compile Include="Linq\Query.cs" />
+    <Compile Include="Linq\QueryProvider.cs" />
+    <Compile Include="Linq\TypeSystem.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Mappers\BasePropertyAssignmentBehavior.cs" />
     <Compile Include="Mappers\CollectionMapping.cs" />
+    <Compile Include="Tables\RowFinder.cs" />
+    <Compile Include="Linq\Providers\SimpleLogicalComparison.cs" />
     <Compile Include="Tables\Cell.cs" />
     <Compile Include="Mappers\CollectionPropertyAssignmentBehavior.cs" />
     <Compile Include="Tables\Column.cs" />
@@ -70,7 +85,7 @@
     <Compile Include="Interfaces\IRowFinder.cs" />
     <Compile Include="Interfaces\IRowRegistry.cs" />
     <Compile Include="Interfaces\ITable.cs" />
-    <Compile Include="Interfaces\ITypeConverter.cs" />
+    <Compile Include="Interfaces\IValueConverter.cs" />
     <Compile Include="Mappers\MappedPropertyAssignmentBehavior.cs" />
     <Compile Include="Mappers\MapperRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -80,6 +95,8 @@
     <Compile Include="Tables\Row.cs" />
     <Compile Include="Tables\RowRegistry.cs" />
     <Compile Include="Tables\Table.cs" />
+    <Compile Include="Linq\Providers\WhereClauseBuilder.cs" />
+    <Compile Include="Linq\Providers\WhereQueryProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.Common\LinFu.Common.VS2008.csproj">
@@ -94,9 +111,33 @@
       <Project>{859EF99C-D959-4485-B24E-05AEAB9B54CF}</Project>
       <Name>LinFu.DynamicProxy.VS2008</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LinFu.Lazy\LinFu.Lazy.csproj">
+      <Project>{4E321CDD-D178-4303-B35E-C8A8B01E3F53}</Project>
+      <Name>LinFu.Lazy</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LinFu.Reflection\LinFu.Reflection\LinFu.Reflection.VS2008.csproj">
       <Project>{CD5E9841-5A3C-47E4-BADC-9CA297AA7948}</Project>
       <Name>LinFu.Reflection.VS2008</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Visitors\LinFu.Visitors.csproj">
+      <Project>{0837FC66-894F-4841-A919-27322F8EA28D}</Project>
+      <Name>LinFu.Visitors</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Linq.TreeMasher\Linq.TreeMasher.csproj">
+      <Project>{02ACE161-ED67-46EC-A4C8-18F65E7F60C0}</Project>
+      <Name>Linq.TreeMasher</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.IoC.Extensions\Simple.IoC.Extensions.csproj">
+      <Project>{B46F6D47-454A-477D-9B1A-D26977250C01}</Project>
+      <Name>Simple.IoC.Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.IoC\Simple.IoC.Loaders\Simple.IoC.Loaders.VS2008.csproj">
+      <Project>{F6B9BAAF-89AB-419D-B256-BB1EA38D799A}</Project>
+      <Name>Simple.IoC.Loaders.VS2008</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.IoC\Simple.IoC\Simple.IoC.VS2008.csproj">
+      <Project>{457039BF-4B57-4553-AC4F-81B11B59610E}</Project>
+      <Name>Simple.IoC.VS2008</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

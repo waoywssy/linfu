@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simple.IoC.Loaders;
 
 namespace LinFu.Persist
 {
+    [Implements(typeof(ITable), LifecycleType.OncePerRequest)]
     public class Table : ITable
     {
         private List<IRow> _rows = new List<IRow>();

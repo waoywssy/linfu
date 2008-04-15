@@ -67,8 +67,6 @@ namespace LinFu.Persist
             var sourceCell = sourceRow.Cells[columnName];
             object propertyValue = sourceCell.Value;
 
-            //propertyValue = ConvertTo(targetProperty.PropertyType, converter, targetColumn, propertyValue);
-
             Modify(target, propertyName, propertyValue, sourceRow);
         }
 

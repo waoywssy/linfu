@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simple.IoC.Loaders;
 
 namespace LinFu.Persist
 {
+    [Implements(typeof(IRowRegistry), LifecycleType.Singleton)]
     public class RowRegistry : IRowRegistry
     {
         private Dictionary<string, Dictionary<object, IRow>> _entries = new Dictionary<string, Dictionary<object, IRow>>();
