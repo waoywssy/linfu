@@ -61,12 +61,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttributeMapping\AttributeMappingTests.cs" />
+    <Compile Include="AttributeMapping\SampleDomain\NonPersistableOrder.cs" />
+    <Compile Include="AttributeMapping\SampleDomain\Order.cs" />
+    <Compile Include="AttributeMapping\SampleDomain\OrderMappedToSpecificTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.Persist\LinFu.Persist.csproj">
       <Project>{3F7F6492-4BA1-44B2-8536-031B90480C66}</Project>
       <Name>LinFu.Persist</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.IoC\Simple.IoC.Loaders\Simple.IoC.Loaders.VS2008.csproj">
+      <Project>{F6B9BAAF-89AB-419D-B256-BB1EA38D799A}</Project>
+      <Name>Simple.IoC.Loaders.VS2008</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.IoC\Simple.IoC\Simple.IoC.VS2008.csproj">
+      <Project>{457039BF-4B57-4553-AC4F-81B11B59610E}</Project>
+      <Name>Simple.IoC.VS2008</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
