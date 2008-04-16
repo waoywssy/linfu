@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeriveTableNameFromAttribute.cs" />
+    <Compile Include="Interfaces\IDeriveTableName.cs" />
     <Compile Include="Linq\Expressions\CompoundExpressionVisitor.cs" />
     <Compile Include="Attributes\PersistableAttribute.cs" />
     <Compile Include="Attributes\PersistableCollectionAttribute.cs" />
@@ -62,18 +64,18 @@
     <Compile Include="Linq\QueryProvider.cs" />
     <Compile Include="Linq\TypeSystem.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
-    <Compile Include="Mappers\BasePropertyAssignmentBehavior.cs" />
-    <Compile Include="Mappers\CollectionMapping.cs" />
+    <Compile Include="Mapping\PropertyAssignmentBehavior\BasePropertyAssignmentBehavior.cs" />
+    <Compile Include="Mapping\CollectionMapping.cs" />
     <Compile Include="Tables\RowFinder.cs" />
     <Compile Include="Linq\Providers\SimpleLogicalComparison.cs" />
     <Compile Include="Tables\Cell.cs" />
-    <Compile Include="Mappers\CollectionPropertyAssignmentBehavior.cs" />
+    <Compile Include="Mapping\PropertyAssignmentBehavior\CollectionPropertyAssignmentBehavior.cs" />
     <Compile Include="Tables\Column.cs" />
     <Compile Include="Extensions\ColumnIndexExtensions.cs" />
-    <Compile Include="Mappers\CompositePropertyAssignmentBehavior.cs" />
+    <Compile Include="Mapping\PropertyAssignmentBehavior\CompositePropertyAssignmentBehavior.cs" />
     <Compile Include="DefaultInstantiator.cs" />
-    <Compile Include="Mappers\DefaultMapper.cs" />
-    <Compile Include="Mappers\DefaultPropertyAssignmentBehavior.cs" />
+    <Compile Include="Mapping\Mappers\DefaultMapper.cs" />
+    <Compile Include="Mapping\PropertyAssignmentBehavior\DefaultPropertyAssignmentBehavior.cs" />
     <Compile Include="Interfaces\ICell.cs" />
     <Compile Include="Interfaces\ICollectionMapping.cs" />
     <Compile Include="Interfaces\IColumn.cs" />
@@ -90,11 +92,11 @@
     <Compile Include="Interfaces\IRowRegistry.cs" />
     <Compile Include="Interfaces\ITable.cs" />
     <Compile Include="Interfaces\IValueConverter.cs" />
-    <Compile Include="Mappers\MappedPropertyAssignmentBehavior.cs" />
-    <Compile Include="Mappers\MapperRegistry.cs" />
+    <Compile Include="Mapping\PropertyAssignmentBehavior\MappedPropertyAssignmentBehavior.cs" />
+    <Compile Include="Mapping\MapperRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Mappers\PropertyMapping.cs" />
-    <Compile Include="Mappers\ReferenceAssignmentBehavior.cs" />
+    <Compile Include="Mapping\PropertyMapping.cs" />
+    <Compile Include="Mapping\PropertyAssignmentBehavior\ReferenceAssignmentBehavior.cs" />
     <Compile Include="Tables\Relation.cs" />
     <Compile Include="Tables\Row.cs" />
     <Compile Include="Tables\RowRegistry.cs" />
