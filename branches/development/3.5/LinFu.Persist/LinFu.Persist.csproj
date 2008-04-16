@@ -46,6 +46,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Linq\Expressions\CompoundExpressionVisitor.cs" />
+    <Compile Include="Attributes\PersistableAttribute.cs" />
+    <Compile Include="Attributes\PersistableCollectionAttribute.cs" />
+    <Compile Include="Attributes\PersistablePropertyAttribute.cs" />
+    <Compile Include="Attributes\PersistableReferenceAttribute.cs" />
     <Compile Include="SamplePropertyMappingRegistry.cs" />
     <Compile Include="SqlTable.cs" />
     <Compile Include="Tables\DefaultIndexer.cs" />
