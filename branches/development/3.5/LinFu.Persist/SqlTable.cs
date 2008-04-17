@@ -12,12 +12,12 @@ namespace LinFu.Persist
     {
         public string PrimaryKeyField { get; set; }
         public IRowRegistry RowRegistry { get; set; }
-        public void CreateSchemaFrom(SqlCommand schemaCommand)
-        {
-            SqlDataAdapter adapter = new SqlDataAdapter(schemaCommand);
-            DataTable schemaTable = new DataTable();
-            adapter.Fill(schemaTable);
+        public void CreateSchemaFrom(IDbDataAdapter adapter)
+        {            
+            DataSet dataSet = new DataSet();            
+            adapter.Fill(dataSet);
 
+            DataTable schemaTable = dataSet.Tables[0];
             Dictionary<string, DataColumn> columnIndex = new Dictionary<string, DataColumn>();
 
             // Index the table columns            
@@ -33,11 +33,11 @@ namespace LinFu.Persist
             }
         }
 
-        public void FillWith(SqlCommand command)
+        public void FillWith(IDbCommand command)
         {
             var reader = command.ExecuteReader();
 
-            int fieldCount = reader.VisibleFieldCount;
+            int fieldCount = reader.FieldCount;
             Dictionary<string, int> ordinals = new Dictionary<string, int>();
             for (int i = 0; i < fieldCount; i++)
             {
@@ -50,11 +50,7 @@ namespace LinFu.Persist
                 IRow newRow = null;
 
                 object primaryKeyValue = null;
-                if (!string.IsNullOrEmpty(PrimaryKeyField) && ordinals.ContainsKey(PrimaryKeyField))
-                {
-                    int targetOrdinal = ordinals[PrimaryKeyField];
-                    primaryKeyValue = reader.GetValue(targetOrdinal);
-                }
+                primaryKeyValue = GetPrimaryKey(reader, ordinals, primaryKeyValue);
 
                 newRow = CreateRow(newRow, primaryKeyValue);
                 PopulateRowCells(reader, fieldCount, newRow);
@@ -78,7 +74,17 @@ namespace LinFu.Persist
             reader.Dispose();
         }
 
-        private IRow CreateRow(IRow newRow, object primaryKeyValue)
+        private object GetPrimaryKey(IDataReader reader, Dictionary<string, int> ordinals, object primaryKeyValue)
+        {
+            if (!string.IsNullOrEmpty(PrimaryKeyField) && ordinals.ContainsKey(PrimaryKeyField))
+            {
+                int targetOrdinal = ordinals[PrimaryKeyField];
+                primaryKeyValue = reader.GetValue(targetOrdinal);
+            }
+            return primaryKeyValue;
+        }
+
+        protected virtual IRow CreateRow(IRow newRow, object primaryKeyValue)
         {
             if (RowRegistry != null && primaryKeyValue != null)
             {
@@ -93,15 +99,22 @@ namespace LinFu.Persist
             return newRow;
         }
 
-        private static void PopulateRowCells(SqlDataReader reader, int fieldCount, IRow newRow)
+        protected virtual ICell CreateCell(IRow parentRow, string fieldName, object value)
+        {
+            return new Cell() { Value = value };
+        }
+
+        private void PopulateRowCells(IDataReader reader, int fieldCount, IRow newRow)
         {
             for (int i = 0; i < fieldCount; i++)
             {
                 string fieldName = reader.GetName(i);
                 object value = reader.GetValue(i);
 
-                newRow.Cells[fieldName] = new Cell() { Value = value };
+                newRow.Cells[fieldName] = CreateCell(newRow, fieldName, value);
             }
         }
+
+        
     }
 }

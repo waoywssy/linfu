@@ -45,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeriveTableNameFromAttribute.cs" />
+    <Compile Include="DeriveTableName.cs" />
     <Compile Include="Interfaces\IDeriveTableName.cs" />
     <Compile Include="Linq\Expressions\CompoundExpressionVisitor.cs" />
     <Compile Include="Attributes\PersistableAttribute.cs" />

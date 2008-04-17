@@ -6,8 +6,8 @@ using Simple.IoC.Loaders;
 
 namespace LinFu.Persist
 {
-    [Implements(typeof(IDeriveTableName), LifecycleType.OncePerRequest)]
-    public class DeriveTableNameFromAttribute : IDeriveTableName
+    [Implements(typeof(IDeriveTableName), LifecycleType.Singleton)]
+    public class DeriveTableName : IDeriveTableName
     {
         private Dictionary<Type, string> _cachedResults = new Dictionary<Type, string>();
         public string GetTableName(Type targetType)
