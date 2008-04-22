@@ -12,19 +12,18 @@ using System.IO;
 namespace LinFu.Persist.Tests
 {
     [TestFixture]
-    public class AttributeMappingTests
+    public class AttributeMappingTests : BaseFixture
     {
         private SimpleContainer container;
-        [SetUp]
-        public virtual void Setup()
+        
+        public override void Setup()
         {
             container = new SimpleContainer();
             var directory = Path.GetDirectoryName(typeof(AttributeMappingTests).Assembly.Location);            
             Loader loader = new Loader(container);
             loader.LoadDirectory(directory, "*.dll");
-        }
-        [TearDown]
-        public virtual void TearDown()
+        }        
+        public override void TearDown()
         {
             container = null;
         }

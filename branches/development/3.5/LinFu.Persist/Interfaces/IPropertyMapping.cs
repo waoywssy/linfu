@@ -8,8 +8,7 @@ namespace LinFu.Persist
     public interface IPropertyMapping
     {
         Type PropertyType { get; set; }
-        Type ColumnType { get; set; }
-        string ColumnName { get; set; }
+        IKey MappedColumns { get; set; }
         string PropertyName { get; set; }
     }
 }

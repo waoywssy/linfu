@@ -7,9 +7,9 @@ namespace LinFu.Persist
 {
     public interface IRowRegistry
     {
-        IRow GetRow(string TableName, object primaryKeyValue);
+        IRow GetRow(string TableName, Dictionary<string, object> primaryKeyValues);
 
-        bool HasRow(string tableName, object primaryKeyValue);
-        void Register(string tableName, IRow row, object key);
+        bool HasRow(string tableName, Dictionary<string, object> primaryKeyValues);
+        void Register(string tableName, IRow row, Dictionary<string, object> primaryKeyValues);
     }
 }

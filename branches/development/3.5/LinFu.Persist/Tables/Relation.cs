@@ -7,13 +7,14 @@ namespace LinFu.Persist
 {
     public class Relation : IRelation
     {
-        public IColumn SourceColumn
+
+        public IKey SourceKey
         {
             get;
             set;
         }
 
-        public IColumn TargetColumn
+        public IKey TargetKey
         {
             get;
             set;

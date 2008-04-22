@@ -7,59 +7,63 @@ using LinFu.Reflection;
 
 namespace LinFu.Persist
 {
-    public class MappedPropertyAssignmentBehavior : BasePropertyAssignmentBehavior
-    {
-        private DynamicObject _dynamic = new DynamicObject();
-        public MappedPropertyAssignmentBehavior(IPropertyMapping mapping)
-            : base(mapping)
-        {
-        }
-        public virtual IValueConverter ValueConverter
-        {
-            get;
-            set;
-        }
-        public override bool CanModify(PropertyInfo targetProperty, IRow currentRow)
-        {
-            var targetTable = currentRow.Table;
-            bool result = base.CanModify(targetProperty, currentRow);
+    //public class MappedPropertyAssignmentBehavior : BasePropertyAssignmentBehavior
+    //{
+    //    private DynamicObject _dynamic = new DynamicObject();
+    //    public MappedPropertyAssignmentBehavior(IPropertyMapping mapping)
+    //        : base(mapping)
+    //    {
+    //    }
+    //    public virtual IValueConverter ValueConverter
+    //    {
+    //        get;
+    //        set;
+    //    }
+    //    public override bool CanModify(PropertyInfo targetProperty, IRow currentRow)
+    //    {
+    //        var targetTable = currentRow.Table;
+    //        bool result = base.CanModify(targetProperty, currentRow);
 
-            var converter = ValueConverter;
+    //        var converter = ValueConverter;
 
-            if (converter == null)
-                return false;
+    //        if (converter == null || PropertyMapping == null)
+    //            return false;
 
+    //        // The property can only be mapped to a single field 
+    //        if (PropertyMapping.ForeignKey.Columns.Count != 1)
+    //            return false;
 
-            var columns = targetTable.Columns;
-            string columnName = PropertyMapping.ColumnName;
+    //        var columns = targetTable.Columns;
+    //        string columnName = PropertyMapping.ColumnName;
 
-            var targetColumn = columns[columnName];
-            if (ValueConverter != null && !ValueConverter.CanConvertTo(targetProperty.PropertyType, targetColumn.DataType))
-                return false;
+    //        var targetColumn = columns[columnName];
+    //        if (ValueConverter != null && !ValueConverter.CanConvertTo(targetProperty.PropertyType, targetColumn.DataType))
+    //            return false;
 
-            return result;
-        }
+    //        return result;
+    //    }
 
-        protected override void Modify(object target, string propertyName, object propertyValue, IRow sourceRow)
-        {
-            var propertyType = PropertyMapping.PropertyType;
-            var value = propertyValue;
+    //    protected override void Modify(object target, string propertyName, 
+    //        IEnumerable<KeyValuePair<string, object>> columnValues, IRow sourceRow)
+    //    {
+    //        var propertyType = PropertyMapping.PropertyType;
+    //        var value = propertyValue;
 
-            // Perform any conversion if necessary
+    //        // Perform any conversion if necessary
 
-            if (propertyValue != null)
-                value = Convert(propertyValue, propertyType, value);
+    //        if (propertyValue != null)
+    //            value = Convert(propertyValue, propertyType, value);
 
-            _dynamic.Target = target;
-            _dynamic.Properties[propertyName] = propertyValue;
-        }
+    //        _dynamic.Target = target;
+    //        _dynamic.Properties[propertyName] = propertyValue;
+    //    }
 
-        private object Convert(object propertyValue, Type propertyType, object value)
-        {
-            Type valueType = propertyValue.GetType();
-            if (!propertyType.IsAssignableFrom(valueType) && ValueConverter != null)
-                value = ValueConverter.ConvertTo(propertyType, propertyValue);
-            return value;
-        }
-    }
+    //    private object Convert(object propertyValue, Type propertyType, object value)
+    //    {
+    //        Type valueType = propertyValue.GetType();
+    //        if (!propertyType.IsAssignableFrom(valueType) && ValueConverter != null)
+    //            value = ValueConverter.ConvertTo(propertyType, propertyValue);
+    //        return value;
+    //    }
+    //}
 }

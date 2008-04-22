@@ -5,9 +5,12 @@ using System.Text;
 
 namespace LinFu.Persist
 {
-    public interface IRelation
+    public class EventArgs<T> : EventArgs
     {
-        IKey SourceKey { get; set; }
-        IKey TargetKey { get; set; }
+        public T Item
+        {
+            get;
+            internal set;
+        }
     }
 }

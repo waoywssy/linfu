@@ -5,9 +5,8 @@ using System.Text;
 
 namespace LinFu.Persist
 {
-    public interface IRelation
+    public interface IKey
     {
-        IKey SourceKey { get; set; }
-        IKey TargetKey { get; set; }
+        IList<IColumn> Columns { get; }
     }
 }

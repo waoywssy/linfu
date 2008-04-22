@@ -25,12 +25,30 @@ namespace LinFu.Persist
                 return false;
 
             var targetTable = currentRow.Table;
-            var columnName = _mapping.ColumnName;
+            var columnNames = (from n in _mapping.MappedColumns.Columns
+                               select n.ColumnName).ToList();
+
             var columns = targetTable.Columns;
 
             // The property can be modified if:
-            // 1) The target table has the specified source column
-            if (!columns.ContainsKey(columnName))
+            // 1) The target table has the specified source columns
+            bool hasColumns = true;
+
+            var tableColumns = (from c in columns
+                                select c.Key).AsEnumerable();
+
+            HashSet<string> tableColumnList = new HashSet<string>(tableColumns);
+            foreach (var current in columnNames)
+            {
+                if (tableColumnList.Contains(current))
+                    continue;
+
+                hasColumns = false;
+                break;
+            }
+
+
+            if (!hasColumns)
                 return false;
 
             // 2) The target property maps to the source column
@@ -40,11 +58,14 @@ namespace LinFu.Persist
             // 3) The target property type is compatible with the source column type OR
             //    there is a user-defined conversion between the two types
 
-            var targetColumn = columns[columnName];
-            if (targetProperty.PropertyType.IsAssignableFrom(targetColumn.DataType))
-                return true;
+            var targetColumns = from name in columnNames
+                                where columns.ContainsKey(name)
+                                select columns[name];
 
-            if (CanConvertFrom(targetColumn, targetColumn.DataType, targetProperty.PropertyType))
+            //if (targetProperty.PropertyType.IsAssignableFrom(targetColumn.DataType))
+            //    return true;
+
+            if (CanConvertFrom(targetColumns, targetProperty.PropertyType))
                 return true;
 
             return false;
@@ -52,28 +73,49 @@ namespace LinFu.Persist
 
         public void AssignPropertyValue(object target, PropertyInfo targetProperty, IRow sourceRow)
         {
+            if (_mapping == null)
+                return;
 
-            var columnName = _mapping.ColumnName;
+            var columnNames = from c in _mapping.MappedColumns.Columns
+                              where c != null
+                              select c.ColumnName;
+
             var propertyName = targetProperty.Name;
 
-            // The column must exist
-            if (!sourceRow.Cells.ContainsKey(columnName))
+            // The columns must exist
+            bool columnsExist = true;
+            foreach (var name in columnNames)
+            {
+                if (sourceRow.Cells.ContainsKey(name))
+                    continue;
+
+                columnsExist = false;
+                break;
+            }
+
+            if (!columnsExist)
                 return;
 
             var table = sourceRow.Table;
-            var targetColumn = table.Columns[columnName];
+            var targetColumns = (from n in columnNames
+                                 where table.Columns.ContainsKey(n)
+                                 select table.Columns[n]).ToList();
 
             // Copy the value from the source row to the target property
-            var sourceCell = sourceRow.Cells[columnName];
-            object propertyValue = sourceCell.Value;
+            var sourceCells = from t in targetColumns
+                              let cells = sourceRow.Cells
+                              where cells.ContainsKey(t.ColumnName)
+                              select new KeyValuePair<string, object>(t.ColumnName, cells[t.ColumnName].Value);
 
-            Modify(target, propertyName, propertyValue, sourceRow);
+
+            Modify(target, propertyName, sourceCells, sourceRow);
         }
 
-        protected virtual bool CanConvertFrom(IColumn sourceColumn, Type sourceType, Type propertyType)
+        protected virtual bool CanConvertFrom(IEnumerable<IColumn> sourceColumns, Type propertyType)
         {
             return false;
         }
-        protected abstract void Modify(object target, string propertyName, object propertyValue, IRow sourceRow);
+        protected abstract void Modify(object target, string propertyName,
+            IEnumerable<KeyValuePair<string, object>> columnValues, IRow sourceRow);
     }
 }

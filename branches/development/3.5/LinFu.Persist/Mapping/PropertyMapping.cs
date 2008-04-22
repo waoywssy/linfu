@@ -9,24 +9,20 @@ namespace LinFu.Persist
     [Implements(typeof(IPropertyMapping), LifecycleType.OncePerRequest)]
     public class PropertyMapping : IPropertyMapping
     {
-        public Type ColumnType
-        {
-            get;
-            set;
-        }
         public Type PropertyType
         {
             get;
             set;
         }
 
-        public string ColumnName
+        public string PropertyName
         {
             get;
             set;
         }
 
-        public string PropertyName
+
+        public IKey MappedColumns
         {
             get;
             set;

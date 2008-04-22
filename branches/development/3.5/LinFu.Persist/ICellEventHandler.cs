@@ -5,9 +5,8 @@ using System.Text;
 
 namespace LinFu.Persist
 {
-    public interface IRelation
+    public interface ICellEventHandler
     {
-        IKey SourceKey { get; set; }
-        IKey TargetKey { get; set; }
+        void Attach(ICellEvents events);
     }
 }

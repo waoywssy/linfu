@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Data;
 
 namespace LinFu.Persist
 {
-    public interface IRelation
+    public interface IFillTable
     {
-        IKey SourceKey { get; set; }
-        IKey TargetKey { get; set; }
+        void Fill(ITable table, IDbCommand command);
     }
 }

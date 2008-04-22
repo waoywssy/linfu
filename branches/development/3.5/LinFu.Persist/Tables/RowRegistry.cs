@@ -9,43 +9,19 @@ namespace LinFu.Persist
     [Implements(typeof(IRowRegistry), LifecycleType.Singleton)]
     public class RowRegistry : IRowRegistry
     {
-        private Dictionary<string, Dictionary<object, IRow>> _entries = new Dictionary<string, Dictionary<object, IRow>>();
-        public IRow GetRow(string tableName, object primaryKeyValue)
+        public IRow GetRow(string TableName, Dictionary<string, object> primaryKeyValues)
         {
-            if (!_entries.ContainsKey(tableName))
-                return null;
-
-            var rows = _entries[tableName];
-
-            if (!rows.ContainsKey(primaryKeyValue))
-                return null;
-
-            return rows[primaryKeyValue];
+            throw new NotImplementedException();
         }
 
-        public bool HasRow(string tableName, object primaryKeyValue)
+        public bool HasRow(string tableName, Dictionary<string, object> primaryKeyValues)
         {
-            // Check if the table exists
-            if (!_entries.ContainsKey(tableName))
-                return false;
-
-            var rows = _entries[tableName];
-
-            if (!rows.ContainsKey(primaryKeyValue))
-                return false;
-
-            return true;
+            throw new NotImplementedException();
         }
 
-        public void Register(string tableName, IRow row, object key)
+        public void Register(string tableName, IRow row, Dictionary<string, object> primaryKeyValues)
         {
-            if (key == null)
-                throw new ArgumentNullException("key");
-
-            if (!_entries.ContainsKey(tableName))
-                _entries[tableName] = new Dictionary<object, IRow>();
-
-            _entries[tableName][key] = row;
+            throw new NotImplementedException();
         }
     }
 }

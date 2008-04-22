@@ -45,15 +45,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FillTable.cs" />
+    <Compile Include="ICellEventHandler.cs" />
+    <Compile Include="IFillTable.cs" />
+    <Compile Include="Tables\DirtyTracking\CellEventArgs.cs" />
+    <Compile Include="Tables\DirtyTracking\CellWatcher.cs" />
+    <Compile Include="Tables\DirtyTracking\CollectionWatcher.cs" />
     <Compile Include="DeriveTableName.cs" />
+    <Compile Include="DictionaryEventArgs.cs" />
+    <Compile Include="DictionaryWatcher.cs" />
+    <Compile Include="EventArgs.cs" />
+    <Compile Include="Interfaces\ICellEvents.cs" />
+    <Compile Include="Interfaces\ICollectionEvents.cs" />
+    <Compile Include="Interfaces\IDictionaryEvents.cs" />
+    <Compile Include="Interfaces\IKey.cs" />
     <Compile Include="Interfaces\IDeriveTableName.cs" />
+    <Compile Include="Interfaces\ITrackedRow.cs" />
+    <Compile Include="Interfaces\ITrackedTable.cs" />
     <Compile Include="Linq\Expressions\CompoundExpressionVisitor.cs" />
     <Compile Include="Attributes\PersistableAttribute.cs" />
     <Compile Include="Attributes\PersistableCollectionAttribute.cs" />
     <Compile Include="Attributes\PersistablePropertyAttribute.cs" />
     <Compile Include="Attributes\PersistableReferenceAttribute.cs" />
-    <Compile Include="SamplePropertyMappingRegistry.cs" />
-    <Compile Include="SqlTable.cs" />
     <Compile Include="Tables\DefaultIndexer.cs" />
     <Compile Include="Linq\Expressions\ExpressionVisitor.cs" />
     <Compile Include="Extensions\CastingExtensions.cs" />
@@ -102,7 +115,12 @@
     <Compile Include="Tables\RowRegistry.cs" />
     <Compile Include="Tables\Table.cs" />
     <Compile Include="Linq\Providers\WhereClauseBuilder.cs" />
-    <Compile Include="Linq\Providers\WhereQueryProvider.cs" />
+    <Compile Include="Tables\DirtyTracking\TrackedRow.cs" />
+    <Compile Include="Tables\DirtyTracking\TrackedRow.EventHandlers.cs" />
+    <Compile Include="Tables\DirtyTracking\TrackedRowEventArgs.cs" />
+    <Compile Include="Tables\DirtyTracking\TrackedTable.cs" />
+    <Compile Include="Tables\DirtyTracking\TransparentCellWrapper.cs" />
+    <Compile Include="Tables\DirtyTracking\TransparentRowCollectionWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.Common\LinFu.Common.VS2008.csproj">

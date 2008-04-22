@@ -5,9 +5,8 @@ using System.Text;
 
 namespace LinFu.Persist
 {
-    public interface IRelation
+    public class TrackedRowEventArgs : EventArgs
     {
-        IKey SourceKey { get; set; }
-        IKey TargetKey { get; set; }
+        public ITrackedRow Row { get; internal set; }
     }
 }
