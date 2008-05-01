@@ -7,7 +7,14 @@ namespace LinFu.Persist
 {
     public class EventArgs<T> : EventArgs
     {
-        public T Item
+        public EventArgs()
+        {
+        }
+        public EventArgs(T item)
+        {
+            Item = item;
+        }
+        public virtual T Item
         {
             get;
             internal set;
