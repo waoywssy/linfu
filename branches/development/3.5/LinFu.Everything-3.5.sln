@@ -67,6 +67,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.Persist.Metadata.Impl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.Persist.Metadata.Test", "LinFu.Persist.Metadata.Test\LinFu.Persist.Metadata.Test.csproj", "{CE3B3F80-F8BA-4621-952C-C586C083377B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.Persist.RowLoaders", "LinFu.Persist.RowLoaders\LinFu.Persist.RowLoaders.csproj", "{CE5341D6-DDFE-493E-8D7A-E156752FA1A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -201,6 +203,10 @@ Global
 		{CE3B3F80-F8BA-4621-952C-C586C083377B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE3B3F80-F8BA-4621-952C-C586C083377B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE3B3F80-F8BA-4621-952C-C586C083377B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE5341D6-DDFE-493E-8D7A-E156752FA1A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE5341D6-DDFE-493E-8D7A-E156752FA1A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE5341D6-DDFE-493E-8D7A-E156752FA1A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE5341D6-DDFE-493E-8D7A-E156752FA1A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
