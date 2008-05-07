@@ -39,5 +39,12 @@ namespace LinFu.Persist
             }
         }
 
+
+
+        public ICellStorage CellStorage
+        {
+            get;
+            set;
+        }
     }
 }

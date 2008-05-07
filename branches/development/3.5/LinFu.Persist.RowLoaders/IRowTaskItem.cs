@@ -10,6 +10,7 @@ namespace LinFu.Persist
         string TableName { get; set; }
         IEnumerable<string> Columns { get; }
         IEnumerable<KeyValuePair<string, object>> PrimaryKeyValues { get; }
+        ICellStorage CellStorage { get; set; }
     }
 }
 

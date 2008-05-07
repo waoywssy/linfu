@@ -25,40 +25,12 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\output\3.5\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LinFu.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Release\Source\LinFu-Development\3.5\output\3.5\LinFu.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="LinFu.Delegates, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Release\Source\LinFu-Development\3.5\output\3.5\LinFu.Delegates.dll</HintPath>
-    </Reference>
-    <Reference Include="LinFu.DynamicProxy, Version=1.0.3040.28612, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Release\Source\LinFu-Development\3.5\output\3.5\LinFu.DynamicProxy.dll</HintPath>
-    </Reference>
-    <Reference Include="LinFu.Persist, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Release\Source\LinFu-Development\3.5\output\3.5\LinFu.Persist.dll</HintPath>
-    </Reference>
-    <Reference Include="LinFu.Reflection, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Release\Source\LinFu-Development\3.5\output\3.5\LinFu.Reflection.dll</HintPath>
-    </Reference>
-    <Reference Include="Simple.IoC, Version=1.0.0.0, Culture=neutral, PublicKeyToken=62a6874124340d6e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Release\Source\LinFu-Development\3.5\output\3.5\Simple.IoC.dll</HintPath>
-    </Reference>
-    <Reference Include="Simple.IoC.Loaders, Version=1.0.0.0, Culture=neutral, PublicKeyToken=62a6874124340d6e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Release\Source\LinFu-Development\3.5\output\3.5\Simple.IoC.Loaders.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -75,6 +47,8 @@
   <ItemGroup>
     <Compile Include="BaseRowLoadStrategy.cs" />
     <Compile Include="IBulkLoader.cs" />
+    <Compile Include="ICellStorage.cs" />
+    <Compile Include="ICellStorageKey.cs" />
     <Compile Include="IRowLoader.cs" />
     <Compile Include="IRowLoadStrategy.cs" />
     <Compile Include="IRowTaskItem.cs" />
@@ -84,6 +58,32 @@
     <Compile Include="RowTaskItem.cs" />
     <Compile Include="SingleRowLoadStrategy.cs" />
     <Compile Include="SqlBulkLoader.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LinFu.Common\LinFu.Common.VS2008.csproj">
+      <Project>{12E74908-C9CF-45CB-A996-7784846C3A53}</Project>
+      <Name>LinFu.Common.VS2008</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Delegates\LinFu.Delegates\LinFu.Delegates.VS2008.csproj">
+      <Project>{65A26586-FE64-411D-999D-EC328DFF8986}</Project>
+      <Name>LinFu.Delegates.VS2008</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.DynamicProxy\LinFu.DynamicProxy.VS2008.csproj">
+      <Project>{859EF99C-D959-4485-B24E-05AEAB9B54CF}</Project>
+      <Name>LinFu.DynamicProxy.VS2008</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Persist\LinFu.Persist.csproj">
+      <Project>{3F7F6492-4BA1-44B2-8536-031B90480C66}</Project>
+      <Name>LinFu.Persist</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.IoC\Simple.IoC.Loaders\Simple.IoC.Loaders.VS2008.csproj">
+      <Project>{F6B9BAAF-89AB-419D-B256-BB1EA38D799A}</Project>
+      <Name>Simple.IoC.Loaders.VS2008</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.IoC\Simple.IoC\Simple.IoC.VS2008.csproj">
+      <Project>{457039BF-4B57-4553-AC4F-81B11B59610E}</Project>
+      <Name>Simple.IoC.VS2008</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
