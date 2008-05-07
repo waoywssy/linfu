@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\output\3.5\</OutputPath>
+    <OutputPath>..\output\3.5\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -52,6 +52,7 @@
     <Compile Include="ITableRepositoryStorage.cs" />
     <Compile Include="ITableRepositoryLoader.cs" />
     <Compile Include="ITableRepositoryPersister.cs" />
+    <Compile Include="ITypeInfo.cs" />
     <Compile Include="ITypeMapping.cs" />
     <Compile Include="IKeyInfo.cs" />
     <Compile Include="ITableInfo.cs" />

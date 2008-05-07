@@ -12,7 +12,7 @@ namespace LinFu.Persist.Metadata.Implementation
     public class DbTypeMapper : ITypeMapper
     {
         private readonly IDictionary<string, Type> _typeMap = new Dictionary<string, Type>();
-
+        
         public DbTypeMapper()
         {
             CreateTypeMap();
@@ -45,8 +45,8 @@ namespace LinFu.Persist.Metadata.Implementation
             _typeMap["nchar"] = typeof(string);
             _typeMap["nullable nchar"] = typeof(string);
             _typeMap["datetime"] = typeof(DateTime);
-            _typeMap["nullable datetime"] = typeof(DateTime);
-            _typeMap["bigint"] = typeof(Int64);
+            _typeMap["nullable datetime"] = typeof(DateTime?);
+            _typeMap["bigint"] = typeof(long);
             _typeMap["nullable bigint"] = typeof(long?);
             _typeMap["binary"] = typeof(byte[]);
             _typeMap["nullable binary"] = typeof(byte?[]);
@@ -64,7 +64,8 @@ namespace LinFu.Persist.Metadata.Implementation
             _typeMap["nullable money"] = typeof(decimal?);
             _typeMap["real"] = typeof(Single);
             _typeMap["nullable real"] = typeof(Single?);
-            _typeMap["uniqueidentifier"] = typeof(Guid?);
+            _typeMap["nullable uniqueidentifier"] = typeof(Guid?);
+            _typeMap["uniqueidentifier"] = typeof(Guid);
             _typeMap["smalldatetime"] = typeof(DateTime);
             _typeMap["nullable smalldatetime"] = typeof(DateTime?);
             _typeMap["smallint"] = typeof(short);

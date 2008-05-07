@@ -96,9 +96,9 @@ namespace LinFu.Persist.Metadata.Implementation {
         ///tc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME AND 
         ///tc.CONSTRAINT_TYPE = &apos;PRIMARY KEY&apos;
         ///ORDER BY 
-        ///	TABLE_NAME,
-        ///	COLUMN_NAME,
-        ///	ORDINAL_POSITION.
+        ///	tc.TABLE_NAME,
+        ///	kcu.COLUMN_NAME,
+        ///	kcu.ORDINAL_POSITION.
         /// </summary>
         internal static string PrimaryKeys {
             get {

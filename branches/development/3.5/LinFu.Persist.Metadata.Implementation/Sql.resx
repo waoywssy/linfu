@@ -169,9 +169,9 @@ ON
 tc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME AND 
 tc.CONSTRAINT_TYPE = 'PRIMARY KEY'
 ORDER BY 
-	TABLE_NAME,
-	COLUMN_NAME,
-	ORDINAL_POSITION</value>
+	tc.TABLE_NAME,
+	kcu.COLUMN_NAME,
+	kcu.ORDINAL_POSITION</value>
     <comment>Extracts all the primary keys for all tables</comment>
   </data>
 </root>

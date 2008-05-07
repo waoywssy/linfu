@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\output\3.5\</OutputPath>
+    <OutputPath>..\output\3.5\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -66,10 +66,6 @@
     <ProjectReference Include="..\LinFu.Persist.Metadata\LinFu.Persist.Metadata.csproj">
       <Project>{BE8A24E2-5E79-44EF-879B-E158148284D7}</Project>
       <Name>LinFu.Persist.Metadata</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LinFu.Persist\LinFu.Persist.csproj">
-      <Project>{3F7F6492-4BA1-44B2-8536-031B90480C66}</Project>
-      <Name>LinFu.Persist</Name>
     </ProjectReference>
     <ProjectReference Include="..\Simple.IoC\Simple.IoC.Loaders\Simple.IoC.Loaders.VS2008.csproj">
       <Project>{F6B9BAAF-89AB-419D-B256-BB1EA38D799A}</Project>

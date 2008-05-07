@@ -14,6 +14,37 @@ namespace Simple.IoC
         private readonly List<ITypeSurrogate> _surrogates = new List<ITypeSurrogate>();
         private INamedFactoryStorage _storage = new DefaultNamedFactoryStorage();
 
+        private static readonly MethodInfo _getServiceMethod;
+        private static readonly MethodInfo _getNamedServiceMethod;
+        static SimpleContainer()
+        {
+
+            foreach (MethodInfo method in typeof(IContainer).GetMethods())
+            {
+                if (method == null)
+                    continue;
+
+                if (method.Name != "GetService" || !method.IsGenericMethod)
+                    continue;
+
+                if (method.ReturnType != typeof(object))
+                    continue;
+
+                ParameterInfo[] parameters = method.GetParameters();
+                int parameterCount = parameters == null ? 0 : parameters.Length;
+                if (parameterCount == 0)
+                    continue;
+
+                // Find the generic GetService() method
+                if (parameterCount == 1 && parameters[0].ParameterType == typeof(Type))
+                    _getServiceMethod = method;
+
+                // Find the generic GetService() method that uses
+                // named services
+                if (parameterCount == 2)
+                    _getNamedServiceMethod = method;
+            }
+        }
         public SimpleContainer()
         {
             _propertyInjectors.Add(new DefaultPropertyInjector());
@@ -60,21 +91,6 @@ namespace Simple.IoC
 
         public virtual T GetService<T>(string serviceName) where T : class
         {
-            // Search for a customizer for this current service type
-            ICustomizeInstance targetCustomizer = null;
-            foreach (ICustomizeInstance customizer in _customizers)
-            {
-                if (customizer == null)
-                    continue;
-
-                if (!customizer.CanCustomize(serviceName, typeof(T), this))
-                    continue;
-
-                targetCustomizer = customizer;
-                break;
-            }
-
-
             T result = null;
 
             if (_storage == null || string.IsNullOrEmpty(serviceName))
@@ -82,8 +98,7 @@ namespace Simple.IoC
                 // Use the nameless implementation by default
                 result = GetService<T>(false);
 
-                if (targetCustomizer != null && result != null)
-                    targetCustomizer.Customize(serviceName, typeof(T), result, this);
+                result = PostProcess<T>(string.Empty, result, true);
 
                 return result;
             }
@@ -97,13 +112,28 @@ namespace Simple.IoC
 
             result = PostProcess(serviceName, result, true);
 
-            if (targetCustomizer != null && result != null)
-                targetCustomizer.Customize(serviceName, typeof(T), result, this);
-
             if (result == null)
                 throw new ServiceNotFoundException(serviceName, typeof(T));
 
             return result;
+        }
+
+        private ICustomizeInstance GetCustomizer<T>(string serviceName) where T : class
+        {
+            // Search for a customizer for this current service type
+            ICustomizeInstance targetCustomizer = null;
+            foreach (ICustomizeInstance customizer in _customizers)
+            {
+                if (customizer == null)
+                    continue;
+
+                if (!customizer.CanCustomize(serviceName, typeof(T), this))
+                    continue;
+
+                targetCustomizer = customizer;
+                break;
+            }
+            return targetCustomizer;
         }
         public virtual T GetService<T>(bool throwOnError) where T : class
         {
@@ -175,6 +205,10 @@ namespace Simple.IoC
                 propertyInjector.InjectProperties(result, this);
             }
 
+            ICustomizeInstance targetCustomizer = GetCustomizer<T>(serviceName);
+            if (targetCustomizer != null && result != null)
+                targetCustomizer.Customize(serviceName, typeof(T), result, this);
+
             if (TypeInjectors.Count == 0)
                 return result;
 
@@ -241,6 +275,23 @@ namespace Simple.IoC
             get { return _propertyInjectors; }
         }
 
+        public object GetService(Type serviceType)
+        {
+            if (_getServiceMethod == null)
+                throw new NotImplementedException();
+            
+            MethodInfo getServiceMethod = _getServiceMethod.MakeGenericMethod(serviceType);
+            return getServiceMethod.Invoke(this, new object[] { serviceType });
+        }
+
+        public object GetService(Type serviceType, string serviceName)
+        {
+            if (_getNamedServiceMethod == null)
+                throw new NotImplementedException();
+
+            MethodInfo getNamedServiceMethod = _getNamedServiceMethod.MakeGenericMethod(serviceType);
+            return getNamedServiceMethod.Invoke(this, new object[] { serviceType, serviceName });
+        }
         #endregion
     }
 }
