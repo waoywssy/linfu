@@ -31,23 +31,15 @@ namespace LinFu.Database.Implementation
 
         public IConnectionRepositoryLoader LoadStrategy { get; set; }
 
-        public IConnectionRepository Retrieve()
-        {
-            IConnectionRepository repository = _container.GetService<IConnectionRepository>();
+        public void Load(IConnectionRepository repository)
+        {            
             if (!repository.IsLoaded)
             {
                 LoadStrategy.Load(repository);
+                if (repository.DefaultConnection == null)
+                    repository.DefaultConnection = repository.Connections.Last();
                 repository.IsLoaded = true;
             }
-                
-            IFactory<IConnection> factory = new ConnectionFactory();
-            foreach (var item in repository.Connections)
-            {
-                if (!_container.NamedFactoryStorage.ContainsFactory<IConnection>(item.Name))    
-                    _container.NamedFactoryStorage.Store<IConnection>(item.Name, factory);
-            }
-
-            return repository;
         }
 
         #endregion

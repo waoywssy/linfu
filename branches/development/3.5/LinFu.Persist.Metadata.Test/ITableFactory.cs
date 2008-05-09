@@ -8,7 +8,7 @@ namespace LinFu.Persist.Metadata.Test
 {
     public interface ITableFactory
     {
-        ITableRepository Repository { get; set; }
+        ITableInfoRepository Repository { get; set; }
         ITable CreateTable(string tableName);
         ITable CreateTable(ITableInfo tableInfo);
     }

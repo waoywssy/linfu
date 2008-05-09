@@ -46,20 +46,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IColumnInfo.cs" />
-    <Compile Include="IDbTableRepositoryLoader.cs" />
     <Compile Include="IRelationInfo.cs" />
-    <Compile Include="ITableRepository.cs" />
-    <Compile Include="ITableRepositoryStorage.cs" />
-    <Compile Include="ITableRepositoryLoader.cs" />
-    <Compile Include="ITableRepositoryPersister.cs" />
+    <Compile Include="ITableInfoRepository.cs" />
+    <Compile Include="ITableInfoRepositoryStorage.cs" />
+    <Compile Include="ITableInfoRepositoryLoader.cs" />
+    <Compile Include="ITableInfoRepositoryPersister.cs" />
     <Compile Include="ITypeInfo.cs" />
     <Compile Include="ITypeMapping.cs" />
     <Compile Include="IKeyInfo.cs" />
     <Compile Include="ITableInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

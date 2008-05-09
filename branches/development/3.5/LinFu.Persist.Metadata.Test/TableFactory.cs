@@ -12,7 +12,7 @@ namespace LinFu.Persist.Metadata.Test
 
         #region ITableFactory Members
 
-        public ITableRepository Repository { get; set; }
+        public ITableInfoRepository Repository { get; set; }
 
 
         public ITable CreateTable(string tableName)

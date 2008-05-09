@@ -51,7 +51,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseFixture.cs" />
-    <Compile Include="ConnectionCustomizer.cs" />
     <Compile Include="ITableFactory.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -63,6 +62,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LinFu.Database\LinFu.Database.Implementation\LinFu.Database.Implementation.csproj">
+      <Project>{E85F7116-2CE5-48F2-B81A-5ECC676FB6B1}</Project>
+      <Name>LinFu.Database.Implementation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LinFu.Persist.Metadata.Implementation\LinFu.Persist.Metadata.Implementation.csproj">
       <Project>{F23CD416-619B-443F-B3C9-F715C75528A5}</Project>
       <Name>LinFu.Persist.Metadata.Implementation</Name>

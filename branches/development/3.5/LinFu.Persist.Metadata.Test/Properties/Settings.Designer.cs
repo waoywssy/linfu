@@ -27,9 +27,9 @@ namespace LinFu.Persist.Metadata.Test.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=.;Initial Catalog=Northwind;Integrated Security=True")]
-        public string Setting {
+        public string Northwind {
             get {
-                return ((string)(this["Setting"]));
+                return ((string)(this["Northwind"]));
             }
         }
     }

@@ -26,6 +26,7 @@ namespace LinFu.Database.Implementation
         public Connection()
         {
             IsolationLevel = IsolationLevel.ReadCommitted;
+            CommandTimeout = 30;
         }
 
         #endregion
@@ -53,6 +54,10 @@ namespace LinFu.Database.Implementation
 
         public IsolationLevel IsolationLevel { get; set; }
 
+        public int CommandTimeout { get; set; }
+
+        public bool FillSchema { get; set; }
+
         public bool SupportsBulkLoading
         {
             get {return BulkLoader == null;}            
@@ -63,9 +68,11 @@ namespace LinFu.Database.Implementation
         public DataTable ExecuteDataTable(IDbCommand command)
         {
             _transaction.BeginTransaction(command);
-            IDbDataAdapter dataAdapter = ProviderFactory.CreateDataAdapter();
+            IDbDataAdapter dataAdapter = ProviderFactory.CreateDataAdapter();          
             dataAdapter.SelectCommand = command;
             DataSet dataSet = new DataSet();
+            if (FillSchema)
+                dataAdapter.FillSchema(dataSet, SchemaType.Source);
             dataAdapter.Fill(dataSet);
             return dataSet.Tables[0];
         }
@@ -108,9 +115,12 @@ namespace LinFu.Database.Implementation
             return ExecuteScalar<T>(CreateCommand(commandText));
         }
 
+
         public IDbCommand CreateCommand()
         {
-            return ProviderFactory.CreateCommand();
+            IDbCommand command = ProviderFactory.CreateCommand();
+            command.CommandTimeout = CommandTimeout;
+            return command;
         }
 
         public IDbCommand CreateCommand(string commandText)

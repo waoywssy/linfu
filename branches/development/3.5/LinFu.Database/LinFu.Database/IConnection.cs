@@ -30,6 +30,16 @@ namespace LinFu.Database
         IsolationLevel IsolationLevel { get; set; }
 
         /// <summary>
+        /// Gets or sets the wait time before terminating the attempt to execute a command and generating an error.
+        /// </summary>
+        int CommandTimeout { get; set; }
+
+        /// <summary>
+        /// Sets or gets whether the source schema should be included when returning datatables.        
+        /// </summary>
+        bool FillSchema { get; set; }
+
+        /// <summary>
         /// Returns <b>true</b> if the <see cref="IConnection"/> supports bulk loading, otherwise <b>false</b>
         /// </summary>
         bool SupportsBulkLoading { get; }

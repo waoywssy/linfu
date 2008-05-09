@@ -29,23 +29,14 @@ namespace LinFu.Database.Tests
         }
 
         [Test]
-        public void ConnectionRepositoryReader()
-        {
-            IConnectionRepositoryStorage reader = _container.GetService<IConnectionRepositoryStorage>();
-            IConnectionRepository repository = reader.Retrieve();
+        public void ConnectionRepository()
+        {            
+            IConnectionRepository repository = _container.GetService<IConnectionRepository>();
             repository.DefaultConnection = repository["Northwind"];
             Assert.IsNotNull(repository);            
         }
 
-        [Test]
-        public void GetDefaultConnection()
-        {
-            IConnectionRepositoryStorage reader = _container.GetService<IConnectionRepositoryStorage>();
-            IConnectionRepository repository = reader.Retrieve();
-            repository.DefaultConnection = repository["Northwind"];
-            IConnection connection = _container.GetService<IConnection>();
-            Assert.IsNotNull(connection);            
-        }
+        
         
         [Test]
         public void AutoLoadConnectionRepository()
@@ -60,8 +51,7 @@ namespace LinFu.Database.Tests
         [Test]
         public void GetNamedConnection()
         {
-            IConnectionRepositoryStorage reader = _container.GetService<IConnectionRepositoryStorage>();
-            IConnectionRepository repository = reader.Retrieve();                        
+            
             IConnection connection = _container.GetService<IConnection>("Northwind");
             Assert.IsNotNull(connection);
         }
@@ -70,14 +60,15 @@ namespace LinFu.Database.Tests
         [Test]
         public void ExecuteDataTable()
         {
-            IConnectionRepositoryStorage reader = _container.GetService<IConnectionRepositoryStorage>();
-            IConnectionRepository repository = reader.Retrieve();
-            repository.DefaultConnection = repository["Northwind"];
 
-            IConnection connection = _container.GetService<IConnection>();
-            DataTable datatable = connection.ExecuteDataTable("SELECT * FROM Customers");
-            Assert.IsNotNull(datatable);
-            Assert.IsTrue(datatable.Rows.Count > 0);
+            
+            using (IConnection connection = _container.GetService<IConnection>("Northwind"))
+            {
+                DataTable datatable = connection.ExecuteDataTable("SELECT * FROM Customers");
+                Assert.IsNotNull(datatable);
+                Assert.IsTrue(datatable.Rows.Count > 0);
+            }
+            
 
         }
         

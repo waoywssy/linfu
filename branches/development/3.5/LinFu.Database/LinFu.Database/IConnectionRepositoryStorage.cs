@@ -6,8 +6,8 @@ using System.Text;
 namespace LinFu.Database
 {
     public interface IConnectionRepositoryStorage
-    {        
-        IConnectionRepository Retrieve();
+    {
+        void Load(IConnectionRepository repository);
         IConnectionRepositoryLoader LoadStrategy { get; set; }
     }
 }
