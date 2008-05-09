@@ -14,7 +14,6 @@ namespace LinFu.Database.Implementation
     {        
         private IDbTransaction _transaction;
         private IDbConnection _dbConnection;
-        private bool _isTransactableMethod = false;
         private bool performRollback = false;       
 
         public IConnection Connection {get;set;}
@@ -36,50 +35,52 @@ namespace LinFu.Database.Implementation
 
         private void BeginTransaction()
         {
-            if (_transaction == null)
-            {
-                _dbConnection = Connection.ProviderFactory.CreateConnection();
-                _dbConnection.ConnectionString = Connection.ConnectionString;
-                _dbConnection.Open();
-                _transaction = _dbConnection.BeginTransaction(Connection.IsolationLevel);
-            }
+            if (_transaction != null)
+                return;
+            
+            _dbConnection = Connection.ProviderFactory.CreateConnection();
+            _dbConnection.ConnectionString = Connection.ConnectionString;
+            _dbConnection.Open();
+            _transaction = _dbConnection.BeginTransaction(Connection.IsolationLevel);
         }
 
         public void FinalizeTransaction()
         {
-            Console.WriteLine("FinalizeTransaction");
             if (performRollback)
-                RollbackTransaction();
-            else
-                CommitTransaction();
-            if (_dbConnection != null)
             {
-                _dbConnection.Close();
-                _dbConnection.Dispose();
+                RollbackTransaction();
             }
+            else
+            {
+                CommitTransaction();
+            }
+
+            if (_dbConnection == null)
+                return;
+
+            _dbConnection.Close();
+            _dbConnection.Dispose();
         }
 
 
         private void CommitTransaction()
         {
-            if (_transaction != null)
-            {
-                _transaction.Commit();
-                _transaction.Dispose();
-                _transaction = null;
-            }
-            
-            
+            if (_transaction == null)
+                return;
+
+            _transaction.Commit();
+            _transaction.Dispose();
+            _transaction = null;
         }
 
         private void RollbackTransaction()
         {
-            if (_transaction != null)
-            {
-                _transaction.Rollback();
-                _transaction.Dispose();
-                _transaction = null;
-            }            
+            if (_transaction == null)
+                return;
+
+            _transaction.Rollback();
+            _transaction.Dispose();
+            _transaction = null;
         }
 
         private void CloseConnection()
