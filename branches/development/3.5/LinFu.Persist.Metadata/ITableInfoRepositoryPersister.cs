@@ -12,3 +12,4 @@ namespace LinFu.Persist.Metadata
         void Save(ITableInfoRepository repository);
     }
 }
+

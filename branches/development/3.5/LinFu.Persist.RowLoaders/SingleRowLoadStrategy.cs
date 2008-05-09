@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using Simple.IoC.Loaders;
 using System.Data;
+using LinFu.Database;
 
 namespace LinFu.Persist
 {
@@ -19,9 +20,12 @@ namespace LinFu.Persist
             if (tasks.Count() != 1)
                 return null;
 
-            IDbCommand command = CreateCommand(tasks.Single());      
-             
-            return CreateRows(command, tasks.Single().Columns);
+            using(IConnection connection = Container.GetService<IConnection>())
+            {
+                IDbCommand command = CreateCommand(connection,tasks.Single());      
+                
+                return CreateRows(connection.ExecuteReader(command), tasks.Single().Columns);
+            }
         }
 
 
@@ -29,9 +33,9 @@ namespace LinFu.Persist
 
         #region Private Methods
         
-        private IDbCommand CreateCommand(IRowTaskItem task)
+        private IDbCommand CreateCommand(IConnection connection, IRowTaskItem task)
         {
-            IDbCommand command = Connection.CreateCommand();
+            IDbCommand command = connection.CreateCommand();
             command.CommandText = CreateSelectStatement(task);
             foreach (var primaryKey in task.PrimaryKeyValues)
             {

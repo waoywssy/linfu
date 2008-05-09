@@ -7,23 +7,27 @@ using Simple.IoC;
 
 namespace LinFu.Persist
 {
-    public abstract class BaseRowLoadStrategy : IRowLoadStrategy
+    public abstract class BaseRowLoadStrategy : IRowLoadStrategy,IInitialize
     {
-        #region IRowLoadStrategy Members
-
-        public IDbConnection Connection { get; set; }
+        #region IRowLoadStrategy Members        
 
         public abstract IEnumerable<IRow> Load(IEnumerable<IRowTaskItem> tasks);
         
         #endregion
 
+        #region IInitialize Members
 
-        protected IEnumerable<IRow> CreateRows(IDbCommand command, IEnumerable<string> columns)
+        public void Initialize(IContainer container)
         {
-            command.Connection = Connection;
-            if (Connection.State != ConnectionState.Open)
-                Connection.Open();
-            IDataReader reader = command.ExecuteReader();
+            Container = container;
+        }
+
+        #endregion
+
+        protected IContainer Container { get; set; }
+
+        protected IEnumerable<IRow> CreateRows(IDataReader reader, IEnumerable<string> columns)
+        {            
             IList<IRow> rows = new List<IRow>();
             while (reader.Read())
             {
@@ -37,15 +41,15 @@ namespace LinFu.Persist
                 }
                 rows.Add(row);
             }
-            reader.Close();
-            command.Dispose();
-            Connection.Close();
+            reader.Close();                    
             return rows;
         }
         protected virtual ICell CreateCell(string columnName, object value)
         {
             return new Cell() { Value = value };
         }
+
+       
     }
     
 

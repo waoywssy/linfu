@@ -115,6 +115,13 @@ namespace LinFu.Database.Implementation
             return ExecuteScalar<T>(CreateCommand(commandText));
         }
 
+        public void BulkLoad(DataTable dataTable)
+        {
+            if (BulkLoader == null)
+                throw new DatabaseException("Bulkload is not supported by this provide");
+            _transaction.BeginTransaction(BulkLoader);
+            BulkLoader.Load(dataTable);
+        }
 
         public IDbCommand CreateCommand()
         {

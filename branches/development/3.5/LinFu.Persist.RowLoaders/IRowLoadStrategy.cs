@@ -7,8 +7,7 @@ using System.Data;
 namespace LinFu.Persist
 {
     public interface IRowLoadStrategy
-    {
-        IDbConnection Connection { get; set; }
+    {        
         IEnumerable<IRow> Load(IEnumerable<IRowTaskItem> tasks);
     }
 }
