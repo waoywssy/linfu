@@ -108,6 +108,16 @@ namespace LinFu.Database
         T ExecuteScalar<T>(string commandText);
 
         /// <summary>
+        /// Bulk loads/copies the contents of the <paramref name="dataTable"/>
+        /// </summary>
+        /// <remarks>
+        /// The data is loaded into the table as spesified by the datatable name.
+        /// </remarks>
+        /// <param name="dataTable"></param>
+        void BulkLoad(DataTable dataTable);
+
+
+        /// <summary>
         /// Creates a new <see cref="IDbCommand"/>
         /// </summary>
         /// <returns><see cref="IDbCommand"/></returns>

@@ -10,6 +10,7 @@ namespace LinFu.Database
     {
         IConnection Connection {get;set;}
         void BeginTransaction(IDbCommand command);
+        void BeginTransaction(IBulkLoader bulkLoader);
         void FinalizeTransaction();
     }
 }

@@ -9,6 +9,7 @@ namespace LinFu.Database
     public interface IBulkLoader
     {
         void Load(DataTable table);
-        IConnection Connection { get; set; }
+        IDbConnection Connection { get; set; }
+        IDbTransaction Transaction { get; set; }
     }
 }
