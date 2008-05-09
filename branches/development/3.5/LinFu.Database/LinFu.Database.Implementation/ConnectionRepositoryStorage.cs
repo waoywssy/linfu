@@ -32,14 +32,15 @@ namespace LinFu.Database.Implementation
         public IConnectionRepositoryLoader LoadStrategy { get; set; }
 
         public void Load(IConnectionRepository repository)
-        {            
-            if (!repository.IsLoaded)
-            {
-                LoadStrategy.Load(repository);
-                if (repository.DefaultConnection == null)
-                    repository.DefaultConnection = repository.Connections.Last();
-                repository.IsLoaded = true;
-            }
+        {
+            if (repository.IsLoaded)
+                return;
+
+            LoadStrategy.Load(repository);
+            if (repository.DefaultConnection == null)
+                repository.DefaultConnection = repository.Connections.Last();
+
+            repository.IsLoaded = true;
         }
 
         #endregion

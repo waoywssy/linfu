@@ -11,10 +11,10 @@ using System.IO;
 namespace LinFu.Database.Tests
 {
     [TestFixture]
-    public class DatabaseTests :BaseFixture
+    public class DatabaseTests : BaseFixture
     {
-        private IContainer _container; 
-        
+        private IContainer _container;
+
         public override void Setup()
         {
             _container = new SimpleContainer();
@@ -24,26 +24,26 @@ namespace LinFu.Database.Tests
         }
 
         public override void TearDown()
-        {            
+        {
             _container = null;
         }
 
         [Test]
         public void ConnectionRepository()
-        {            
+        {
             IConnectionRepository repository = _container.GetService<IConnectionRepository>();
             repository.DefaultConnection = repository["Northwind"];
-            Assert.IsNotNull(repository);            
+            Assert.IsNotNull(repository);
         }
 
-        
-        
+
+
         [Test]
         public void AutoLoadConnectionRepository()
         {
             IConnection connection = _container.GetService<IConnection>();
             Assert.IsNotNull(connection);
-            
+
             IConnection connection2 = _container.GetService<IConnection>("Northwind");
             Assert.IsNotNull(connection2);
         }
@@ -51,7 +51,7 @@ namespace LinFu.Database.Tests
         [Test]
         public void GetNamedConnection()
         {
-            
+
             IConnection connection = _container.GetService<IConnection>("Northwind");
             Assert.IsNotNull(connection);
         }
@@ -60,18 +60,14 @@ namespace LinFu.Database.Tests
         [Test]
         public void ExecuteDataTable()
         {
-
-            
             using (IConnection connection = _container.GetService<IConnection>("Northwind"))
             {
                 DataTable datatable = connection.ExecuteDataTable("SELECT * FROM Customers");
                 Assert.IsNotNull(datatable);
                 Assert.IsTrue(datatable.Rows.Count > 0);
             }
-            
-
         }
-        
+
         [Test]
         public void ExecuteScalar()
         {
@@ -103,7 +99,7 @@ namespace LinFu.Database.Tests
         {
             using (IConnection connection = _container.GetService<IConnection>())
             {
-                IEnumerable<IDataParameter> parameters =  connection.Procedures["Ten Most Expensive Products"].Parameters;
+                IEnumerable<IDataParameter> parameters = connection.Procedures["Ten Most Expensive Products"].Parameters;
                 Assert.IsNotNull(parameters);
                 Assert.IsTrue(parameters.Count() > 0);
             }
@@ -119,6 +115,6 @@ namespace LinFu.Database.Tests
                 Assert.IsTrue(datatable.Rows.Count > 0);
             }
         }
-       
+
     }
 }

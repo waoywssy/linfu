@@ -12,7 +12,7 @@ namespace LinFu.Persist.RowLoaders
     public class MultiRowLoadStrategy : BaseRowLoadStrategy
     {
         #region IRowLoadStrategy Members
-      
+
         public override IEnumerable<IRow> Load(IEnumerable<IRowTaskItem> tasks)
         {
             using (IConnection connection = Container.GetService<IConnection>())
@@ -23,14 +23,13 @@ namespace LinFu.Persist.RowLoaders
                 string columnList = tasks.First().Columns.Aggregate((current, next) => current + ", " + next);
                 foreach (var task in tasks)
                 {
-                    
-                    string parameterName = string.Format("@p{0}",parameterCount);                    
+                    string parameterName = string.Format("@p{0}", parameterCount);
                     IDataParameter parameter = command.CreateParameter();
                     parameter.ParameterName = parameterName;
                     parameter.Value = task.PrimaryKeyValues.First().Value;
                     command.Parameters.Add(parameter);
                     whereClause.AppendFormat("{0}, ", parameterName);
-                    parameterCount++;                    
+                    parameterCount++;
                 }
                 whereClause.Length -= 2;
                 whereClause.Append(")");
@@ -38,7 +37,7 @@ namespace LinFu.Persist.RowLoaders
                 string sql = string.Format("SELECT {0} FROM {1} {2}", columnList, tasks.First().TableName, whereClause);
                 command.CommandText = sql;
 
-                return CreateRows(connection.ExecuteReader(command), tasks.First().Columns); 
+                return CreateRows(connection.ExecuteReader(command), tasks.First().Columns);
             }
 
         }

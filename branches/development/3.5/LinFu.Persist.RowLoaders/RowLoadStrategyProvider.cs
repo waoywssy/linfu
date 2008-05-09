@@ -7,10 +7,9 @@ using Simple.IoC;
 
 namespace LinFu.Persist.RowLoaders
 {
-    [Implements(typeof(IRowLoadStrategyProvider),LifecycleType.Singleton)]
-    public class RowLoadStrategyProvider : IRowLoadStrategyProvider,IInitialize
+    [Implements(typeof(IRowLoadStrategyProvider), LifecycleType.Singleton)]
+    public class RowLoadStrategyProvider : IRowLoadStrategyProvider, IInitialize
     {
-
         private IContainer _container;
 
         public RowLoadStrategyProvider()
@@ -27,21 +26,22 @@ namespace LinFu.Persist.RowLoaders
 
         #endregion
 
-        
+
         #region IRowLoadStrategyProvider Members
 
         public IRowLoadStrategy GetStrategy(string tableName, long rowCount, IEnumerable<string> keyColumns)
         {
             if (rowCount == 1)
                 return _container.GetService<IRowLoadStrategy>("SingleRowLoadStrategy");
+
             if (rowCount > 1 && keyColumns.Count() == 1 && rowCount < BulkLoadThreshold)
                 return _container.GetService<IRowLoadStrategy>("MultiRowLoadStrategy");
-            else
-                return _container.GetService<IRowLoadStrategy>("BulkLoadRowStrategy");
+                
+            return _container.GetService<IRowLoadStrategy>("BulkLoadRowStrategy");
         }
 
-        public long BulkLoadThreshold {get;set;}
-        
+        public long BulkLoadThreshold { get; set; }
+
 
         #endregion
 

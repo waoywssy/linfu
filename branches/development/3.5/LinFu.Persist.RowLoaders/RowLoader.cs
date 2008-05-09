@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,16 +9,16 @@ using Simple.IoC;
 
 namespace LinFu.Persist
 {
-    [Implements(typeof(IRowLoader),LifecycleType.OncePerRequest)]
+    [Implements(typeof(IRowLoader), LifecycleType.OncePerRequest)]
     public class RowLoader : IRowLoader, IInitialize
-    {             
+    {
         private IRowLoadStrategyProvider _strategyProvider = null;
 
         #region IInitialize Members
 
         public void Initialize(IContainer container)
-        {        
-            _strategyProvider = container.GetService<IRowLoadStrategyProvider>();            
+        {
+            _strategyProvider = container.GetService<IRowLoadStrategyProvider>();
         }
 
         #endregion
@@ -30,17 +30,23 @@ namespace LinFu.Persist
 
             if (tasks.Count() == 0)
                 return null;
-            
+
             List<IRow> rows = new List<IRow>();
 
             var tableGroups = tasks.GroupBy(t => t.TableName);
 
             foreach (var tableGroup in tableGroups)
             {
-                IRowLoadStrategy loadStrategy = _strategyProvider.GetStrategy(tableGroup.Key,tableGroup.Count(),
-                    tableGroup.First().PrimaryKeyValues.Select(p => p.Key));
+                var tableName = tableGroup.Key;
+                var rowCount = tableGroup.Count();
+                var firstTableGroup = tableGroup.First();
+                var keyColumns = firstTableGroup.PrimaryKeyValues.Select(p => p.Key);
 
-                rows.AddRange(loadStrategy.Load(tableGroup));                
+                IRowLoadStrategy loadStrategy = _strategyProvider.GetStrategy(tableName, rowCount,
+                    keyColumns);
+
+                var results = loadStrategy.Load(tableGroup);
+                rows.AddRange(results);
             }
             return rows;
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using LinFu.DynamicProxy;
+using System.Reflection;
 
 namespace LinFu.Lazy
 {
@@ -21,8 +22,23 @@ namespace LinFu.Lazy
                 _actualObject = _getItem();
 
             if (_actualObject != null)
-                return info.TargetMethod.Invoke(_actualObject, info.Arguments);
+            {
+                object result = null;
+                try
+                {
+                    result = info.TargetMethod.Invoke(_actualObject, info.Arguments);
+                }
+                catch (TargetInvocationException ex)
+                {
+                    var inner = ex.InnerException;
+                    while (inner != null && inner is TargetInvocationException)
+                    {
+                        inner = inner.InnerException;
+                    }
 
+                    throw ex.InnerException;
+                }
+            }
             throw new NotImplementedException();
         }
     }

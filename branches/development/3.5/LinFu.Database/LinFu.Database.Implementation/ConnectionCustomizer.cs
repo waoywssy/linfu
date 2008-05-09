@@ -23,19 +23,20 @@ namespace LinFu.Database.Implementation
             IConnectionInfo connectionInfo = null;
             IConnection connection = (IConnection)instance;
 
-            if (string.IsNullOrEmpty(serviceName))
+            // Use the default connection info
+            connectionInfo = connectionRepository.DefaultConnection;
+            if (!string.IsNullOrEmpty(serviceName))
                 connectionInfo = connectionRepository.DefaultConnection;
-            else
-                connectionInfo = connectionRepository[serviceName];
 
-            
             connection.ProviderFactory = connectionInfo.CreateProviderFactory();
             connection.ConnectionString = connectionInfo.ConnectionString;
             try
             {
                 connection.BulkLoader = hostContainer.GetService<IBulkLoader>(connectionInfo.ProviderName);
             }
-            catch { }
+            catch
+            {
+            }
         }
 
         #endregion

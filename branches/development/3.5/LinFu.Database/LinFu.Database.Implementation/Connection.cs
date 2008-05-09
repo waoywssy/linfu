@@ -118,7 +118,7 @@ namespace LinFu.Database.Implementation
         public void BulkLoad(DataTable dataTable)
         {
             if (BulkLoader == null)
-                throw new DatabaseException("Bulkload is not supported by this provide");
+                throw new DatabaseException("Bulkload is not supported by this provider");
             _transaction.BeginTransaction(BulkLoader);
             BulkLoader.Load(dataTable);
         }
