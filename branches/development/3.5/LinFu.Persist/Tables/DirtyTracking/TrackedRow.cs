@@ -130,5 +130,20 @@ namespace LinFu.Persist
         {
             events.Modified += this.events_Modified;
         }
+
+
+        public object this[string columnName]
+        {
+            get
+            {
+                var targetCell = _cells[columnName];
+                return targetCell.Value;
+            }
+            set
+            {
+                var targetCell = _cells[columnName];
+                targetCell.Value = value;
+            }
+        }
     }
 }

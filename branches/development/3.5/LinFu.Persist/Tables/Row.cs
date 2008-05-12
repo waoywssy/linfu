@@ -21,5 +21,20 @@ namespace LinFu.Persist
                 return _cells;
             }
         }
+
+
+        public object this[string columnName]
+        {
+            get
+            {
+                var targetCell = _cells[columnName];
+                return targetCell.Value;
+            }
+            set
+            {
+                var targetCell = _cells[columnName];
+                targetCell.Value = value;
+            }
+        }
     }
 }

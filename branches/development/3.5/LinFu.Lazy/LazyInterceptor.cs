@@ -21,25 +21,25 @@ namespace LinFu.Lazy
             if (_actualObject == null)
                 _actualObject = _getItem();
 
-            if (_actualObject != null)
-            {
-                object result = null;
-                try
-                {
-                    result = info.TargetMethod.Invoke(_actualObject, info.Arguments);
-                }
-                catch (TargetInvocationException ex)
-                {
-                    var inner = ex.InnerException;
-                    while (inner != null && inner is TargetInvocationException)
-                    {
-                        inner = inner.InnerException;
-                    }
+            if (_actualObject == null)            
+                throw new NotImplementedException();
 
-                    throw ex.InnerException;
-                }
+            object result = null;
+            try
+            {
+                result = info.TargetMethod.Invoke(_actualObject, info.Arguments);
             }
-            throw new NotImplementedException();
+            catch (TargetInvocationException ex)
+            {
+                var inner = ex.InnerException;
+                while (inner != null && inner is TargetInvocationException)
+                {
+                    inner = inner.InnerException;
+                }
+
+                throw ex.InnerException;
+            }
+            return result;
         }
     }
 }

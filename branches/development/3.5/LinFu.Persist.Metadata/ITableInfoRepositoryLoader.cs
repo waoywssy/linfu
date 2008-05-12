@@ -11,7 +11,7 @@ namespace LinFu.Persist.Metadata
         /// </summary>
         /// <param name="repositoryName">The name of the repository to load.</param>
         /// <returns>A <see cref="ITableRepository"/> describing the structure of the datastore.</returns>
-        void Load(string repositoryName,ITableInfoRepository repository);
+        void Load(string repositoryName, ITableInfoRepository repository);
     }
 
 }
