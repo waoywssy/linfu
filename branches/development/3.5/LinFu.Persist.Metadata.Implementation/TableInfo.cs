@@ -11,9 +11,8 @@ namespace LinFu.Persist.Metadata.Implementation
 
         #region ITableInfo Members
 
-
         public string TableName { get; set; }
-
+        public string SchemaName { get; set; }
         public IKeyInfo PrimaryKey { get; set; }
 
         public IList<IRelationInfo> Relations
@@ -30,9 +29,9 @@ namespace LinFu.Persist.Metadata.Implementation
         {
             if (string.IsNullOrEmpty(TableName))
                 return base.ToString();
+
             return TableName;
         }
-
         
         #endregion
     }

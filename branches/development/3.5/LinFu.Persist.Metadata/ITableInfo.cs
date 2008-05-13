@@ -18,6 +18,11 @@ namespace LinFu.Persist.Metadata
         string TableName { get; set; }
 
         /// <summary>
+        /// Describes the schema that owns the current table.
+        /// </summary>
+        string SchemaName { get; set; }
+
+        /// <summary>
         /// Describes the primary key.
         /// </summary>
         IKeyInfo PrimaryKey { get; set; }

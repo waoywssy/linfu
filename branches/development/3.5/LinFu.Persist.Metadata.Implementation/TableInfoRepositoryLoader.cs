@@ -23,9 +23,9 @@ namespace LinFu.Persist.Metadata.Implementation
     public class TableInfoRepositoryLoader : ITableInfoRepositoryLoader, IInitialize
     {
         private IContainer _container;
-        
+
         private ITypeMapper _typeMapper;
-        private readonly ResourceManager _resourceManager = new ResourceManager(string.Format("{0}.Sql",typeof(TableInfoRepositoryLoader).Namespace) , Assembly.GetExecutingAssembly());
+        private readonly ResourceManager _resourceManager = new ResourceManager(string.Format("{0}.Sql", typeof(TableInfoRepositoryLoader).Namespace), Assembly.GetExecutingAssembly());
 
         #region IInitialize Members
 
@@ -37,7 +37,7 @@ namespace LinFu.Persist.Metadata.Implementation
 
         #endregion
 
-        
+
 
         #region ITableInfoLoader Members
 
@@ -53,41 +53,61 @@ namespace LinFu.Persist.Metadata.Implementation
 
             DbConnection dbConnection = connection.ProviderFactory.CreateConnection();
             dbConnection.ConnectionString = connection.ConnectionString;
-            
+
             repository.Name = repositoryName;
 
             dbConnection.Open();
-            
-            //Get all the tables.
-            //NOTE :Views are not returned here
+
+            // Get all the tables.
+            // NOTE :Views are not returned here
             var tableRows = dbConnection.GetSchema("Tables").Rows.Cast<DataRow>()
                .Where(r => (string)r["TABLE_TYPE"] == "BASE TABLE");
 
-            //Get all the columns
+            // Get all the columns
             var columnRows = dbConnection.GetSchema("Columns").Rows.Cast<DataRow>();
 
             dbConnection.Close();
 
             foreach (DataRow row in tableRows)
             {
-                ITableInfo tableInfo = new TableInfo { TableName = string.Format("{0}.[{1}]" ,row["TABLE_SCHEMA"],row["TABLE_NAME"]) };
+                string schema = row["TABLE_SCHEMA"] as string ?? string.Empty;
+                string tablename = row["TABLE_NAME"] as string ?? string.Empty;
+
+                if (schema == string.Empty || tablename == string.Empty)
+                    continue;
+
+                TableInfo tableInfo = new TableInfo { TableName = tablename };
                 repository.Tables.Add(tableInfo.TableName, tableInfo);
 
-                var tableColumns = columnRows.Where(r => (string)r["TABLE_NAME"] == (string)row["TABLE_NAME"] & (string)r["TABLE_SCHEMA"] == (string)row["TABLE_SCHEMA"])
-                                        .OrderBy(o => (int)o["ORDINAL_POSITION"]);
-                
-                CreateColumns(tableInfo,tableColumns);              
+                var tableColumns = from r in columnRows
+                                   let currentTableName = r["TABLE_NAME"] as string
+                                   let currentSchema = r["TABLE_SCHEMA"] as string
+                                   where currentSchema != null && currentTableName != null
+                                   select r;
+
+                tableColumns = tableColumns.OrderBy(o =>
+                    {
+                        int ordinal = 0;
+                        object value = o["ORDINAL_POSITION"];
+
+                        if (value is int)
+                            ordinal = (int)value;
+
+                        return ordinal;
+                    });
+
+
+                tableInfo.SchemaName = schema;
+                CreateColumns(tableInfo, tableColumns);
             }
 
-            //Now that we have all the tables and columns loaded, we are ready to set up the keys and relationships
-
-            CreatePrimaryKeys(repository.Tables,connection);
-            CreateRelations(repository.Tables,connection);
-            
-            
+            // Now that we have all the tables and columns loaded, 
+            // we are ready to set up the keys and relationships
+            CreatePrimaryKeys(repository.Tables, connection);
+            CreateRelations(repository.Tables, connection);
         }
 
-        private void CreateColumns(ITableInfo tableInfo,IEnumerable<DataRow> tableColumns)
+        private void CreateColumns(ITableInfo tableInfo, IEnumerable<DataRow> tableColumns)
         {
             foreach (var item in tableColumns)
             {
@@ -95,15 +115,19 @@ namespace LinFu.Persist.Metadata.Implementation
                 columnInfo.ColumnName = (string)item["COLUMN_NAME"];
                 columnInfo.DataType = _typeMapper.MapType((string)item["DATA_TYPE"], (string)item["IS_NULLABLE"] == "YES");
                 columnInfo.Table = tableInfo;
+
+                if (tableInfo.Columns.ContainsKey(columnInfo.ColumnName))
+                    continue;
+
                 tableInfo.Columns.Add(columnInfo.ColumnName, columnInfo);
             }
         }
 
-        private void CreatePrimaryKeys(IDictionary<string,ITableInfo> tables, IConnection connection)
+        private void CreatePrimaryKeys(IDictionary<string, ITableInfo> tables, IConnection connection)
         {
-            IDataReader reader = connection.ExecuteReader(_resourceManager.GetString("PrimaryKeys")); 
+            IDataReader reader = connection.ExecuteReader(_resourceManager.GetString("PrimaryKeys"));
             while (reader.Read())
-            {                 
+            {
                 string tableName = string.Format("{0}.[{1}]", reader["TABLE_SCHEMA"], reader["TABLE_NAME"]);
                 string columnName = (string)reader["COLUMN_NAME"];
 
@@ -114,14 +138,14 @@ namespace LinFu.Persist.Metadata.Implementation
                     key.Table = tables[tableName];
                     tables[tableName].PrimaryKey = key;
                 }
-                
+
                 key.Columns.Add(tables[tableName].Columns.Values.Where(c => c.ColumnName == columnName).First());
             }
-            reader.Close();            
+            reader.Close();
         }
 
         private void CreateRelations(IDictionary<string, ITableInfo> tables, IConnection connection)
-        {                                   
+        {
             IDictionary<string, IRelationInfo> relations = new Dictionary<string, IRelationInfo>();
 
             IDataReader reader = connection.ExecuteReader(_resourceManager.GetString("ForeignKeys"));
@@ -143,19 +167,19 @@ namespace LinFu.Persist.Metadata.Implementation
                     relationInfo.ForeignKey = foreignkey;
                     tables[foreignTableName].Relations.Add(relationInfo);
                     tables[primaryTableName].Relations.Add(relationInfo);
-                   
+
                     relations.Add(constraintName, relationInfo);
                 }
 
                 relations[constraintName].ForeignKey.Columns.Add(tables[foreignTableName].Columns[foreignColumnName]);
-                
-            }            
+
+            }
         }
 
-       
+
 
 
         #endregion
-        
+
     }
 }
