@@ -105,6 +105,7 @@ namespace LinFu.Persist.Metadata.Implementation
             // we are ready to set up the keys and relationships
             CreatePrimaryKeys(repository.Tables, connection);
             CreateRelations(repository.Tables, connection);
+
         }
 
         private void CreateColumns(ITableInfo tableInfo, IEnumerable<DataRow> tableColumns)
@@ -139,7 +140,12 @@ namespace LinFu.Persist.Metadata.Implementation
                     tables[tableName].PrimaryKey = key;
                 }
 
-                key.Columns.Add(tables[tableName].Columns.Values.Where(c => c.ColumnName == columnName).First());
+                var matchingColumns = tables[tableName].Columns.Values.Where(c => c.ColumnName == columnName);
+                var firstMatch = matchingColumns.FirstOrDefault();
+                if (firstMatch == null)
+                    continue;
+
+                key.Columns.Add(firstMatch);
             }
             reader.Close();
         }
