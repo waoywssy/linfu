@@ -46,7 +46,9 @@ namespace LinFu.Persist
                     keyColumns);
 
                 var results = loadStrategy.Load(tableGroup);
-                rows.AddRange(results);
+
+                if (results != null)
+                    rows.AddRange(results);
             }
             return rows;
 

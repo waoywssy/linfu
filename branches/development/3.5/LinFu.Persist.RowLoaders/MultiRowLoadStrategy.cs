@@ -22,10 +22,24 @@ namespace LinFu.Persist.RowLoaders
             IRowTaskItem firstTask = tasks.First();            
             ITableInfo tableInfo = Container.GetService<ITableInfoRepository>().Tables[firstTask.TableName];
 
-            //Get the column info for the requested columns            
-            var columns = from columnInfo in tableInfo.Columns
-                          join columnName in firstTask.Columns on columnInfo.Value.LocalName equals columnName
-                          select columnInfo.Value.ColumnName;
+            // BUG: The following query returns zero matches
+            // Get the column info for the requested columns            
+            // var columns = from columnInfo in tableInfo.Columns
+            //              join columnName in firstTask.Columns on 
+            //              columnInfo.Value.LocalName equals columnName
+            //              select columnInfo.Value.ColumnName;
+
+            // Extract the column names from the tableinfo
+            IEnumerable<string> columnNames = tableInfo.Columns.Keys;
+
+            // Use columns that exist in the target table
+            HashSet<string> tableColumns = new HashSet<string>(columnNames);
+            var columns = (from c in firstTask.Columns
+                           where tableColumns.Contains(c)
+                           select c).ToList();
+
+            if (columns.Count == 0)
+                return null;
 
             string columnList = columns.Aggregate((current, next) => current + ", " + next);
 
