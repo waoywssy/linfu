@@ -22,6 +22,19 @@ namespace LinFu.Database.Implementation
 
         #endregion
 
+        #region Private Methods
+        private static void PostProcessParameterizedQuery(IDbCommand command,IEnumerable<Parameter> parameters)
+        {
+            var outParameters = parameters.Where(p => p.Direction == ParameterDirection.Output || p.Direction == ParameterDirection.InputOutput);
+            foreach (var parameter in outParameters)
+            {
+                parameter.Value = ((IDataParameter)command.Parameters[parameter.Name]).Value;
+            }            
+        }
+
+
+        #endregion
+
         #region Constructors
 
         public Connection()
@@ -116,7 +129,7 @@ namespace LinFu.Database.Implementation
         public IDataReader ExecuteReader(string commandText)
         {
             return ExecuteReader(CreateCommand(commandText));
-        }
+        }       
 
         public int ExecuteNonQuery(string commandText)
         {
@@ -126,6 +139,43 @@ namespace LinFu.Database.Implementation
         public T ExecuteScalar<T>(string commandText)
         {
             return ExecuteScalar<T>(CreateCommand(commandText));
+        }
+
+
+        public DataTable ExecuteDataTable(string commandText, params Parameter[] parameters)
+        {
+            IDbCommand command = CreateCommand(commandText);
+            command.AddParameters(parameters);
+            DataTable result = ExecuteDataTable(command);
+            PostProcessParameterizedQuery(command, parameters);
+            return result;
+        }
+
+        public IDataReader ExecuteReader(string commandText, params Parameter[] parameters)
+        {
+            IDbCommand command = CreateCommand(commandText);
+            command.AddParameters(parameters);
+            IDataReader result = ExecuteReader(command);
+            PostProcessParameterizedQuery(command, parameters);
+            return result;
+        }
+
+        public int ExecuteNonQuery(string commandText, params Parameter[] parameters)
+        {
+            IDbCommand command = CreateCommand(commandText);
+            command.AddParameters(parameters);
+            int result = ExecuteNonQuery(command);
+            PostProcessParameterizedQuery(command, parameters);
+            return result;
+        }
+
+        public T ExecuteScalar<T>(string commandText,params Parameter[] parameters)
+        {
+            IDbCommand command = CreateCommand(commandText);
+            command.AddParameters(parameters);
+            T result = ExecuteScalar<T>(command);
+            PostProcessParameterizedQuery(command, parameters);
+            return result;
         }
 
         public void BulkLoad(DataTable dataTable)

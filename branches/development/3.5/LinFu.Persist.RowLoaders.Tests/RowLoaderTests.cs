@@ -37,8 +37,8 @@ namespace LinFu.Persist.RowLoaders.Tests
             base.TearDown();
         }
 
-        
 
+        
         [Test]
         public void LoadSingleRow()
         {
@@ -49,7 +49,7 @@ namespace LinFu.Persist.RowLoaders.Tests
         }
 
         [Test]
-        public void LoadMultibleRows()
+        public void LoadMultipleRows()
         {
             IRowLoader rowLoader = _container.GetService<IRowLoader>();
             IEnumerable<IRow> rows = rowLoader.CreateRows(CreateTaskItems("Customers", 10));
@@ -58,7 +58,7 @@ namespace LinFu.Persist.RowLoaders.Tests
         }
 
         [Test]
-        public void LoadMultibeRowsWithCompositeKeys()
+        public void LoadMultipleRowsWithCompositeKeys()
         {
             IRowLoader rowLoader = _container.GetService<IRowLoader>();
             IEnumerable<IRow> rows = rowLoader.CreateRows(CreateTaskItems("Order Details", 2000));

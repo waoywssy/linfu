@@ -34,13 +34,10 @@ namespace LinFu.Persist.Metadata.Test
             
             ITableInfoRepository defaultRepository = _container.GetService<ITableInfoRepository>();
             Assert.IsNotNull(defaultRepository);
-            
-            
+
+            var tableInfo = defaultRepository.Tables.Values.First();
+            Assert.IsNotNull(tableInfo.LocalName);
+            Assert.IsNotEmpty(tableInfo.LocalName);
         }
-
-
-       
-
-      
     }
 }

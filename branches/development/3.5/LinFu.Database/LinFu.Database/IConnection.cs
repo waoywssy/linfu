@@ -84,7 +84,7 @@ namespace LinFu.Database
         /// <param name="command">The command text to be executed</param>
         /// <returns>A <see cref="DataTable"/> containing the result of the query.</returns>
         DataTable ExecuteDataTable(string commandText);
-
+        
         /// <summary>
         /// Executes a query as represented by <paramref name="commandText"/>
         /// </summary>
@@ -106,6 +106,39 @@ namespace LinFu.Database
         /// <param name="command">The command to be executed</param>
         /// <returns>The value of T returned by the query</returns>
         T ExecuteScalar<T>(string commandText);
+
+        /// <summary>
+        /// Executes a parameterized query as represented by <paramref name="commandText"/>
+        /// </summary>
+        /// <param name="commandText">The command text to be executed</param>
+        /// <param name="parameters">A list of <see cref="Paremeter"/> instances to be used with the query</param>
+        /// <returns>A <see cref="DataTable"/> containing the result of the query.</returns>
+        DataTable ExecuteDataTable(string commandText, params Parameter[] parameters);
+
+        /// <summary>
+        /// Executes a parameterized query as represented by <paramref name="commandText"/>
+        /// </summary>
+        /// <param name="commandText">The command text to be executed</param>
+        /// <param name="parameters">A list of <see cref="Paremeter"/> instances to be used with the query</param>
+        /// <returns>A <see cref="IDataReader"/> containing the result of the query.</returns>
+        IDataReader ExecuteReader(string commandText, params Parameter[] parameters);
+
+        /// <summary>
+        /// Executes a parameterized query as represented by <paramref name="commandText"/>
+        /// </summary>
+        /// <param name="commandText">The command text to be executed</param>
+        /// <param name="parameters">A list of <see cref="Paremeter"/> instances to be used with the query</param>
+        /// <returns>The number of rows affected by the query.</returns>
+        int ExecuteNonQuery(string commandText, params Parameter[] parameters);
+
+        /// <summary>
+        /// Executes a parameterized query as represented by <paramref name="commandText"/>
+        /// </summary>
+        /// <typeparam name="T">The type of result returned.</typeparam>
+        /// <param name="commandText">The command text to be executed</param>
+        /// <param name="parameters">A list of <see cref="Paremeter"/> instances to be used with the query</param>
+        /// <returns>The value of T returned by the query</returns>
+        T ExecuteScalar<T>(string commandText, params Parameter[] parameters); 
 
         /// <summary>
         /// Bulk loads/copies the contents of the <paramref name="dataTable"/>

@@ -116,5 +116,31 @@ namespace LinFu.Database.Tests
             }
         }
 
+        [Test]
+        public void ExecuteParametrizedReader()
+        {
+            using (IConnection connection = _container.GetService<IConnection>())
+            {
+                IDataReader reader = connection.ExecuteReader("SELECT * FROM Customers WHERE CustomerID = @CustomerID "
+                    , new Parameter { Name = "@CustomerID", Value = "ALFKI" });
+                Assert.IsNotNull(reader);
+                while (reader.Read())
+                {
+                    Console.WriteLine(reader[0]);
+                }
+                reader.Close();
+            }
+        }
+        [Test]
+        public void ExecuteParameterizedQueryWithOutputParameter()
+        {
+            using (IConnection connection = _container.GetService<IConnection>())
+            {
+                Parameter outParameter = new Parameter() { Name = "@Count"};
+                connection.ExecuteNonQuery("SELECT @Count = Count(*) FROM Customers",outParameter);
+                Assert.IsNotNull(outParameter.Value);
+                Assert.Greater((int)outParameter.Value,0);
+            }
+        }
     }
 }

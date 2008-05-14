@@ -20,7 +20,7 @@ namespace LinFu.Persist.Metadata.Implementation
 
         public void Initialize(IContainer container)
         {
-            _loadStrategies.Add(container.GetService<ITableInfoRepositoryLoader>("CachedTableInfoRepositoryLoader"));
+            //_loadStrategies.Add(container.GetService<ITableInfoRepositoryLoader>("CachedTableInfoRepositoryLoader"));
             _loadStrategies.Add(container.GetService<ITableInfoRepositoryLoader>("TableInfoRepositoryLoader"));            
             _persistStrategy = container.GetService<ITableInfoRepositoryPersister>();
         }

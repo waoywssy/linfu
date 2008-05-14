@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandExtensions.cs" />
     <Compile Include="IBulkLoader.cs" />
     <Compile Include="IConnection.cs" />
     <Compile Include="IConnectionInfo.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="IProcedure.cs" />
     <Compile Include="IProcedures.cs" />
     <Compile Include="ITransaction.cs" />
+    <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
