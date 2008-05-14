@@ -4,6 +4,7 @@ using System.Text;
 using Simple.IoC.Loaders;
 using System.Data;
 using LinFu.Database;
+using LinFu.Persist.Metadata;
 
 namespace LinFu.Persist
 {
@@ -35,8 +36,10 @@ namespace LinFu.Persist
         
         private IDbCommand CreateCommand(IConnection connection, IRowTaskItem task)
         {
+            ITableInfo tableInfo = Container.GetService<ITableInfoRepository>().Tables[task.TableName];
+            
             IDbCommand command = connection.CreateCommand();
-            command.CommandText = CreateSelectStatement(task);
+            command.CommandText = CreateSelectStatement(task,tableInfo);
             foreach (var primaryKey in task.PrimaryKeyValues)
             {
                 IDbDataParameter parameter = command.CreateParameter();
@@ -47,15 +50,20 @@ namespace LinFu.Persist
             return command;
         }
 
-        private static string CreateSelectStatement(IRowTaskItem task)
+        private static string CreateSelectStatement(IRowTaskItem task, ITableInfo tableInfo)
         {
-            string columnList = task.Columns.Aggregate((current,next) => current + ", " + next) ;
-          
-            string whereClause = task.PrimaryKeyValues.Select(p => string.Format("{0} = @{0}", p.Key))
-                .Aggregate((current, next) => current + " AND " + next);
-            
+            //Get the column info for the requested columns            
+            var columns = from columnInfo in tableInfo.Columns
+                          join columnName in task.Columns on columnInfo.Value.LocalName equals columnName
+                          select columnInfo.Value.ColumnName;
+
+            string columnList = columns.Aggregate((current,next) => current + ", " + next) ;
+
+            string whereClause = tableInfo.PrimaryKey.Columns.Select(c => string.Format("{0} = @{1}",c.ColumnName,c.LocalName))
+                .Aggregate((current,next) => current + " AND " + next);
+                        
             return string.Format("SELECT {0} FROM {1} WHERE {2}", columnList, 
-                task.TableName, whereClause);
+                tableInfo.TableName, whereClause);
         }
 
        

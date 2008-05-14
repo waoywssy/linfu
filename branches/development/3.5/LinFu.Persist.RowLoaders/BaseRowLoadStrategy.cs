@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using Simple.IoC;
+using LinFu.Persist.Metadata;
 
 namespace LinFu.Persist
 {
@@ -20,6 +21,8 @@ namespace LinFu.Persist
         public void Initialize(IContainer container)
         {
             Container = container;
+
+
         }
 
         #endregion

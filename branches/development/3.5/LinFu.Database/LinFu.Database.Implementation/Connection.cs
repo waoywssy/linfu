@@ -17,7 +17,8 @@ namespace LinFu.Database.Implementation
         #region Private Fields
         
         private bool _disposed = false;
-        private ITransaction _transaction;
+        private ITransaction _transaction;        
+        private IContainer _container;
 
         #endregion
 
@@ -39,7 +40,8 @@ namespace LinFu.Database.Implementation
             _transaction.Connection = this;
             Procedures = container.GetService<IProcedures>();
             Procedures.Connection = this;
-            Procedures.Transaction = _transaction;            
+            Procedures.Transaction = _transaction;
+            _container = container;
         }
 
         #endregion
@@ -47,7 +49,9 @@ namespace LinFu.Database.Implementation
         #region IConnection Members
 
         public string ConnectionString{get;set;}
-        
+
+        public string ProviderName { get; set; }
+
         public DbProviderFactory ProviderFactory{get;set;}
         
         public IProcedures Procedures{get;private set;}
@@ -60,10 +64,19 @@ namespace LinFu.Database.Implementation
 
         public bool SupportsBulkLoading
         {
-            get {return BulkLoader == null;}            
-        }
-
-        public IBulkLoader BulkLoader { get; set; }
+            get 
+            {
+                try
+                {
+                    _container.GetService<IBulkLoader>(ProviderName);
+                }
+                catch(ServiceNotFoundException)
+                {
+                    return false;
+                }
+                return true;
+            }            
+        }      
 
         public DataTable ExecuteDataTable(IDbCommand command)
         {
@@ -117,10 +130,17 @@ namespace LinFu.Database.Implementation
 
         public void BulkLoad(DataTable dataTable)
         {
-            if (BulkLoader == null)
-                throw new DatabaseException("Bulkload is not supported by this provider");
-            _transaction.BeginTransaction(BulkLoader);
-            BulkLoader.Load(dataTable);
+            IBulkLoader bulkLoader = null;
+            try
+            {
+                bulkLoader = _container.GetService<IBulkLoader>(ProviderName);
+            }
+            catch (ServiceNotFoundException)
+            {
+                throw new DatabaseException(string.Format("Bulkload is not supported by this provider ({0})",ProviderName));
+            }                                                        
+            _transaction.BeginTransaction(bulkLoader);
+            bulkLoader.Load(dataTable);
         }
 
         public IDbCommand CreateCommand()

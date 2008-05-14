@@ -30,13 +30,7 @@ namespace LinFu.Database.Implementation
 
             connection.ProviderFactory = connectionInfo.CreateProviderFactory();
             connection.ConnectionString = connectionInfo.ConnectionString;
-            try
-            {
-                connection.BulkLoader = hostContainer.GetService<IBulkLoader>(connectionInfo.ProviderName);
-            }
-            catch
-            {
-            }
+            connection.ProviderName = connectionInfo.ProviderName;
         }
 
         #endregion

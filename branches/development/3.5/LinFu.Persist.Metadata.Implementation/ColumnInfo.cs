@@ -15,6 +15,8 @@ namespace LinFu.Persist.Metadata.Implementation
 
         public string ColumnName { get; set; }
 
+        public string LocalName { get; set; }
+
         public Type DataType { get; set; }
 
         #endregion
@@ -22,7 +24,7 @@ namespace LinFu.Persist.Metadata.Implementation
         public override string ToString()
         {
             if (ColumnName != null && DataType != null)
-                return string.Format("{0}({1})", ColumnName, DataType.Name);
+                return string.Format("{0}({1})", LocalName, DataType.Name);
             
             return base.ToString();
         }

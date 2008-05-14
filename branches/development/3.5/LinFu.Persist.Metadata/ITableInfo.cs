@@ -11,11 +11,14 @@ namespace LinFu.Persist.Metadata
     public interface ITableInfo
     {
         /// <summary>
-        /// Get the table name.
-        /// </summary>
-        /// <remarks>In order to make the tablename unique, 
-        /// the tablename is normally a concatenation of schema and tablename.</remarks>
+        /// Gets or sets the name of the <see cref="ITableInfo"/> as formatted by the datasource spesific naming scheme.
+        /// </summary>        
         string TableName { get; set; }
+
+        /// <summary>
+        /// The local name of the <see cref="ITableInfo"/> without the datasource specific naming scheme.
+        /// </summary>        
+        string LocalName { get; set; }
 
         /// <summary>
         /// Describes the schema that owns the current table.
@@ -28,7 +31,7 @@ namespace LinFu.Persist.Metadata
         IKeyInfo PrimaryKey { get; set; }
 
         /// <summary>
-        /// Gets a collection o relations that belongs to this <see cref="ITableInfo"/>.
+        /// Gets a collection of relations that belongs to this <see cref="ITableInfo"/>.
         /// </summary>
         /// <remarks>This list will not only include foreign key relations, but also relations from other tables
         /// that has this table as the primary table.</remarks>

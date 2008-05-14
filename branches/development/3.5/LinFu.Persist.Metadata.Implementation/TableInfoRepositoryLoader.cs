@@ -70,19 +70,26 @@ namespace LinFu.Persist.Metadata.Implementation
 
             foreach (DataRow row in tableRows)
             {
-                string schema = row["TABLE_SCHEMA"] as string ?? string.Empty;
-                string tablename = row["TABLE_NAME"] as string ?? string.Empty;
+                string schemaName = row["TABLE_SCHEMA"] as string ?? string.Empty;
+                string tableName = row["TABLE_NAME"] as string ?? string.Empty;
 
-                if (schema == string.Empty || tablename == string.Empty)
+                if (schemaName == string.Empty || tableName == string.Empty)
                     continue;
 
-                TableInfo tableInfo = new TableInfo { TableName = tablename };
-                repository.Tables.Add(tableInfo.TableName, tableInfo);
+                
+                TableInfo tableInfo = new TableInfo { LocalName = tableName, 
+                    TableName = string.Format("{0}.[{1}]", schemaName, tableName)};
+                
+                if (repository.Tables.ContainsKey(tableInfo.LocalName))
+                    continue;
+
+                repository.Tables.Add(tableInfo.LocalName, tableInfo);
 
                 var tableColumns = from r in columnRows
                                    let currentTableName = r["TABLE_NAME"] as string
                                    let currentSchema = r["TABLE_SCHEMA"] as string
-                                   where currentSchema != null && currentTableName != null
+                                   where currentSchema != null && currentTableName != null &&
+                                   currentSchema == schemaName && currentTableName == tableName
                                    select r;
 
                 tableColumns = tableColumns.OrderBy(o =>
@@ -97,7 +104,7 @@ namespace LinFu.Persist.Metadata.Implementation
                     });
 
 
-                tableInfo.SchemaName = schema;
+                tableInfo.SchemaName = schemaName;
                 CreateColumns(tableInfo, tableColumns);
             }
 
@@ -109,18 +116,22 @@ namespace LinFu.Persist.Metadata.Implementation
         }
 
         private void CreateColumns(ITableInfo tableInfo, IEnumerable<DataRow> tableColumns)
-        {
+        {                        
             foreach (var item in tableColumns)
             {
+                string columnName = item["COLUMN_NAME"] as string ?? string.Empty;
+                
+                
                 IColumnInfo columnInfo = _container.GetService<IColumnInfo>();
-                columnInfo.ColumnName = (string)item["COLUMN_NAME"];
+                columnInfo.ColumnName = string.Format("[{0}]", columnName);
+                columnInfo.LocalName = columnName;
                 columnInfo.DataType = _typeMapper.MapType((string)item["DATA_TYPE"], (string)item["IS_NULLABLE"] == "YES");
                 columnInfo.Table = tableInfo;
 
-                if (tableInfo.Columns.ContainsKey(columnInfo.ColumnName))
+                if (tableInfo.Columns.ContainsKey(columnInfo.LocalName))
                     continue;
 
-                tableInfo.Columns.Add(columnInfo.ColumnName, columnInfo);
+                tableInfo.Columns.Add(columnInfo.LocalName, columnInfo);
             }
         }
 
@@ -129,8 +140,9 @@ namespace LinFu.Persist.Metadata.Implementation
             IDataReader reader = connection.ExecuteReader(_resourceManager.GetString("PrimaryKeys"));
             while (reader.Read())
             {
-                string tableName = string.Format("{0}.[{1}]", reader["TABLE_SCHEMA"], reader["TABLE_NAME"]);
-                string columnName = (string)reader["COLUMN_NAME"];
+
+                string tableName = reader["TABLE_NAME"] as string ?? string.Empty;
+                string columnName = reader["COLUMN_NAME"] as string ?? string.Empty;                
 
                 IKeyInfo key = tables[tableName].PrimaryKey;
                 if (key == null)
@@ -140,7 +152,7 @@ namespace LinFu.Persist.Metadata.Implementation
                     tables[tableName].PrimaryKey = key;
                 }
 
-                var matchingColumns = tables[tableName].Columns.Values.Where(c => c.ColumnName == columnName);
+                var matchingColumns = tables[tableName].Columns.Values.Where(c => c.LocalName == columnName);
                 var firstMatch = matchingColumns.FirstOrDefault();
                 if (firstMatch == null)
                     continue;
@@ -158,10 +170,10 @@ namespace LinFu.Persist.Metadata.Implementation
 
             while (reader.Read())
             {
-                string foreignTableName = string.Format("{0}.[{1}]", reader["FK_TABLE_SCHEMA"], reader["FK_TABLE_NAME"]);
-                string foreignColumnName = (string)reader["FK_COLUMN_NAME"];
-                string constraintName = (string)reader["FK_CONSTRAINT_NAME"];
-                string primaryTableName = string.Format("{0}.[{1}]", reader["UQ_TABLE_SCHEMA"], reader["UQ_TABLE_NAME"]);
+                string foreignTableName = reader["FK_TABLE_NAME"] as string ?? string.Empty;
+                string foreignColumnName = reader["FK_COLUMN_NAME"] as string ?? string.Empty;
+                string constraintName = reader["FK_CONSTRAINT_NAME"] as string ?? string.Empty;
+                string primaryTableName = reader["UQ_TABLE_NAME"] as string ?? string.Empty;                
 
                 if (!relations.ContainsKey(constraintName))
                 {

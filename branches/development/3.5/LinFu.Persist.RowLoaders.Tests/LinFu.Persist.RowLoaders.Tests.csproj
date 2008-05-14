@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CE5341D6-DDFE-493E-8D7A-E156752FA1A2}</ProjectGuid>
+    <ProjectGuid>{97F76D14-A4CD-4D50-93EC-030695512C1E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LinFu.Persist.RowLoaders</RootNamespace>
-    <AssemblyName>LinFu.Persist.RowLoaders</AssemblyName>
+    <RootNamespace>LinFu.Persist.RowLoaders.Tests</RootNamespace>
+    <AssemblyName>LinFu.Persist.RowLoaders.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.4.3.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\output\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -45,43 +49,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseRowLoadStrategy.cs" />
-    <Compile Include="IBulkLoader.cs" />
-    <Compile Include="ICellStorage.cs" />
-    <Compile Include="ICellStorageKey.cs" />
-    <Compile Include="IRowLoader.cs" />
-    <Compile Include="IRowLoadStrategy.cs" />
-    <Compile Include="IRowLoadStrategyProvider.cs" />
-    <Compile Include="IRowTaskItem.cs" />
-    <Compile Include="BulkLoadStrategy.cs" />
-    <Compile Include="MultiRowLoadStrategy.cs" />
+    <Compile Include="BaseFixture.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="RowLoaderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RowLoader.cs" />
-    <Compile Include="RowLoadStrategyProvider.cs" />
-    <Compile Include="RowTaskItem.cs" />
-    <Compile Include="SingleRowLoadStrategy.cs" />
-    <Compile Include="SqlBulkLoader.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LinFu.Common\LinFu.Common.VS2008.csproj">
-      <Project>{12E74908-C9CF-45CB-A996-7784846C3A53}</Project>
-      <Name>LinFu.Common.VS2008</Name>
+    <ProjectReference Include="..\LinFu.Database\LinFu.Database.Implementation\LinFu.Database.Implementation.csproj">
+      <Project>{E85F7116-2CE5-48F2-B81A-5ECC676FB6B1}</Project>
+      <Name>LinFu.Database.Implementation</Name>
     </ProjectReference>
     <ProjectReference Include="..\LinFu.Database\LinFu.Database\LinFu.Database.csproj">
       <Project>{5878575B-14A5-41F6-9592-ED49125262B2}</Project>
       <Name>LinFu.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LinFu.Delegates\LinFu.Delegates\LinFu.Delegates.VS2008.csproj">
-      <Project>{65A26586-FE64-411D-999D-EC328DFF8986}</Project>
-      <Name>LinFu.Delegates.VS2008</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LinFu.DynamicProxy\LinFu.DynamicProxy.VS2008.csproj">
-      <Project>{859EF99C-D959-4485-B24E-05AEAB9B54CF}</Project>
-      <Name>LinFu.DynamicProxy.VS2008</Name>
+    <ProjectReference Include="..\LinFu.Persist.Metadata.Implementation\LinFu.Persist.Metadata.Implementation.csproj">
+      <Project>{F23CD416-619B-443F-B3C9-F715C75528A5}</Project>
+      <Name>LinFu.Persist.Metadata.Implementation</Name>
     </ProjectReference>
     <ProjectReference Include="..\LinFu.Persist.Metadata\LinFu.Persist.Metadata.csproj">
       <Project>{BE8A24E2-5E79-44EF-879B-E158148284D7}</Project>
       <Name>LinFu.Persist.Metadata</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Persist.RowLoaders\LinFu.Persist.RowLoaders.csproj">
+      <Project>{CE5341D6-DDFE-493E-8D7A-E156752FA1A2}</Project>
+      <Name>LinFu.Persist.RowLoaders</Name>
     </ProjectReference>
     <ProjectReference Include="..\LinFu.Persist\LinFu.Persist.csproj">
       <Project>{3F7F6492-4BA1-44B2-8536-031B90480C66}</Project>
@@ -95,6 +91,13 @@
       <Project>{457039BF-4B57-4553-AC4F-81B11B59610E}</Project>
       <Name>Simple.IoC.VS2008</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -8,12 +8,17 @@ using System.Data;
 namespace LinFu.Database
 {
     public interface IConnection : IDisposable
-    {
+    {                        
         /// <summary>
         /// Sets or gets the connectionstring that is used to create new <see cref="IDbConnection"/> instances.
         /// </summary>
         string ConnectionString { get; set; }
-       
+
+        /// <summary>
+        /// Gets or sets the providername that is used to locate provider spesific implementations.
+        /// </summary>
+        string ProviderName { get; set; }
+
         /// <summary>
         /// Sets or gets the <see cref="DbProviderFactory"/> that is used to create provider spesific instances.
         /// </summary>
@@ -43,12 +48,7 @@ namespace LinFu.Database
         /// Returns <b>true</b> if the <see cref="IConnection"/> supports bulk loading, otherwise <b>false</b>
         /// </summary>
         bool SupportsBulkLoading { get; }
-
-        /// <summary>
-        /// Sets or gets the <see cref="IBulkLoader"/> that is used for bulk load operations.
-        /// </summary>
-        IBulkLoader BulkLoader { get; set; }
-
+      
         /// <summary>
         /// Executes a <see cref="IDbCommand"/>
         /// </summary>

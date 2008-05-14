@@ -12,6 +12,7 @@ namespace LinFu.Persist.Metadata.Implementation
         #region ITableInfo Members
 
         public string TableName { get; set; }
+        public string LocalName { get; set; }
         public string SchemaName { get; set; }
         public IKeyInfo PrimaryKey { get; set; }
 
@@ -27,7 +28,7 @@ namespace LinFu.Persist.Metadata.Implementation
 
         public override string ToString()
         {
-            if (string.IsNullOrEmpty(TableName))
+            if (string.IsNullOrEmpty(LocalName))
                 return base.ToString();
 
             return TableName;

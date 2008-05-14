@@ -33,7 +33,7 @@ namespace LinFu.Persist.Metadata.Implementation
             
             foreach (var item in Columns)
             {
-                sb.AppendFormat("{0}, ",item.ColumnName);
+                sb.AppendFormat("{0}, ",item.LocalName);
             }
             sb.Length -= 2;
             sb.Append(")");

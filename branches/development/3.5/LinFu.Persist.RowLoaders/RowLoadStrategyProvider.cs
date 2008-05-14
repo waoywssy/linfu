@@ -34,13 +34,13 @@ namespace LinFu.Persist.RowLoaders
             if (rowCount == 1)
                 return _container.GetService<IRowLoadStrategy>("SingleRowLoadStrategy");
 
-            // BUG: The BulkRowStrategy doesn't seem to be working            
-            //if (rowCount > 1 && keyColumns.Count() == 1 && rowCount < BulkLoadThreshold)
-            //    return _container.GetService<IRowLoadStrategy>("MultiRowLoadStrategy");
+             // BUG: The BulkRowStrategy doesn't seem to be working            
+            if (rowCount > 1 && keyColumns.Count() == 1 && rowCount < BulkLoadThreshold)
+                return _container.GetService<IRowLoadStrategy>("MultiRowLoadStrategy");
                 
-            //return _container.GetService<IRowLoadStrategy>("BulkLoadRowStrategy");
+            return _container.GetService<IRowLoadStrategy>("BulkLoadRowStrategy");
 
-            return _container.GetService<IRowLoadStrategy>("MultiRowLoadStrategy");
+            //return _container.GetService<IRowLoadStrategy>("MultiRowLoadStrategy");
         }
 
         public long BulkLoadThreshold { get; set; }

@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LinFu.Persist.Metadata")]
+[assembly: AssemblyTitle("LinFu.Persist.RowLoaders.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("LinFu.Persist.Metadata")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCompany("Visma Retail AS")]
+[assembly: AssemblyProduct("LinFu.Persist.RowLoaders.Tests")]
+[assembly: AssemblyCopyright("Copyright © Visma Retail AS 2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e29e357b-017f-4059-8c2d-8a8c802a2001")]
+[assembly: Guid("9259ec1b-481b-4092-bdc2-a99f433197b4")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.1")]
+[assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
