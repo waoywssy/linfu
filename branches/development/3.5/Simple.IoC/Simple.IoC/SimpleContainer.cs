@@ -88,8 +88,15 @@ namespace Simple.IoC
         {
             return GetService<T>(true);
         }
-
+        public virtual T GetService<T>(bool throwError)
+        {
+            return GetService<T>(throwError);
+        }
         public virtual T GetService<T>(string serviceName) where T : class
+        {
+            return GetService<T>(serviceName, true);
+        }
+        public virtual T GetService<T>(string serviceName, bool throwError) where T : class
         {
             T result = null;
 
@@ -115,7 +122,7 @@ namespace Simple.IoC
 
             result = PostProcess(serviceName, result, true);
 
-            if (result == null)
+            if (result == null && throwError == true)
                 throw new ServiceNotFoundException(serviceName, typeof(T));
 
             return result;
