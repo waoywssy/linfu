@@ -38,20 +38,6 @@ namespace LinFu.Persist.Tests.Databases
             _connection = null;
             _container = null;
         }
-        [Test]
-        public void ShouldFillOrdersTable()
-        {
-            string sql = "select * from orders";
-            ITrackedTable table = new TrackedTable();
-            IDbCommand selectCommand = new SqlCommand(sql, _connection);
-            IFillTable fillTable = _container.GetService<IFillTable>();
-            Assert.IsNotNull(fillTable);
-
-            _connection.Open();
-            fillTable.Fill(table, selectCommand);
-            _connection.Close();
-
-            Assert.IsTrue(table.AddedRows.Count() > 0);
-        }
+        
     }
 }

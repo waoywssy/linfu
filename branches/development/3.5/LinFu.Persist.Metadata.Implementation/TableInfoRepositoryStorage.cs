@@ -7,7 +7,7 @@ namespace LinFu.Persist.Metadata.Implementation
 {
     /// <summary>
     /// Represents a default implementation of the <see cref="ITableRepositoryStorage"/> interface.
-    /// The basic rule of thump here is that we retrieve the structure from the database, store it and 
+    /// The basic rule of thumb here is that we retrieve the structure from the database, store it and 
     /// then use the stored/cached version for any subsequent loading of the repository. 
     /// </summary>
     [Implements(typeof(ITableInfoRepositoryStorage),LifecycleType.Singleton)]

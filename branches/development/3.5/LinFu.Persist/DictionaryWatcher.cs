@@ -24,16 +24,18 @@ namespace LinFu.Persist
 
             string methodName = targetMethod.Name;
 
-            if (methodName == "Clear" && declaringType == typeof(ICollection<KeyValuePair<TKey, TItem>>) && ItemsCleared != null)
+            #region Handle the Clear() method
+            if (methodName == "Clear" && declaringType == typeof(ICollection<KeyValuePair<TKey, TItem>>) 
+                && ItemsCleared != null)
                 ItemsCleared(_target, EventArgs.Empty);
-
+            #endregion
 
             if (declaringType != typeof(IDictionary<TKey, TItem>))
                 return;
 
             if (argumentCount < 1)
                 return;
-
+            #region Handle the Remove method
             TKey key = (TKey)arguments[0];
             if (methodName == "Remove" && ItemRemoved != null)
             {
@@ -43,6 +45,8 @@ namespace LinFu.Persist
                     Item = default(TItem)
                 });
             }
+            #endregion
+
             if (argumentCount != 2)
                 return;
 

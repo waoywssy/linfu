@@ -45,9 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FillTable.cs" />
     <Compile Include="ICellEventHandler.cs" />
-    <Compile Include="IFillTable.cs" />
     <Compile Include="Tables\DirtyTracking\CellEventArgs.cs" />
     <Compile Include="Tables\DirtyTracking\CellWatcher.cs" />
     <Compile Include="Tables\DirtyTracking\CollectionWatcher.cs" />
