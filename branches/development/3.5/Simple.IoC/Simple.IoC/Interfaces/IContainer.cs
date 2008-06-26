@@ -12,7 +12,7 @@ namespace Simple.IoC
         bool Contains(string serviceName, Type serviceType);
         bool Contains(Type serviceType);
         T GetService<T>() where T : class;
-        T GetService<T>(bool throwError);
+        T GetService<T>(bool throwError) where T : class;
         T GetService<T>(string serviceName) where T : class;
         T GetService<T>(string serviceName, bool throwError) where T : class;
         INamedFactoryStorage NamedFactoryStorage { get; set; }

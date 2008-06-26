@@ -88,10 +88,7 @@ namespace Simple.IoC
         {
             return GetService<T>(true);
         }
-        public virtual T GetService<T>(bool throwError)
-        {
-            return GetService<T>(throwError);
-        }
+        
         public virtual T GetService<T>(string serviceName) where T : class
         {
             return GetService<T>(serviceName, true);
