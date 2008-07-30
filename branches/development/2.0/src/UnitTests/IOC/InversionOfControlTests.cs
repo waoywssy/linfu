@@ -113,12 +113,55 @@ namespace LinFu.UnitTests
 	    [Test]
 	    public void ContainerShouldSupportGenericAddFactoryMethod()
 	    {
-	        throw new NotImplementedException();
+            var container = new SimpleContainer();
+	        var mockFactory = new Mock<IFactory<ISerializable>>();
+	        var mockService = new Mock<ISerializable>();
+
+	        container.AddFactory(mockFactory.Object);
+	        mockFactory.Expect(f => f.CreateInstance(container)).Returns(mockService.Object);
+
+	        Assert.IsNotNull(container.GetService<ISerializable>());
+	    }
+
+	    [Test]
+	    public void ContainerShouldSupportNamedGenericAddFactoryMethod()
+	    {
+            var container = new SimpleContainer();
+            var mockFactory = new Mock<IFactory<ISerializable>>();
+            var mockService = new Mock<ISerializable>();
+
+            container.AddFactory("MyService", mockFactory.Object);
+            mockFactory.Expect(f => f.CreateInstance(container)).Returns(mockService.Object);
+
+            Assert.IsNotNull(container.GetService<ISerializable>("MyService"));
 	    }
 	    [Test]
 	    public void ContainerShouldBeAbleToAddExistingServiceInstances()
 	    {
-	        throw new NotImplementedException();
+            var container = new SimpleContainer();
+            var mockService = new Mock<ISerializable>();
+	        container.AddService<ISerializable>(mockService.Object);
+
+	        var result = container.GetService<ISerializable>();
+	        Assert.AreSame(result, mockService.Object);
+	    }
+
+	    [Test]
+	    public void GenericFactoryAdapterShouldCallUntypedFactoryInstance()
+	    {
+	        var container = new SimpleContainer();
+	        var mockFactory = new Mock<IFactory<ISerializable>>();
+	        var mockService = new Mock<ISerializable>();
+	        var adapter = new FactoryAdapter<ISerializable>(mockFactory.Object);
+
+            // The adapter itself should call the container on creation
+	        mockFactory.Expect(f => f.CreateInstance(container)).Returns(mockService.Object);
+
+	        Assert.IsInstanceOfType(typeof (IFactory), adapter);
+
+	        adapter.CreateInstance(container);
+
+	        mockFactory.VerifyAll();
 	    }
 	}
 }

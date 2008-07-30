@@ -18,5 +18,20 @@ namespace LinFu.IOC
         {
             return container.GetService(serviceName, typeof (T)) as T;
         }
+        public static void AddFactory<T>(this IContainer container, string serviceName, IFactory<T> factory)
+        {
+            IFactory adapter = new FactoryAdapter<T>(factory);
+            container.AddFactory(serviceName, typeof (T), adapter);
+        }
+
+        public static void AddFactory<T>(this IContainer container, IFactory<T> factory)
+        {
+            IFactory adapter = new FactoryAdapter<T>(factory);
+            container.AddFactory(typeof(T), adapter);
+        }
+        public static void AddService<T>(this IContainer container, T instance)
+        {
+            container.AddFactory(typeof (T), new InstanceFactory(instance));
+        }
     }
 }

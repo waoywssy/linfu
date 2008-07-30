@@ -50,8 +50,11 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="IOC\ContainerExtensions.cs" />
+    <Compile Include="IOC\FactoryAdapter.cs" />
     <Compile Include="IOC\IContainer.cs" />
     <Compile Include="IOC\IFactory.cs" />
+    <Compile Include="IOC\IFactoryOfT.cs" />
+    <Compile Include="IOC\InstanceFactory.cs" />
     <Compile Include="IOC\NamedServiceNotFoundException.cs" />
     <Compile Include="IOC\ServiceNotFoundException.cs" />
     <Compile Include="IOC\SimpleContainer.cs" />
