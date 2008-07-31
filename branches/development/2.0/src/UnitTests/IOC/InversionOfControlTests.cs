@@ -144,25 +144,7 @@ namespace LinFu.UnitTests
 
 	        var result = container.GetService<ISerializable>();
 	        Assert.AreSame(result, mockService.Object);
-	    }
-
-	    [Test]
-	    public void GenericFactoryAdapterShouldCallUntypedFactoryInstance()
-	    {
-	        var container = new SimpleContainer();
-	        var mockFactory = new Mock<IFactory<ISerializable>>();
-	        var mockService = new Mock<ISerializable>();
-	        var adapter = new FactoryAdapter<ISerializable>(mockFactory.Object);
-
-            // The adapter itself should call the container on creation
-	        mockFactory.Expect(f => f.CreateInstance(container)).Returns(mockService.Object);
-
-	        Assert.IsInstanceOfType(typeof (IFactory), adapter);
-
-	        adapter.CreateInstance(container);
-
-	        mockFactory.VerifyAll();
-	    }
+	    }	    
 	}
 }
 

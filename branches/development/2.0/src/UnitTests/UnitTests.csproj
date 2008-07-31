@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="IOC\Factories\FactoryTests.cs" />
     <Compile Include="IOC\InversionOfControlTests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -50,6 +50,9 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="IOC\ContainerExtensions.cs" />
+    <Compile Include="IOC\Factories\OncePerRequestFactory.cs" />
+    <Compile Include="IOC\Factories\SingletonCache.cs" />
+    <Compile Include="IOC\Factories\SingletonFactory.cs" />
     <Compile Include="IOC\FactoryAdapter.cs" />
     <Compile Include="IOC\IContainer.cs" />
     <Compile Include="IOC\IFactory.cs" />
