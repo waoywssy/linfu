@@ -44,9 +44,52 @@ namespace LinFu.UnitTests.IOC
         }
 
         [Test]
-        public void OncePerThreadFactoryShouldCreateUniqueInstancesAmongThreads()
+        public void OncePerThreadFactoryShouldCreateTheSameInstanceFromWithinTheSameThread()
         {
-            throw new NotImplementedException();
+            IFactory<ISerializable> localFactory = new OncePerThreadFactory<ISerializable>(createInstance);
+
+            var first = localFactory.CreateInstance(null);
+            var second = localFactory.CreateInstance(null);
+
+            // The two instances should be the same
+            // since they were created from the same thread
+            Assert.IsNotNull(first);
+            Assert.AreSame(first, second);            
+        }
+
+        [Test]
+        public void OncePerThreadFactoryShouldCreateUniqueInstancesFromDifferentThreads()
+        {
+            IFactory<ISerializable> localFactory = new OncePerThreadFactory<ISerializable>(createInstance);
+            var resultList = new List<ISerializable>();
+
+            Action<IFactory<ISerializable>> doCreate = factory =>
+            {
+                var instance = factory.CreateInstance(null);
+                lock (resultList)
+                {
+                    resultList.Add(instance);
+                }
+            };
+
+            
+
+            // Create the instance in another thread
+            var asyncResult = doCreate.BeginInvoke(localFactory, null, null);
+            var localInstance = localFactory.CreateInstance(null);
+
+            // Wait for the previous thread
+            // to finish executing
+            doCreate.EndInvoke(asyncResult);
+
+            Assert.IsTrue(resultList.Count > 0);
+
+            // Collect the results from the other thread
+            var instanceFromOtherThread = resultList[0];
+
+            Assert.IsNotNull(localInstance);
+            Assert.IsNotNull(instanceFromOtherThread);
+            Assert.AreNotSame(localInstance, instanceFromOtherThread);
         }
         [Test]
         public void SingletonFactoryShouldCreateTheSameInstanceOnce()

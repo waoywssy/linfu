@@ -6,30 +6,17 @@ using System.Text;
 
 namespace LinFu.IOC.Factories
 {
-    public class SingletonFactory<T> : IFactory<T>, IFactory
+    public class SingletonFactory<T> : BaseFactory<T>
     {
-        private Func<IContainer, T> _createInstance;
+        private readonly Func<IContainer, T> _createInstance;
         public SingletonFactory(Func<IContainer, T> createInstance)
         {
             _createInstance = createInstance;
         }
 
-        #region IFactory<T> Members
-
-        public T CreateInstance(IContainer container)
+        public override T CreateInstance(IContainer container)
         {
             return SingletonCache.CreateInstance(container, _createInstance);
-        }
-
-        #endregion
-
-        #region IFactory Members
-
-        object IFactory.CreateInstance(IContainer container)
-        {
-            return (T)CreateInstance(container);
-        }
-
-        #endregion
+        }       
     }
 }
