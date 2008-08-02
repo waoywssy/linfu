@@ -34,7 +34,7 @@ namespace LinFu.UnitTests
 
 	        container.AddFactory(serviceType, mockFactory.Object);
 
-            // The container should call the IFactory.CreateInstance method
+            // The container must call the IFactory.CreateInstance method
 	        mockFactory.Expect(f => f.CreateInstance(container)).Returns(instance);
 	        
             var result = container.GetService(serviceType);
@@ -55,7 +55,7 @@ namespace LinFu.UnitTests
 	    }
 	    [Test]
         [ExpectedException(typeof(ServiceNotFoundException))]
-	    public void ContainerShouldThrowErrorIfServiceNotFound()
+	    public void ContainerMustThrowErrorIfServiceNotFound()
 	    {
             var container = new SimpleContainer();
             var instance = container.GetService(typeof(ISerializable));
@@ -90,7 +90,7 @@ namespace LinFu.UnitTests
 	    }
 
 	    [Test]
-	    public void ContainerShouldSupportGenericGetServiceMethod()
+	    public void ContainerMustSupportGenericGetServiceMethod()
 	    {
 	        var mockService = new Mock<ISerializable>();
 	        var mockFactory = new Mock<IFactory>();
@@ -111,7 +111,7 @@ namespace LinFu.UnitTests
 	    }
 
 	    [Test]
-	    public void ContainerShouldSupportGenericAddFactoryMethod()
+	    public void ContainerMustSupportGenericAddFactoryMethod()
 	    {
             var container = new SimpleContainer();
 	        var mockFactory = new Mock<IFactory<ISerializable>>();
@@ -124,7 +124,7 @@ namespace LinFu.UnitTests
 	    }
 
 	    [Test]
-	    public void ContainerShouldSupportNamedGenericAddFactoryMethod()
+	    public void ContainerMustSupportNamedGenericAddFactoryMethod()
 	    {
             var container = new SimpleContainer();
             var mockFactory = new Mock<IFactory<ISerializable>>();
@@ -136,7 +136,7 @@ namespace LinFu.UnitTests
             Assert.IsNotNull(container.GetService<ISerializable>("MyService"));
 	    }
 	    [Test]
-	    public void ContainerShouldBeAbleToAddExistingServiceInstances()
+	    public void ContainerMustBeAbleToAddExistingServiceInstances()
 	    {
             var container = new SimpleContainer();
             var mockService = new Mock<ISerializable>();
@@ -144,7 +144,23 @@ namespace LinFu.UnitTests
 
 	        var result = container.GetService<ISerializable>();
 	        Assert.AreSame(result, mockService.Object);
-	    }	    
+	    }
+
+	    [Test]
+        [Ignore("TODO: Implement this")]
+	    public void ContainerMustAllowServicesToBeIntercepted()
+	    {
+            // TODO: Wrap a decorator around an IContainer
+            // instance
+	        throw new NotImplementedException();
+	    }
+
+	    [Test]
+        [Ignore("TODO: Implement this")]
+	    public void ContainerMustAllowSurrogatesForNonExistentServiceInstances()
+	    {
+	        throw new NotImplementedException();
+	    }
 	}
 }
 

@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7AD01E90-C807-4918-A5CE-F240CE4D2F51}</ProjectGuid>
+    <ProjectGuid>{FA3D5517-EFF4-4363-AFF2-EF67B981334E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LinFu</RootNamespace>
-    <AssemblyName>LinFu.Core</AssemblyName>
+    <RootNamespace>LinFu.IoC</RootNamespace>
+    <AssemblyName>LinFu.IoC</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,41 +30,33 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AutomatedDebug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\build\Debug\Core\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="IOC\ContainerExtensions.cs" />
-    <Compile Include="IOC\Factories\BaseFactory.cs" />
-    <Compile Include="IOC\Factories\OncePerRequestFactory.cs" />
-    <Compile Include="IOC\Factories\OncePerThreadFactory.cs" />
-    <Compile Include="IOC\Factories\SingletonCache.cs" />
-    <Compile Include="IOC\Factories\SingletonFactory.cs" />
-    <Compile Include="IOC\FactoryAdapter.cs" />
-    <Compile Include="IOC\IContainer.cs" />
-    <Compile Include="IOC\IFactory.cs" />
-    <Compile Include="IOC\IFactoryOfT.cs" />
-    <Compile Include="IOC\InstanceFactory.cs" />
-    <Compile Include="IOC\NamedServiceNotFoundException.cs" />
-    <Compile Include="IOC\ServiceNotFoundException.cs" />
-    <Compile Include="IOC\SimpleContainer.cs" />
+    <Compile Include="NamedServiceNotFoundException.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceNotFoundException.cs" />
+    <Compile Include="SimpleContainer.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\LinFu.IoC.Interfaces\LinFu.IoC.Interfaces.csproj">
+      <Project>{C6AC7707-9288-4ADF-9053-34FE71FFE0BE}</Project>
+      <Name>LinFu.IoC.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

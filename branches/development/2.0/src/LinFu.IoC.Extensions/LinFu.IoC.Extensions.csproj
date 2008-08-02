@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E3B1686C-DCB3-44E7-BB25-9483592EA942}</ProjectGuid>
+    <ProjectGuid>{9FFE90E0-49C0-4C37-91AE-ADB9B2F3D832}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LinFu.UnitTests</RootNamespace>
-    <AssemblyName>LinFu.UnitTests</AssemblyName>
+    <RootNamespace>LinFu.IoC.Extensions</RootNamespace>
+    <AssemblyName>LinFu.IoC.Extensions</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,41 +30,25 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AutomatedDebug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\build\Debug\UnitTests\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Moq, Version=2.0.2991.26580, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Moq.dll</HintPath>
-    </Reference>
-    <Reference Include="NUnit.framework">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\NUnit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="IOC\Factories\FactoryTests.cs" />
-    <Compile Include="IOC\InversionOfControlTests.cs" />
+    <Compile Include="ContainerExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LinFu.IoC.Extensions\LinFu.IoC.Extensions.csproj">
-      <Project>{9FFE90E0-49C0-4C37-91AE-ADB9B2F3D832}</Project>
-      <Name>LinFu.IoC.Extensions</Name>
-    </ProjectReference>
     <ProjectReference Include="..\LinFu.IoC.Factories\LinFu.IoC.Factories.csproj">
       <Project>{14DB06BE-3178-4A01-98AB-DFC65485E567}</Project>
       <Name>LinFu.IoC.Factories</Name>
@@ -73,12 +57,8 @@
       <Project>{C6AC7707-9288-4ADF-9053-34FE71FFE0BE}</Project>
       <Name>LinFu.IoC.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LinFu.IoC\LinFu.IoC.csproj">
-      <Project>{FA3D5517-EFF4-4363-AFF2-EF67B981334E}</Project>
-      <Name>LinFu.IoC</Name>
-    </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

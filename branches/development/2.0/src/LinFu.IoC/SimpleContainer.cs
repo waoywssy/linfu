@@ -11,22 +11,22 @@ namespace LinFu.IOC
         private readonly Dictionary<string, Dictionary<Type, IFactory>> _namedFactories =
             new Dictionary<string, Dictionary<Type, IFactory>>();
 
-        public bool SuppressErrors
+        public virtual bool SuppressErrors
         {
             get; set;
         }
 
-        public void AddFactory(Type serviceType, IFactory factory)
+        public virtual void AddFactory(Type serviceType, IFactory factory)
         {
             _factories[serviceType] = factory;
         }
 
-        public bool Contains(Type serviceType)
+        public virtual bool Contains(Type serviceType)
         {
             return _factories.ContainsKey(serviceType);
         }
 
-        public object GetService(Type serviceType)
+        public virtual object GetService(Type serviceType)
         {
             object result = null;
             if (!_factories.ContainsKey(serviceType) && !SuppressErrors)
@@ -44,7 +44,7 @@ namespace LinFu.IOC
             return result;
         }
 
-        public void AddFactory(string serviceName, Type serviceType, IFactory factory)
+        public virtual void AddFactory(string serviceName, Type serviceType, IFactory factory)
         {
             // Create the entry, if necessary
             if (!_namedFactories.ContainsKey(serviceName))
@@ -53,13 +53,13 @@ namespace LinFu.IOC
             _namedFactories[serviceName][serviceType] = factory;            
         }
 
-        public bool Contains(string serviceName, Type serviceType)
+        public virtual bool Contains(string serviceName, Type serviceType)
         {   
             return _namedFactories.ContainsKey(serviceName) && 
                 _namedFactories[serviceName].ContainsKey(serviceType);
         }
 
-        public object GetService(string serviceName, Type serviceType)
+        public virtual object GetService(string serviceName, Type serviceType)
         {
             // Determine if the service exists, and
             // suppress the errors if necessary

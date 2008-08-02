@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LinFu.IOC;
 
-namespace LinFu.IOC
+namespace LinFu.IoC
 {
-    internal class InstanceFactory : IFactory
+    public class InstanceFactory : IFactory
     {
-        private object _instance;
+        private readonly object _instance;
         public InstanceFactory(object instance)
         {
             _instance = instance;
