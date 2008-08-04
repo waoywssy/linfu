@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using LinFu.IOC;
+using LinFu.IoC;
 
 namespace LinFu.IoC
 {

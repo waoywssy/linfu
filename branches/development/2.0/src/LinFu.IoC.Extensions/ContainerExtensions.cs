@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using LinFu.IoC;
 
-namespace LinFu.IOC
+namespace LinFu.IoC
 {
     public static class ContainerExtensions
     {
@@ -14,12 +14,12 @@ namespace LinFu.IOC
             var serviceType = typeof (T);
             return container.GetService(serviceType) as T;
         }
-        public static T GetService<T>(this IContainer container, string serviceName)
+        public static T GetService<T>(this INamedContainer container, string serviceName)
             where T : class
         {
             return container.GetService(serviceName, typeof (T)) as T;
         }
-        public static void AddFactory<T>(this IContainer container, string serviceName, IFactory<T> factory)
+        public static void AddFactory<T>(this INamedContainer container, string serviceName, IFactory<T> factory)
         {
             IFactory adapter = new FactoryAdapter<T>(factory);
             container.AddFactory(serviceName, typeof (T), adapter);

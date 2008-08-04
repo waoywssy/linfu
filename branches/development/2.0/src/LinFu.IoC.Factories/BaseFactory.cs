@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LinFu.IOC.Factories
+namespace LinFu.IoC.Factories
 {
     public abstract class BaseFactory<T> : IFactory<T>, IFactory
     {       

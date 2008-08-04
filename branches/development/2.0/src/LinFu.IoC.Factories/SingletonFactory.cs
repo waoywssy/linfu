@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace LinFu.IOC.Factories
+namespace LinFu.IoC.Factories
 {
     public class SingletonFactory<T> : BaseFactory<T>
     {

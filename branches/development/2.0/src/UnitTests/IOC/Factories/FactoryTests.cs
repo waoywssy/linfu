@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using LinFu.IOC;
-using LinFu.IOC.Factories;
+using LinFu.IoC;
+using LinFu.IoC.Factories;
 using Moq;
 using NUnit.Framework;
 

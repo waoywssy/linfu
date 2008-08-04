@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LinFu.IoC;
 
-namespace LinFu.IOC
+namespace LinFu.IoC
 {
     public class SimpleContainer : IContainer
     {
-        private readonly Dictionary<Type, IFactory> _factories = new Dictionary<Type, IFactory>();
-        private readonly Dictionary<string, Dictionary<Type, IFactory>> _namedFactories =
-            new Dictionary<string, Dictionary<Type, IFactory>>();
+        private readonly Dictionary<Type, IFactory> _factories = new Dictionary<Type, IFactory>();        
 
         public virtual bool SuppressErrors
         {
@@ -42,41 +41,6 @@ namespace LinFu.IOC
                 result = factory.CreateInstance(this);
 
             return result;
-        }
-
-        public virtual void AddFactory(string serviceName, Type serviceType, IFactory factory)
-        {
-            // Create the entry, if necessary
-            if (!_namedFactories.ContainsKey(serviceName))
-                _namedFactories[serviceName] = new Dictionary<Type, IFactory>();
-
-            _namedFactories[serviceName][serviceType] = factory;            
-        }
-
-        public virtual bool Contains(string serviceName, Type serviceType)
-        {   
-            return _namedFactories.ContainsKey(serviceName) && 
-                _namedFactories[serviceName].ContainsKey(serviceType);
-        }
-
-        public virtual object GetService(string serviceName, Type serviceType)
-        {
-            // Determine if the service exists, and
-            // suppress the errors if necessary
-            bool exists = Contains(serviceName, serviceType);
-            if (!exists && SuppressErrors)
-                return null;
-
-            if (!exists && SuppressErrors != true)
-                throw new NamedServiceNotFoundException(serviceName, serviceType);
-
-            var factory = _namedFactories[serviceName][serviceType];
-
-            // Make sure that the factory exists
-            if (factory == null)
-                return null;
-
-            return factory.CreateInstance(this);
         }
     }
 }

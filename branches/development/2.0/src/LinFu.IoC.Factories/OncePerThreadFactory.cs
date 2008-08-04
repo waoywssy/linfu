@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace LinFu.IOC.Factories
+namespace LinFu.IoC.Factories
 {
     public class OncePerThreadFactory<T> : BaseFactory<T>
     {

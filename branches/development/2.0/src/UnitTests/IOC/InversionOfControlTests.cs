@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.Serialization;
-using LinFu.IOC;
+using LinFu.IoC;
 using Moq;
 using NUnit.Framework;
 
@@ -23,6 +23,62 @@ namespace LinFu.UnitTests
 	        Assert.IsTrue(container.Contains(serviceType), "The container needs to have a factory for service type '{0}'", serviceType);
 	    }
 
+	    [Test]
+	    public void ContainerMustUseUnnamedGetServiceMethodIfNameIsEmpty()
+	    {
+            var mockFactory = new Mock<IFactory>();
+	        var mockService = new Mock<ISerializable>();
+            var container = new NamedContainer();
+
+
+	        var serviceType = typeof (ISerializable);
+	        mockFactory.Expect(f => f.CreateInstance(container)).Returns(mockService.Object);
+	        container.AddFactory(serviceType, mockFactory.Object);
+
+	        var result = container.GetService(string.Empty, serviceType);
+
+	        Assert.AreSame(mockService.Object, result);
+	    }
+
+	    [Test]
+	    public void ContainerMustUseUnnamedContainsMethodIfNameIsEmpty()
+	    {
+            var mockFactory = new Mock<IFactory>();
+            var mockService = new Mock<ISerializable>();
+            var container = new NamedContainer();
+
+            var serviceType = typeof(ISerializable);
+
+            // Use unnamed AddFactory method
+            container.AddFactory(serviceType, mockFactory.Object);
+
+            // The container should use the
+            // IContainer.Contains(Type) method instead of the
+            // IContainer.Contains(string, Type) method if the
+            // service name is blank
+	        Assert.IsTrue(container.Contains(string.Empty, typeof (ISerializable)));
+	    }
+
+	    [Test]
+	    public void ContainerMustUseUnnamedAddFactoryMethodIfNameIsEmpty()
+	    {
+            var mockFactory = new Mock<IFactory>();
+            var mockService = new Mock<ISerializable>();
+
+            var container = new NamedContainer();
+
+            var serviceType = typeof(ISerializable);
+            
+            // Add the service using a blank name;
+            // the container should register this factory
+            // as if it had no name
+	        container.AddFactory(string.Empty, serviceType, mockFactory.Object);
+            mockFactory.Expect(f => f.CreateInstance(container)).Returns(mockService.Object);
+            
+            // Verify the result
+	        var result = container.GetService<ISerializable>();
+	        Assert.AreSame(mockService.Object, result);
+	    }
 	    [Test]
 	    public void ContainerMustReturnServiceInstance()
 	    {
@@ -65,7 +121,7 @@ namespace LinFu.UnitTests
         public void ContainerMustHoldNamedFactoryInstance()
 	    {
 	        var mockFactory = new Mock<IFactory>();
-            var container = new SimpleContainer();
+            var container = new NamedContainer();
 
             // Randomly assign an interface type
             // NOTE: The actual interface type doesn't matter
@@ -84,7 +140,7 @@ namespace LinFu.UnitTests
         [ExpectedException(typeof(NamedServiceNotFoundException))]
 	    public void ContainerMustBeAbleToSuppressNamedServiceNotFoundErrors()
 	    {
-            var container = new SimpleContainer();
+            var container = new NamedContainer();
             var instance = container.GetService("MyService", typeof(ISerializable));
             Assert.IsNull(instance, "The container is supposed to return a null instance");
 	    }
@@ -94,7 +150,7 @@ namespace LinFu.UnitTests
 	    {
 	        var mockService = new Mock<ISerializable>();
 	        var mockFactory = new Mock<IFactory>();
-	        var container = new SimpleContainer();
+	        var container = new NamedContainer();
 
 	        container.AddFactory(typeof (ISerializable), mockFactory.Object);
 	        container.AddFactory("MyService", typeof (ISerializable), mockFactory.Object);
@@ -126,7 +182,7 @@ namespace LinFu.UnitTests
 	    [Test]
 	    public void ContainerMustSupportNamedGenericAddFactoryMethod()
 	    {
-            var container = new SimpleContainer();
+            var container = new NamedContainer();
             var mockFactory = new Mock<IFactory<ISerializable>>();
             var mockService = new Mock<ISerializable>();
 
