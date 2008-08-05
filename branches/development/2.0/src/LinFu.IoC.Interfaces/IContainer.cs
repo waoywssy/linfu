@@ -22,7 +22,7 @@ namespace LinFu.IoC
         void AddFactory(Type serviceType, IFactory factory);
 
         /// <summary>
-        /// Specifies whether or not the container can create
+        /// Determines whether or not the container can create
         /// the given <paramref name="serviceType">service type</paramref>.
         /// </summary>
         /// <param name="serviceType">The type of service used to determine whether or not the given service can actually be created</param>

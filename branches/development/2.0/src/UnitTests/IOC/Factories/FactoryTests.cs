@@ -66,12 +66,16 @@ namespace LinFu.UnitTests.IOC
             Action<IFactory<ISerializable>> doCreate = factory =>
             {
                 var instance = factory.CreateInstance(null);
+                var otherInstance = factory.CreateInstance(null);
+
+                // The two instances 
+                // within the same thread must match
+                Assert.AreSame(instance, otherInstance);
                 lock (resultList)
                 {
                     resultList.Add(instance);
                 }
             };
-
             
 
             // Create the instance in another thread
