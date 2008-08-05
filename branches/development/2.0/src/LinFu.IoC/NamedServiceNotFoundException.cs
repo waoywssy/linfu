@@ -5,6 +5,11 @@ using System.Text;
 
 namespace LinFu.IoC
 {
+    /// <summary>
+    /// The exception thrown when a service name and a service type is
+    /// requested from a named container and that named container
+    /// is unable to find or create that particular service instance.
+    /// </summary>
     public class NamedServiceNotFoundException : ServiceNotFoundException
     {
         private readonly string _serviceName;
