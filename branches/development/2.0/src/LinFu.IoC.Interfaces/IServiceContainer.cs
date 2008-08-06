@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
 {
@@ -7,7 +9,7 @@ namespace LinFu.IoC
     /// named services.
     /// </summary>
     /// <seealso name="IContainer/>
-    public interface IContainerWithNamedServices : IContainer
+    public interface IServiceContainer : IContainer
     {
         /// <summary>
         /// Adds an <see cref="IFactory"/> instance and associates it
@@ -40,5 +42,11 @@ namespace LinFu.IoC
         /// <returns>If successful, it will return a service instance that is compatible with the given type;
         /// otherwise, it will just return a <c>null</c> value.</returns>
         object GetService(string serviceName, Type serviceType);
+
+        /// <summary>
+        /// The list of postprocessors that will handle every
+        /// service request result.
+        /// </summary>
+        IList<IPostProcessor> PostProcessors { get; }
     }
 }

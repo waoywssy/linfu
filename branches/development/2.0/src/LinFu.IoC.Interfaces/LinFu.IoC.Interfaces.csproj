@@ -48,7 +48,9 @@
     <Compile Include="IContainer.cs" />
     <Compile Include="IFactory.cs" />
     <Compile Include="IFactoryOfT.cs" />
-    <Compile Include="IContainerWithNamedServices.cs" />
+    <Compile Include="IServiceContainer.cs" />
+    <Compile Include="IPostProcessor.cs" />
+    <Compile Include="IServiceRequestResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

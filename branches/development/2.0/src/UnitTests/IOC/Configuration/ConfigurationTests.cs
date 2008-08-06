@@ -50,6 +50,11 @@ namespace LinFu.UnitTests.IOC.Configuration
         }
 
         [Test]
+        public void CreatedServicesMustBeAbleToInitializeThemselves()
+        {
+            throw new NotImplementedException();
+        }
+        [Test]
         public void OncePerRequestFactoryMustBeCreatedFromTypeWithImplementsAttribute()
         {
             var implementingType = typeof(OncePerRequestSampleService);

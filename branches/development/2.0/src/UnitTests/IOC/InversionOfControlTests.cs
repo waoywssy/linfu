@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 using LinFu.IoC;
+using LinFu.IoC.Interfaces;
 using Moq;
 using NUnit.Framework;
 
@@ -202,6 +203,21 @@ namespace LinFu.UnitTests.IOC
 	        Assert.AreSame(result, mockService.Object);
 	    }
 
+	    [Test]
+	    public void ContainerMustCallPostProcessorDuringARequest()
+	    {
+	        var mockPostProcessor = new Mock<IPostProcessor>();
+            var container = new ServiceContainer();
+	        container.PostProcessors.Add(mockPostProcessor.Object);
+
+	        mockPostProcessor.Expect(p => 
+                p.PostProcess(It.Is<IServiceRequestResult>(result=>result != null)));
+
+	        container.SuppressErrors = true;
+	        container.GetService<ISerializable>();
+
+            mockPostProcessor.VerifyAll();
+	    }
 	    [Test]
         [Ignore("TODO: Implement this")]
 	    public void ContainerMustAllowServicesToBeIntercepted()

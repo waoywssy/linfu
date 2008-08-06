@@ -2,95 +2,122 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using LinFu.IoC;
+using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
 {
     /// <summary>
-    /// Represents an inversion of control container that supports
-    /// named services.
+    /// Represents a service container with additional
+    /// extension points for customizing service instances
     /// </summary>
-    /// <seealso name="IContainer/>
-    /// <seealso name="INamedContainer"/>
-    public class ServiceContainer : BaseContainer, IContainerWithNamedServices
+    public class ServiceContainer : ServiceContainerBase
     {
-        protected readonly Dictionary<string, Dictionary<Type, IFactory>> _namedFactories =
-            new Dictionary<string, Dictionary<Type, IFactory>>();
-
         /// <summary>
-        /// Adds an <see cref="IFactory"/> instance and associates it
-        /// with the given <paramref name="serviceType">service type</paramref> and
-        /// <paramref name="serviceName">service name</paramref>.
-        /// </summary>
-        /// <param name="serviceName">The name of the service to associate with the given <see cref="IFactory"/> instance.</param>
-        /// <param name="serviceType">The type of service that the factory will be able to create.</param>
-        /// <param name="factory">The <see cref="IFactory"/> instance that will create the object instance.</param>
-        public virtual void AddFactory(string serviceName, Type serviceType, IFactory factory)
-        {
-            if (serviceName == string.Empty)
-            {
-                AddFactory(serviceType, factory);
-                return;
-            }
-            // Create the entry, if necessary
-            if (!_namedFactories.ContainsKey(serviceName))
-                _namedFactories[serviceName] = new Dictionary<Type, IFactory>();
-
-            _namedFactories[serviceName][serviceType] = factory;            
-        }
-
-        /// <summary>
-        /// Determines whether or not a service can be created using
-        /// the given <paramref name="serviceName">service name</paramref>
-        /// and <paramref name="serviceType">service type</paramref>.
-        /// </summary>
-        /// <param name="serviceName">The name of the service to associate with the given <see cref="IFactory"/> instance.</param>
-        /// <param name="serviceType">The type of service that the factory will be able to create.</param>
-        /// <returns>Returns <c>true</c> if the service exists; otherwise, it will return <c>false</c>.</returns>
-        public virtual bool Contains(string serviceName, Type serviceType)
-        {
-            // Use the standard IContainer.Contains(Type)
-            // if the service name is blank
-            if (serviceName == string.Empty)
-                return Contains(serviceType);
-
-            return _namedFactories.ContainsKey(serviceName) && 
-                   _namedFactories[serviceName].ContainsKey(serviceType);
-        }
-
-        /// <summary>
-        /// Causes the container to instantiate the service with the given
-        /// <paramref name="serviceType">service type</paramref>. If the service type cannot be created, then an
-        /// exception will be thrown if the <see cref="IContainer.SuppressErrors"/> property
-        /// is set to false. Otherwise, it will simply return null.
+        /// Overridden. This method modifies the original
+        /// <see cref="BaseContainer.GetService"/> method
+        /// so that its results can be handled by the 
+        /// postprocessors.
         /// </summary>
         /// <param name="serviceName">The name of the service to instantiate.</param>
         /// <param name="serviceType">The service type to instantiate.</param>        
         /// <returns>If successful, it will return a service instance that is compatible with the given type;
         /// otherwise, it will just return a <c>null</c> value.</returns>
-        public virtual object GetService(string serviceName, Type serviceType)
+        public override object GetService(string serviceName, Type serviceType)
         {
-            // Used the other GetService method if
-            // the name is blank
-            if (serviceName == string.Empty)
-                return GetService(serviceType);
+            // Attempt to create the service
+            // without throwing an exception
+            object instance = null;
 
-            // Determine if the service exists, and
-            // suppress the errors if necessary
-            var exists = Contains(serviceName, serviceType);
-            if (!exists && SuppressErrors)
-                return null;
+            // Save the old state
+            var suppressErrors = SuppressErrors;
+            lock (this)
+            {
+                SuppressErrors = true;
+                instance = base.GetService(serviceName, serviceType);
+                SuppressErrors = suppressErrors;
+            }
+            
+            var result = PostProcess(serviceName, serviceType, instance);
 
-            if (!exists && SuppressErrors != true)
-                throw new NamedServiceNotFoundException(serviceName, serviceType);
+            // Use the modified result, if possible; otherwise,
+            // use the original result.
+            instance = result.ActualResult ?? result.OriginalResult;
 
-            var factory = _namedFactories[serviceName][serviceType];
+            return instance;
+        }
 
-            // Make sure that the factory exists
-            if (factory == null)
-                return null;
+        /// <summary>
+        /// Overridden. Causes the container to instantiate the service with the given
+        /// <paramref name="serviceType">service type</paramref>. If the service type cannot be created, then an
+        /// exception will be thrown if the <see cref="IContainer.SuppressErrors"/> property
+        /// is set to false. Otherwise, it will simply return null.
+        /// </summary>
+        /// <remarks>
+        /// This overload of the <c>GetService</c> method has been overridden
+        /// so that its results can be handled by the postprocessors.
+        /// </remarks>
+        /// <seealso cref="IPostProcessor"/>
+        /// <param name="serviceType">The service type to instantiate.</param>
+        /// <returns>If successful, it will return a service instance that is compatible with the given type;
+        /// otherwise, it will just return a null value.</returns>
+        public override object GetService(Type serviceType)
+        {
+            object instance = null;
 
-            return factory.CreateInstance(this);
+            // Save the old state
+            var suppressErrors = SuppressErrors;
+
+            // Attempt to create the service
+            // without throwing an exception
+            lock (this)
+            {                
+                this.SuppressErrors = true;
+                instance = base.GetService(serviceType);
+                this.SuppressErrors = suppressErrors;
+            }
+            
+            var result = PostProcess(string.Empty, serviceType, instance);
+
+            // Use the modified result, if possible; otherwise,
+            // use the original result.
+            instance = result.ActualResult ?? result.OriginalResult;
+
+            return instance;
+        }
+
+        /// <summary>
+        /// A method that searches the current container for
+        /// postprocessors and passes every request result made
+        /// to the list of <see cref="IServiceContainer.PostProcessors"/>.
+        /// </summary>
+        /// <param name="serviceName">The name of the service being requested. By default, this is usually blank.</param>
+        /// <param name="serviceType">The type of service being requested.</param>
+        /// <param name="instance">The original instance returned by container's service instantiation attempt.</param>
+        /// <returns>A <see cref="IServiceRequestResult"/> representing the results returned as a result of the postprocessors.</returns>
+        private IServiceRequestResult PostProcess(string serviceName, Type serviceType, object instance)
+        {
+            // Initialize the results
+            var result = new ServiceRequestResult()
+            {
+                ServiceName = serviceName ?? string.Empty,
+                ActualResult = instance,
+                Container = this,
+                OriginalResult = instance,
+                ServiceType = serviceType
+            };
+
+            // Let each postprocessor inspect 
+            // the results and/or modify the 
+            // returned object instance
+            foreach (var postProcessor in PostProcessors)
+            {
+                if (postProcessor == null)
+                    continue;
+
+                postProcessor.PostProcess(result);
+            }
+            
+            return result;
         }
     }
 }
