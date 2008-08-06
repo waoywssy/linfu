@@ -7,7 +7,7 @@ namespace LinFu.IoC
     /// named services.
     /// </summary>
     /// <seealso name="IContainer/>
-    public interface INamedContainer : IContainer
+    public interface IContainerWithNamedServices : IContainer
     {
         /// <summary>
         /// Adds an <see cref="IFactory"/> instance and associates it

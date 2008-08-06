@@ -12,7 +12,7 @@ namespace LinFu.IoC
     /// </summary>
     /// <seealso name="IContainer/>
     /// <seealso name="INamedContainer"/>
-    public class NamedContainer : SimpleContainer, INamedContainer
+    public class ServiceContainer : BaseContainer, IContainerWithNamedServices
     {
         protected readonly Dictionary<string, Dictionary<Type, IFactory>> _namedFactories =
             new Dictionary<string, Dictionary<Type, IFactory>>();

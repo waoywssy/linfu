@@ -111,7 +111,7 @@ namespace LinFu.UnitTests.IOC.Factories
         [Test]
         public void GenericFactoryAdapterShouldCallUntypedFactoryInstance()
         {
-            var container = new SimpleContainer();
+            var container = new ServiceContainer();
             var mockFactory = new Mock<IFactory<ISerializable>>();
             var mockService = new Mock<ISerializable>();
             var adapter = new FactoryAdapter<ISerializable>(mockFactory.Object);

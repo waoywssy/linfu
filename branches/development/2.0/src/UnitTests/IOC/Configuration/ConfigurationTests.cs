@@ -58,6 +58,17 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             TestFactoryConverterWith<OncePerRequestFactory<ISampleService>>(serviceType, implementingType, converter);
         }
+
+        [Test]
+        public void OncePerThreadFactoryMustBeCreatedFromTypeWithImplementsAttribute()
+        {
+            throw new NotImplementedException();
+        }
+        [Test]
+        public void SingletonFactoryMustBeCreatedFromTypeWithImplementsAttribute()
+        {
+            throw new NotImplementedException();
+        }
         private void TestFactoryConverterWith<TFactory>(Type serviceType, Type implementingType, IFactoryConverter converter)
             where TFactory : IFactory
         {

@@ -13,7 +13,7 @@ namespace LinFu.UnitTests.IOC
 	    public void ContainerMustHoldAnonymousFactoryInstance()
 	    {
 	        var mockFactory = new Mock<IFactory>();
-	        var container = new SimpleContainer();
+	        var container = new ServiceContainer();
 
             // Give it a random service interface type
 	        var serviceType = typeof (IDisposable);
@@ -28,7 +28,7 @@ namespace LinFu.UnitTests.IOC
 	    {
             var mockFactory = new Mock<IFactory>();
 	        var mockService = new Mock<ISerializable>();
-            var container = new NamedContainer();
+            var container = new ServiceContainer();
 
 
 	        var serviceType = typeof (ISerializable);
@@ -45,7 +45,7 @@ namespace LinFu.UnitTests.IOC
 	    {
             var mockFactory = new Mock<IFactory>();
             var mockService = new Mock<ISerializable>();
-            var container = new NamedContainer();
+            var container = new ServiceContainer();
 
             var serviceType = typeof(ISerializable);
 
@@ -65,7 +65,7 @@ namespace LinFu.UnitTests.IOC
             var mockFactory = new Mock<IFactory>();
             var mockService = new Mock<ISerializable>();
 
-            var container = new NamedContainer();
+            var container = new ServiceContainer();
 
             var serviceType = typeof(ISerializable);
             
@@ -83,7 +83,7 @@ namespace LinFu.UnitTests.IOC
 	    public void ContainerMustReturnServiceInstance()
 	    {
             var mockFactory = new Mock<IFactory>();
-            var container = new SimpleContainer();
+            var container = new ServiceContainer();
 
 	        var serviceType = typeof (ISerializable);
 	        var instance = new object();
@@ -103,7 +103,7 @@ namespace LinFu.UnitTests.IOC
 	    [Test]
 	    public void ContainerMustBeAbleToSupressServiceNotFoundErrors()
 	    {            
-            var container = new SimpleContainer();
+            var container = new ServiceContainer();
 	        container.SuppressErrors = true;
 
             var instance = container.GetService(typeof(ISerializable));
@@ -113,7 +113,7 @@ namespace LinFu.UnitTests.IOC
         [ExpectedException(typeof(ServiceNotFoundException))]
 	    public void ContainerMustThrowErrorIfServiceNotFound()
 	    {
-            var container = new SimpleContainer();
+            var container = new ServiceContainer();
             var instance = container.GetService(typeof(ISerializable));
             Assert.IsNull(instance, "The container is supposed to return a null instance");
 	    }
@@ -121,7 +121,7 @@ namespace LinFu.UnitTests.IOC
         public void ContainerMustHoldNamedFactoryInstance()
 	    {
 	        var mockFactory = new Mock<IFactory>();
-            var container = new NamedContainer();
+            var container = new ServiceContainer();
 
             // Randomly assign an interface type
             // NOTE: The actual interface type doesn't matter
@@ -140,7 +140,7 @@ namespace LinFu.UnitTests.IOC
         [ExpectedException(typeof(NamedServiceNotFoundException))]
 	    public void ContainerMustBeAbleToSuppressNamedServiceNotFoundErrors()
 	    {
-            var container = new NamedContainer();
+            var container = new ServiceContainer();
             var instance = container.GetService("MyService", typeof(ISerializable));
             Assert.IsNull(instance, "The container is supposed to return a null instance");
 	    }
@@ -150,7 +150,7 @@ namespace LinFu.UnitTests.IOC
 	    {
 	        var mockService = new Mock<ISerializable>();
 	        var mockFactory = new Mock<IFactory>();
-	        var container = new NamedContainer();
+	        var container = new ServiceContainer();
 
 	        container.AddFactory(typeof (ISerializable), mockFactory.Object);
 	        container.AddFactory("MyService", typeof (ISerializable), mockFactory.Object);
@@ -169,7 +169,7 @@ namespace LinFu.UnitTests.IOC
 	    [Test]
 	    public void ContainerMustSupportGenericAddFactoryMethod()
 	    {
-            var container = new SimpleContainer();
+            var container = new ServiceContainer();
 	        var mockFactory = new Mock<IFactory<ISerializable>>();
 	        var mockService = new Mock<ISerializable>();
 
@@ -182,7 +182,7 @@ namespace LinFu.UnitTests.IOC
 	    [Test]
 	    public void ContainerMustSupportNamedGenericAddFactoryMethod()
 	    {
-            var container = new NamedContainer();
+            var container = new ServiceContainer();
             var mockFactory = new Mock<IFactory<ISerializable>>();
             var mockService = new Mock<ISerializable>();
 
@@ -194,7 +194,7 @@ namespace LinFu.UnitTests.IOC
 	    [Test]
 	    public void ContainerMustBeAbleToAddExistingServiceInstances()
 	    {
-            var container = new SimpleContainer();
+            var container = new ServiceContainer();
             var mockService = new Mock<ISerializable>();
 	        container.AddService<ISerializable>(mockService.Object);
 

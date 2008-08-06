@@ -10,10 +10,14 @@ namespace LinFu.IoC
     /// Represents a basic inversion of control container
     /// with support for creating custom service instances.
     /// </summary>
-    public class SimpleContainer : IContainer
+    public abstract class BaseContainer : IContainer
     {
         private readonly Dictionary<Type, IFactory> _factories = new Dictionary<Type, IFactory>();        
         
+        protected BaseContainer()
+        {
+        }
+
         /// <summary>
         /// Gets or sets a <see cref="bool">System.Boolean</see> value
         /// that determines whether or not the container should throw

@@ -59,7 +59,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="IOC\Configuration\ConfigurationTests.cs" />
     <Compile Include="IOC\Configuration\ISampleService.cs" />
-    <Compile Include="IOC\Configuration\UnnamedSampleService.cs" />
+    <Compile Include="IOC\Configuration\OncePerRequestSampleService.cs" />
     <Compile Include="IOC\Factories\FactoryTests.cs" />
     <Compile Include="IOC\InversionOfControlTests.cs" />
   </ItemGroup>
