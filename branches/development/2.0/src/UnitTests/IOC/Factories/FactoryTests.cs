@@ -8,7 +8,7 @@ using LinFu.IoC.Factories;
 using Moq;
 using NUnit.Framework;
 
-namespace LinFu.UnitTests.IOC
+namespace LinFu.UnitTests.IOC.Factories
 {
     [TestFixture]
     public class FactoryTests

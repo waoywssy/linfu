@@ -4,7 +4,7 @@ using LinFu.IoC;
 using Moq;
 using NUnit.Framework;
 
-namespace LinFu.UnitTests
+namespace LinFu.UnitTests.IOC
 {
 	[TestFixture]
 	public class InversionOfControlTests

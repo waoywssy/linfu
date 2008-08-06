@@ -77,7 +77,7 @@ namespace LinFu.IoC
 
             // Determine if the service exists, and
             // suppress the errors if necessary
-            bool exists = Contains(serviceName, serviceType);
+            var exists = Contains(serviceName, serviceType);
             if (!exists && SuppressErrors)
                 return null;
 
