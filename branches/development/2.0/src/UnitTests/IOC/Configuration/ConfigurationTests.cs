@@ -54,46 +54,7 @@ namespace LinFu.UnitTests.IOC.Configuration
         {
             throw new NotImplementedException();
         }
-        [Test]
-        public void OncePerRequestFactoryMustBeCreatedFromTypeWithImplementsAttribute()
-        {
-            var implementingType = typeof(OncePerRequestSampleService);
-            var serviceType = typeof (ISampleService);
-            var converter = new ImplementsAttributeConverter();
-
-            TestFactoryConverterWith<OncePerRequestFactory<ISampleService>>(serviceType, implementingType, converter);
-        }
-
-        [Test]
-        public void OncePerThreadFactoryMustBeCreatedFromTypeWithImplementsAttribute()
-        {
-            throw new NotImplementedException();
-        }
-        [Test]
-        public void SingletonFactoryMustBeCreatedFromTypeWithImplementsAttribute()
-        {
-            throw new NotImplementedException();
-        }
-        private void TestFactoryConverterWith<TFactory>(Type serviceType, Type implementingType, IFactoryConverter converter)
-            where TFactory : IFactory
-        {
-            IEnumerable<IFactory> factories = converter.CreateFactoriesFrom(implementingType);
-            Assert.IsNotNull(factories, "The result cannot be null");
-            Assert.IsTrue(factories.Count() == 1, "The converter must return at least one result");
-
-            // There must be at least one factory from
-            // the result list
-            var factory = factories.FirstOrDefault();
-            Assert.IsNotNull(factory);
-            Assert.IsTrue(factory is TFactory);
-
-
-            // The service must be compatible with the service type
-            // and match the implementing type itself
-            var serviceInstance = factory.CreateInstance(null);
-            Assert.IsAssignableFrom(implementingType, serviceInstance);
-            Assert.IsInstanceOfType(serviceType, serviceInstance);
-        }
+        
 
         [Test]
         public void FactoryMustBeCreatedFromTypeWithNamedImplementsAttribute()

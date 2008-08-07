@@ -43,6 +43,9 @@ namespace LinFu.IoC
             // use the original result.
             instance = result.ActualResult ?? result.OriginalResult;
 
+            if (suppressErrors == false && instance == null)
+                throw new NamedServiceNotFoundException(serviceName, serviceType);
+
             return instance;
         }
 
@@ -81,6 +84,10 @@ namespace LinFu.IoC
             // Use the modified result, if possible; otherwise,
             // use the original result.
             instance = result.ActualResult ?? result.OriginalResult;
+
+
+            if (suppressErrors == false && instance == null)
+                throw new ServiceNotFoundException(serviceType);
 
             return instance;
         }
