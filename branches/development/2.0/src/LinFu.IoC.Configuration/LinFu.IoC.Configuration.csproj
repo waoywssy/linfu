@@ -49,6 +49,7 @@
     <Compile Include="ImplementsAttribute.cs" />
     <Compile Include="ImplementsAttributeFactoryLoader.cs" />
     <Compile Include="LifecycleType.cs" />
+    <Compile Include="Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

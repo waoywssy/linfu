@@ -9,12 +9,12 @@ using LinFu.IoC.Factories;
 namespace LinFu.IoC.Configuration
 {
     /// <summary>
-    /// A factory converter that scans a type for <see cref="ImplementsAttribute"/>
+    /// A loader class that scans a type for <see cref="ImplementsAttribute"/>
     /// attribute declarations and creates a factory for each corresponding 
     /// attribute instance.
     /// </summary>
     /// <seealso cref="IFactory"/>
-    public class ImplementsAttributeFactoryLoader : IFactoryLoader
+    public class ImplementsAttributeFactoryLoader : ITypeLoader
     {
         private static readonly Dictionary<LifecycleType, Type> _factoryTypes = 
             new Dictionary<LifecycleType, Type>();
@@ -38,7 +38,7 @@ namespace LinFu.IoC.Configuration
         /// <param name="sourceType">The input type from which one or more factories will be created.</param>
         /// <returns>A set of <see cref="Action{IServiceContainer}"/> instances. This cannot be null.</returns>
         /// 
-        public IEnumerable<Action<IServiceContainer>> LoadFactoriesFrom(Type sourceType)
+        public IEnumerable<Action<IServiceContainer>> LoadContainerFrom(Type sourceType)
         {
             // Extract the Implements attribute from the source type
             ICustomAttributeProvider provider = sourceType;

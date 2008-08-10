@@ -15,6 +15,17 @@ namespace LinFu.UnitTests.IOC.Configuration
     public class LoaderAttributeTests
     {
         [Test]
+        public void NamedOncePerRequestFactoryMustBeCreatedFromTypeWithImplementsAttribute()
+        {
+            var implementingType = typeof(NamedOncePerRequestSampleService);
+            var serviceType = typeof(ISampleService);
+            var converter = new ImplementsAttributeFactoryLoader();
+
+            TestFactoryConverterWith<OncePerRequestFactory<ISampleService>>("MyService",
+                serviceType, implementingType, converter);
+        }
+
+        [Test]
         public void OncePerRequestFactoryMustBeCreatedFromTypeWithImplementsAttribute()
         {
             var implementingType = typeof(OncePerRequestSampleService);
@@ -23,6 +34,13 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             TestFactoryConverterWith<OncePerRequestFactory<ISampleService>>(string.Empty,
                 serviceType, implementingType, converter);
+        }
+
+        [Test]
+        public void NamedOncePerThreadFactoryMustBeCreatedFromTypeWithImplementsAttribute()
+        {
+            TestFactoryConverterWith<OncePerThreadFactory<ISampleService>>("MyService",
+                typeof(ISampleService), typeof(NamedOncePerThreadSampleService), new ImplementsAttributeFactoryLoader());
         }
 
         [Test]
@@ -37,7 +55,13 @@ namespace LinFu.UnitTests.IOC.Configuration
             TestFactoryConverterWith<SingletonFactory<ISampleService>>(string.Empty,
                 typeof(ISampleService), typeof(SingletonSampleService), new ImplementsAttributeFactoryLoader());
         }
-        private void TestFactoryConverterWith<TFactory>(string serviceName, Type serviceType, Type implementingType, IFactoryLoader loader)
+        [Test]
+        public void NamedSingletonFactoryMustBeCreatedFromTypeWithImplementsAttribute()
+        {
+            TestFactoryConverterWith<SingletonFactory<ISampleService>>("MyService",
+                typeof(ISampleService), typeof(NamedSingletonSampleService), new ImplementsAttributeFactoryLoader());
+        }
+        private static void TestFactoryConverterWith<TFactory>(string serviceName, Type serviceType, Type implementingType, ITypeLoader loader)
             where TFactory : IFactory
         {
             // The loader should initialize the container with
@@ -46,7 +70,7 @@ namespace LinFu.UnitTests.IOC.Configuration
             mockContainer.Expect(container =>
                 container.AddFactory(serviceName, serviceType, It.Is<IFactory>(f => f != null && f is TFactory)));
 
-            var factoryActions = loader.LoadFactoriesFrom(implementingType);
+            var factoryActions = loader.LoadContainerFrom(implementingType);
             Assert.IsNotNull(factoryActions, "The result cannot be null");
             Assert.IsTrue(factoryActions.Count() == 1, "There must be at least at least one result");
 

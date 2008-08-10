@@ -9,8 +9,8 @@ namespace LinFu.IoC.Configuration
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public class ImplementsAttribute : Attribute
     {
-        private Type _serviceType;
-        private LifecycleType _lifeCycleType;
+        private readonly Type _serviceType;
+        private readonly LifecycleType _lifeCycleType;
 
         /// <summary>
         /// The name to associate with the given service.
