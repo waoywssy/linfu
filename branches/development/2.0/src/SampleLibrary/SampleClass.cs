@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SampleLibrary
 {
-    public class SampleClass
+    public class SampleClass : ISampleService
     {
     }
 }

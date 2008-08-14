@@ -14,7 +14,7 @@ namespace LinFu.IoC.Configuration
     /// attribute instance.
     /// </summary>
     /// <seealso cref="IFactory"/>
-    public class ImplementsAttributeFactoryLoader : ITypeLoader
+    public class ImplementsAttributeLoader : ITypeLoader
     {
         private static readonly Dictionary<LifecycleType, Type> _factoryTypes = 
             new Dictionary<LifecycleType, Type>();
@@ -22,7 +22,7 @@ namespace LinFu.IoC.Configuration
         /// <summary>
         /// Initializes the list of factory types.
         /// </summary>
-        static ImplementsAttributeFactoryLoader()
+        static ImplementsAttributeLoader()
         {
             _factoryTypes[LifecycleType.OncePerRequest] = typeof (OncePerRequestFactory<>);
             _factoryTypes[LifecycleType.OncePerThread] = typeof (OncePerThreadFactory<>);
@@ -83,6 +83,15 @@ namespace LinFu.IoC.Configuration
             return results;
         }
 
+        /// <summary>
+        /// Creates a factory instance that can create instaces of the given
+        /// <paramref name="serviceType"/>  using the <paramref name="implementingType"/>
+        /// as the implementation.
+        /// </summary>
+        /// <param name="serviceType">The service being implemented.</param>
+        /// <param name="implementingType">The actual type that will implement the service.</param>
+        /// <param name="lifecycle">The <see cref="LifecycleType"/> that determines the lifetime of each instance being created.</param>
+        /// <returns></returns>
         private IFactory CreateFactory(Type serviceType, Type implementingType, LifecycleType lifecycle)
         {
             // Determine the factory type
@@ -96,6 +105,7 @@ namespace LinFu.IoC.Configuration
 
             return result;
         }
+
         /// <summary>
         /// A <c>private</c> method that creates the factory method delegate
         /// for use with a particular factory class.
@@ -110,7 +120,7 @@ namespace LinFu.IoC.Configuration
         {
             var flags = BindingFlags.NonPublic | BindingFlags.Static;
 
-            var factoryMethodDefinition = typeof (ImplementsAttributeFactoryLoader).GetMethod("CreateFactoryMethodInternal", flags);
+            var factoryMethodDefinition = typeof (ImplementsAttributeLoader).GetMethod("CreateFactoryMethodInternal", flags);
             var factoryMethod = factoryMethodDefinition.MakeGenericMethod(serviceType, implementingType);
 
             // Create the Func<IContainer, TService> factory delegate

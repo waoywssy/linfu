@@ -49,8 +49,10 @@
     <Compile Include="AssemblyContainerLoader.cs" />
     <Compile Include="AssemblyLoader.cs" />
     <Compile Include="DefaultDirectoryLister.cs" />
+    <Compile Include="FactoryAttribute.cs" />
+    <Compile Include="FactoryAttributeLoader.cs" />
     <Compile Include="ImplementsAttribute.cs" />
-    <Compile Include="ImplementsAttributeFactoryLoader.cs" />
+    <Compile Include="ImplementsAttributeLoader.cs" />
     <Compile Include="LifecycleType.cs" />
     <Compile Include="Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

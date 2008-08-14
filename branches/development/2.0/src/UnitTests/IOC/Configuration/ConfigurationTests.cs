@@ -15,26 +15,7 @@ namespace LinFu.UnitTests.IOC.Configuration
 {
     [TestFixture]
     public class ConfigurationTests
-    {
-        [Test]
-        [Ignore("TODO: Implement this")]
-        public void LoaderMustLoadUnnamedFactoriesWithFactoryAttributeFromAnAssembly()
-        {
-            var mockContainer = new Mock<IContainer>();
-            var containerInstance = mockContainer.Object;
-
-            // If this works, the loader will construct the factory
-            // and add it to the container instance
-            mockContainer.Expect(container =>
-                                 container.AddFactory(typeof(ISampleService),
-                                 It.Is<IFactory>(f => f != null)));
-
-            // TODO: Fix this
-            //var loader = new Loader(containerInstance);
-            //loader.Load(typeof (ConfigurationTests).Assembly);
-            throw new NotImplementedException();
-        }
-
+    {        
         [Test]
         public void LoaderMustPassFilenameToContainerLoaders()
         {
@@ -95,12 +76,7 @@ namespace LinFu.UnitTests.IOC.Configuration
         {
             throw new NotImplementedException();
         }
-        [Test]
-        [Ignore("TODO: Implement this")]
-        public void LoaderMustLoadNamedFactoriesWithFactoryAttributeAnAssembly()
-        {
-            throw new NotImplementedException();
-        }
+        
         [Test]
         [Ignore("TODO: Implement this")]
         public void LoaderMustSignalToPluginsWhenTheLoadBegins()
@@ -120,34 +96,13 @@ namespace LinFu.UnitTests.IOC.Configuration
         public void CreatedServicesMustBeAbleToInitializeThemselves()
         {
             throw new NotImplementedException();
-        }
-
-
-        [Test]
-        [Ignore("TODO: Implement this")]
-        public void FactoryMustBeCreatedFromTypeWithNamedImplementsAttribute()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Test]
-        [Ignore("TODO: Implement this")]
-        public void NamedFactoryMustBeCreatedFromTypeWithFactoryAttribute()
-        {
-            throw new NotImplementedException();
-        }
+        }        
         
         [Test]
         [Ignore("TODO: Implement this")]
         public void BootstrapTypeLoaderMustLoadOtherTypeLoadersWithTypeLoaderAttribute()
         {
             throw new NotImplementedException();
-        }
-        [Test]
-        [Ignore("TODO: Implement this")]
-        public void UnnamedFactoryMustBeCreatedFromTypeWithFactoryAttribute()
-        {
-            throw new NotImplementedException();
-        }
+        }        
     }
 }

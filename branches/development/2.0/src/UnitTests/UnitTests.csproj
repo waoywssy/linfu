@@ -59,7 +59,6 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="IOC\Configuration\AssemblyContainerLoaderTests.cs" />
     <Compile Include="IOC\Configuration\ConfigurationTests.cs" />
-    <Compile Include="IOC\Configuration\ISampleService.cs" />
     <Compile Include="IOC\Configuration\LoaderAttributeTests.cs" />
     <Compile Include="IOC\Configuration\NamedOncePerRequestSampleService.cs" />
     <Compile Include="IOC\Configuration\NamedOncePerThreadSampleService.cs" />
