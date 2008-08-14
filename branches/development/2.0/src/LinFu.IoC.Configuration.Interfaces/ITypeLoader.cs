@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using LinFu.Reflection;
 
-namespace LinFu.IoC.Configuration.Interfaces
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// Generates one or more <see cref="Action{IServiceContainer}"/> instances

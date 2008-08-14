@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
-using LinFu.IoC.Configuration.Interfaces;
 using LinFu.Reflection;
 using Moq;
 using NUnit.Framework;
@@ -40,10 +39,12 @@ namespace LinFu.UnitTests.IOC.Configuration
         [Test]
         public void AssemblyContainerLoaderShouldOnlyLoadDllFiles()
         {
+            var mockTypeLoader = new Mock<ITypeLoader>();
             var containerLoader = new AssemblyContainerLoader();
+            containerLoader.TypeLoaders.Add(mockTypeLoader.Object);
 
             // This should return true
-            string validFile = "input.dll";
+            string validFile = typeof(AssemblyContainerLoaderTests).Assembly.Location;
             Assert.IsTrue(containerLoader.CanLoad(validFile));
 
             // This should return false;

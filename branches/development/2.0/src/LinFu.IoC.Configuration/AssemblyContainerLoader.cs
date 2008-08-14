@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using LinFu.IoC.Configuration.Interfaces;
 using LinFu.Reflection;
 
 namespace LinFu.IoC.Configuration

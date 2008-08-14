@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using LinFu.IoC.Configuration.Interfaces;
 using LinFu.Reflection;
 
 namespace LinFu.IoC.Configuration

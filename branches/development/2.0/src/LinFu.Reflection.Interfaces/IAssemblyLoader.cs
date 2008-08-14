@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace LinFu.IoC.Configuration.Interfaces
+namespace LinFu.Reflection
 {
     /// <summary>
     /// Represents a class that loads assemblies into memory

@@ -8,7 +8,7 @@ namespace LinFu.IoC
     /// An inversion of control container that supports
     /// named services.
     /// </summary>
-    /// <seealso name="IContainer/>
+    /// <seealso name="IContainer"
     public interface IServiceContainer : IContainer
     {
         /// <summary>

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using LinFu.IoC.Configuration.Interfaces;
+
 
 namespace LinFu.Reflection
 {
@@ -19,6 +19,14 @@ namespace LinFu.Reflection
     {
         private readonly IList<IActionLoader<TTarget, Type>> typeLoaders = new List<IActionLoader<TTarget, Type>>();
 
+        /// <summary>
+        /// Initializes the class with the default property values.
+        /// </summary>
+        public AssemblyTargetLoader()
+        {
+            AssemblyLoader = new AssemblyLoader();
+            TypeExtractor = new TypeExtractor();
+        }
         /// <summary>
         /// The <see cref="IAssemblyLoader"/> instance that will load
         /// the target assemblies.
@@ -52,8 +60,10 @@ namespace LinFu.Reflection
         /// <param name="filename">The filename and full path of the target file.</param>
         /// <returns>Returns <c>true</c> if the file can be loaded; otherwise, the result is <c>false</c>.</returns>
         public bool CanLoad(string filename)
-        {
-            return Path.GetExtension(filename).ToLower() == ".dll";
+        {            
+            return TypeLoaders.Count > 0 &&
+                Path.GetExtension(filename).ToLower() == ".dll" &&
+                File.Exists(filename);
         }
 
         /// <summary>

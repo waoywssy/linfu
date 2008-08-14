@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Policy;
 using System.Text;
-using LinFu.IoC.Configuration.Interfaces;
+
 
 namespace LinFu.Reflection
 {

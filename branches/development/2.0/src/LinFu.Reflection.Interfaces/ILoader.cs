@@ -1,7 +1,14 @@
+using System;
 using System.Collections.Generic;
 
 namespace LinFu.Reflection
 {
+    /// <summary>
+    /// Represents a generic interface for an abstract loader
+    /// that can read configuration information from disk
+    /// and apply it to a <typeparamref name="TTarget"/> instance.
+    /// </summary>
+    /// <typeparam name="TTarget">The class type being configured.</typeparam>
     public interface ILoader<TTarget>
     {
         /// <summary>
@@ -14,7 +21,7 @@ namespace LinFu.Reflection
 
         /// <summary>
         /// The list of <see cref="IActionLoader{TTarget, TInput}"/>
-        /// instances responsible for configuring the <see cref="Target"/> instance.
+        /// instances responsible for configuring the <typeparamref name="TTarget"/> instance.
         /// </summary>
         IList<IActionLoader<TTarget, string>> FileLoaders { get; }
 
@@ -26,6 +33,12 @@ namespace LinFu.Reflection
         IDirectoryListing DirectoryLister { get; set; }
 
         /// <summary>
+        /// The custom list of actions that will be
+        /// performed prior to the beginning of a load operation.
+        /// </summary>
+        IList<Action<ILoader<TTarget>>> CustomLoaderActions { get; }
+        
+        /// <summary>
         /// Loads the configuration using the files listed in 
         /// the target <paramref name="directory"/> that match 
         /// the given <paramref name="filespec">file pattern</paramref>.
@@ -35,9 +48,16 @@ namespace LinFu.Reflection
         void LoadDirectory(string directory, string filespec);
 
         /// <summary>
-        /// Loads
+        /// Configures the <paramref name="target"/> instance 
+        /// using the configuration currently loaded from disk.
         /// </summary>
-        /// <param name="target"></param>
+        /// <param name="target">The <typeparamref name="TTarget"/> instance to be configured.</param>
         void LoadInto(TTarget target);
+
+        /// <summary>
+        /// Clears the currently loaded configuration
+        /// and resets the loader back to its defaults.
+        /// </summary>
+        void Reset();
     }
 }

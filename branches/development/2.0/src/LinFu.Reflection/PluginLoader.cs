@@ -15,7 +15,7 @@ namespace LinFu.Reflection
     /// <typeparam name="TAttribute">The attribute type that marks a type as a plugin type.</typeparam>
     public class PluginLoader<TTarget, TAttribute> : IActionLoader<ILoader<TTarget>, Type>
         where TAttribute : Attribute
-    {
+    {        
         /// <summary>
         /// Determines if the PluginLoader can load the <paramref name="inputType"/>.
         /// </summary>
@@ -37,6 +37,12 @@ namespace LinFu.Reflection
                 typeof (ILoaderPlugin<TTarget>).IsAssignableFrom(inputType);
         }
 
+        /// <summary>
+        /// Loads a set of actions from a <see cref="System.Type"/>
+        /// instance.
+        /// </summary>
+        /// <param name="input">The target type to scan.</param>
+        /// <returns>A set of actions which will be applied to the target <see cref="ILoader{T}"/> instance.</returns>
         public IEnumerable<Action<ILoader<TTarget>>> Load(Type input)
         {
             // Create the plugin instance
