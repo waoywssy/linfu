@@ -20,7 +20,7 @@ namespace LinFu.IoC.Configuration
         /// </summary>
         /// <param name="sourceType">The input type from which one or more factories will be created.</param>
         /// <returns>A set of <see cref="Action{IServiceContainer}"/> instances. This cannot be null.</returns>
-        public IEnumerable<Action<IServiceContainer>> LoadContainerFrom(Type sourceType)
+        public IEnumerable<Action<IServiceContainer>> Load(Type sourceType)
         {
             if (sourceType == null)
                 throw new ArgumentNullException("sourceType");
@@ -96,6 +96,7 @@ namespace LinFu.IoC.Configuration
                                       let serviceName = f.ServiceName
                                       let serviceType = f.ServiceType
                                       let factory = createFactory(serviceType, factoryInstance)
+                                      where factory != null
                                       select new
                                                  {
                                                      ServiceName=serviceName, 
@@ -116,6 +117,11 @@ namespace LinFu.IoC.Configuration
             }
 
             return results;
-        }        
+        }
+
+        public bool CanLoad(Type sourceType)
+        {
+            return sourceType.IsClass;
+        }
     }
 }

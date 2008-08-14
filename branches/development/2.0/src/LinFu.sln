@@ -4,6 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\Unit
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0691ABF2-B3C7-43BF-9862-2D8D1299CE58}"
 	ProjectSection(SolutionItems) = preProject
+		CommonAssemblyInfo.cs = CommonAssemblyInfo.cs
 		..\go.bat = ..\go.bat
 		..\LinFu.build = ..\LinFu.build
 	EndProjectSection
@@ -21,6 +22,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.IoC.Configuration.Interfaces", "LinFu.IoC.Configuration.Interfaces\LinFu.IoC.Configuration.Interfaces.csproj", "{857A7827-0969-4BC7-A941-61A060B9BBA8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleLibrary", "SampleLibrary\SampleLibrary.csproj", "{DEFBEF97-B03C-448F-9518-394735439E2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.Reflection", "LinFu.Reflection\LinFu.Reflection.csproj", "{22EEB00F-F471-486C-A6AD-60F088821C78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.Reflection.Interfaces", "LinFu.Reflection.Interfaces\LinFu.Reflection.Interfaces.csproj", "{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{5B5BB34E-7987-48F2-8183-D8AE3D7AB361}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Implementations", "Implementations", "{6298C321-5C1D-43DD-B372-9CBF4529E9B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,9 +86,31 @@ Global
 		{DEFBEF97-B03C-448F-9518-394735439E2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEFBEF97-B03C-448F-9518-394735439E2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEFBEF97-B03C-448F-9518-394735439E2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22EEB00F-F471-486C-A6AD-60F088821C78}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22EEB00F-F471-486C-A6AD-60F088821C78}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
+		{22EEB00F-F471-486C-A6AD-60F088821C78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22EEB00F-F471-486C-A6AD-60F088821C78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22EEB00F-F471-486C-A6AD-60F088821C78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22EEB00F-F471-486C-A6AD-60F088821C78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}.AutomatedDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}.AutomatedDebug|Any CPU.Build.0 = Debug|Any CPU
+		{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{857A7827-0969-4BC7-A941-61A060B9BBA8} = {5B5BB34E-7987-48F2-8183-D8AE3D7AB361}
+		{C6AC7707-9288-4ADF-9053-34FE71FFE0BE} = {5B5BB34E-7987-48F2-8183-D8AE3D7AB361}
+		{2470C3FC-4EFD-40DC-9EB7-759325B35E5C} = {5B5BB34E-7987-48F2-8183-D8AE3D7AB361}
+		{FA3D5517-EFF4-4363-AFF2-EF67B981334E} = {6298C321-5C1D-43DD-B372-9CBF4529E9B4}
+		{EFBACCF3-C834-4114-9FC1-1F190DD6CE98} = {6298C321-5C1D-43DD-B372-9CBF4529E9B4}
+		{9FFE90E0-49C0-4C37-91AE-ADB9B2F3D832} = {6298C321-5C1D-43DD-B372-9CBF4529E9B4}
+		{14DB06BE-3178-4A01-98AB-DFC65485E567} = {6298C321-5C1D-43DD-B372-9CBF4529E9B4}
+		{22EEB00F-F471-486C-A6AD-60F088821C78} = {6298C321-5C1D-43DD-B372-9CBF4529E9B4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		VisualSVNWorkingCopyRoot = ..

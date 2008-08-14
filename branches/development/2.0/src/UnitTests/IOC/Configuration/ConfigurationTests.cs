@@ -7,6 +7,7 @@ using LinFu.IoC;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Factories;
+using LinFu.Reflection;
 using NUnit.Framework;
 using Moq;
 using SampleLibrary;
@@ -25,7 +26,7 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             var loader = new Loader
             {
-                Container = mockContainer.Object,
+                Target = mockContainer.Object,
                 DirectoryLister = mockListing.Object
             };
 
@@ -33,7 +34,7 @@ namespace LinFu.UnitTests.IOC.Configuration
             mockListing.Expect(listing => listing.GetFiles(It.IsAny<string>(), filename))
                 .Returns(new []{filename});
             
-            loader.ContainerLoaders.Add(mockLoader.Object);
+            loader.FileLoaders.Add(mockLoader.Object);
             // The container should call the load method
             // with the given filename
             string path = string.Empty;
@@ -78,17 +79,33 @@ namespace LinFu.UnitTests.IOC.Configuration
         }
         
         [Test]
-        [Ignore("TODO: Implement this")]
-        public void LoaderMustSignalToPluginsWhenTheLoadBegins()
+        public void LoaderMustSignalToPluginsWhenTheLoadBeginsAndEnds()
         {
-            throw new NotImplementedException();
-        }
+            var mockPlugin = new Mock<ILoaderPlugin<IServiceContainer>>();
+            var container = new Mock<IServiceContainer>();
+            var mockListing = new Mock<IDirectoryListing>();
+            var loader = new Loader();
 
-        [Test]
-        [Ignore("TODO: Implement this")]
-        public void LoaderMustSignalToPluginsWhenTheLoadEnds()
-        {
-            throw new NotImplementedException();
+            // Setup the directory listing and            
+            // return an empty listing since
+            // we're only interested in the plugin behavior
+            mockListing.Expect(listing => listing.GetFiles(It.IsAny<string>(), string.Empty))
+                .Returns(new string[0]);
+            
+            // Initialize the loader
+            loader.DirectoryLister = mockListing.Object;
+            loader.Target = container.Object;
+            loader.Plugins.Add(mockPlugin.Object);
+
+            // Both the BeginLoad and EndLoad methods should be called
+            mockPlugin.Expect(p => p.BeginLoad(container.Object));
+            mockPlugin.Expect(p => p.EndLoad(container.Object));
+
+            // Execute the loader
+            loader.LoadDirectory(string.Empty, string.Empty);
+
+            mockPlugin.VerifyAll();
+            mockListing.VerifyAll();
         }
 
         [Test]

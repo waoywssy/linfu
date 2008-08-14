@@ -6,7 +6,7 @@ using System.Security.Policy;
 using System.Text;
 using LinFu.IoC.Configuration.Interfaces;
 
-namespace LinFu.IoC.Configuration
+namespace LinFu.Reflection
 {
     /// <summary>
     /// Represents a class that loads assemblies into memory

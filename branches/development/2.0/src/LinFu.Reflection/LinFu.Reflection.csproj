@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C6AC7707-9288-4ADF-9053-34FE71FFE0BE}</ProjectGuid>
+    <ProjectGuid>{22EEB00F-F471-486C-A6AD-60F088821C78}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LinFu.IoC.Interfaces</RootNamespace>
-    <AssemblyName>LinFu.IoC.Interfaces</AssemblyName>
+    <RootNamespace>LinFu.Reflection</RootNamespace>
+    <AssemblyName>LinFu.Reflection</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\LinFu.IoC.Interfaces.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\LinFu.Reflection.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -49,13 +49,18 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="IContainer.cs" />
-    <Compile Include="IFactory.cs" />
-    <Compile Include="IFactoryOfT.cs" />
-    <Compile Include="IServiceContainer.cs" />
-    <Compile Include="IPostProcessor.cs" />
-    <Compile Include="IServiceRequestResult.cs" />
+    <Compile Include="AssemblyLoader.cs" />
+    <Compile Include="AssemblyTargetLoader.cs" />
+    <Compile Include="DefaultDirectoryLister.cs" />
+    <Compile Include="Loader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeExtractor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LinFu.Reflection.Interfaces\LinFu.Reflection.Interfaces.csproj">
+      <Project>{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}</Project>
+      <Name>LinFu.Reflection.Interfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

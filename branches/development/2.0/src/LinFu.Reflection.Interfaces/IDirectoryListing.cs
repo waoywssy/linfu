@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LinFu.IoC.Configuration.Interfaces
+namespace LinFu.Reflection
 {
     /// <summary>
     /// Represents a class that can list the files

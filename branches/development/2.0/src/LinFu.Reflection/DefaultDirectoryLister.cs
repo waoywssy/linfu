@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using LinFu.IoC.Configuration.Interfaces;
 
-namespace LinFu.IoC.Configuration
+namespace LinFu.Reflection
 {
     /// <summary>
     /// A class that lists the contents of a given directory.

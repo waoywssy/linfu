@@ -5,6 +5,7 @@ using System.Text;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Configuration.Interfaces;
+using LinFu.Reflection;
 using Moq;
 using NUnit.Framework;
 using SampleLibrary;
@@ -57,6 +58,7 @@ namespace LinFu.UnitTests.IOC.Configuration
             // The container loader should use the assembly loader
             // to load the assembly
             string filename = "input.dll";
+            
             _mockAssemblyLoader.Expect(loader => loader.Load(filename)).Returns(typeof(SampleClass).Assembly);
 
             containerLoader.AssemblyLoader = _mockAssemblyLoader.Object;
@@ -100,7 +102,8 @@ namespace LinFu.UnitTests.IOC.Configuration
                 .Returns(new Type[] { typeof(SampleClass) });
 
             // Make sure that it calls the type loaders
-            _mockTypeLoader.Expect(loader => loader.LoadContainerFrom(typeof (SampleClass)))
+            _mockTypeLoader.Expect(loader => loader.CanLoad(typeof (SampleClass))).Returns(true);
+            _mockTypeLoader.Expect(loader => loader.Load(typeof (SampleClass)))
                 .Returns(new Action<IServiceContainer>[0]);
 
             containerLoader.AssemblyLoader = _mockAssemblyLoader.Object;

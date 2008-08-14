@@ -46,10 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IAssemblyLoader.cs" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="IContainerLoader.cs" />
-    <Compile Include="IDirectoryListing.cs" />
-    <Compile Include="ITypeExtractor.cs" />
     <Compile Include="ITypeLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -57,6 +57,10 @@
     <ProjectReference Include="..\LinFu.IoC.Interfaces\LinFu.IoC.Interfaces.csproj">
       <Project>{C6AC7707-9288-4ADF-9053-34FE71FFE0BE}</Project>
       <Name>LinFu.IoC.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection.Interfaces\LinFu.Reflection.Interfaces.csproj">
+      <Project>{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}</Project>
+      <Name>LinFu.Reflection.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -94,6 +94,14 @@
       <Project>{FA3D5517-EFF4-4363-AFF2-EF67B981334E}</Project>
       <Name>LinFu.IoC</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection.Interfaces\LinFu.Reflection.Interfaces.csproj">
+      <Project>{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}</Project>
+      <Name>LinFu.Reflection.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection\LinFu.Reflection.csproj">
+      <Project>{22EEB00F-F471-486C-A6AD-60F088821C78}</Project>
+      <Name>LinFu.Reflection</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SampleLibrary\SampleLibrary.csproj">
       <Project>{DEFBEF97-B03C-448F-9518-394735439E2E}</Project>
       <Name>SampleLibrary</Name>

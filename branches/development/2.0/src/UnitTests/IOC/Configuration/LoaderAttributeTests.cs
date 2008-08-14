@@ -78,9 +78,9 @@ namespace LinFu.UnitTests.IOC.Configuration
                                                                    It.IsAny<SampleFactory>()));
 
             ITypeLoader loader = new FactoryAttributeLoader();
-            var actions = loader.LoadContainerFrom(typeof (SampleFactory));
+            var actions = loader.Load(typeof (SampleFactory));
 
-            // The factory loader should return a bunch of actions
+            // The factory loader should return a set of actions
             // that will inject that custom factory into the container
             // itself
             foreach(var action in actions)
@@ -99,7 +99,7 @@ namespace LinFu.UnitTests.IOC.Configuration
             mockContainer.Expect(container =>
                 container.AddFactory(serviceName, serviceType, It.Is<IFactory>(f => f != null && f is TFactory)));
 
-            var factoryActions = loader.LoadContainerFrom(implementingType);
+            var factoryActions = loader.Load(implementingType);
             Assert.IsNotNull(factoryActions, "The result cannot be null");
             Assert.IsTrue(factoryActions.Count() == 1, "There must be at least at least one result");
 

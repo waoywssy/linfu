@@ -38,7 +38,7 @@ namespace LinFu.IoC.Configuration
         /// <param name="sourceType">The input type from which one or more factories will be created.</param>
         /// <returns>A set of <see cref="Action{IServiceContainer}"/> instances. This cannot be null.</returns>
         /// 
-        public IEnumerable<Action<IServiceContainer>> LoadContainerFrom(Type sourceType)
+        public IEnumerable<Action<IServiceContainer>> Load(Type sourceType)
         {
             // Extract the Implements attribute from the source type
             ICustomAttributeProvider provider = sourceType;
@@ -128,6 +128,12 @@ namespace LinFu.IoC.Configuration
 
             return result;
         }
+
+        public bool CanLoad(Type sourceType)
+        {
+            return sourceType.IsClass;
+        }
+
         /// <summary>
         /// A method that generates the actual lambda function that creates
         /// the new service instance.
