@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 
 namespace LinFu.Reflection
-{    
-    public class Loader<TTarget>
+{
+    public class Loader<TTarget> : ILoader<TTarget>
     {
-        private readonly IList<IActionLoader<TTarget, string>> _loaders = new List<IActionLoader<TTarget, string>>();
-        private readonly IList<ILoaderPlugin<TTarget>> _plugins = new List<ILoaderPlugin<TTarget>>();
+        private readonly List<IActionLoader<TTarget, string>> _loaders = new List<IActionLoader<TTarget, string>>();
+        private readonly List<ILoaderPlugin<TTarget>> _plugins = new List<ILoaderPlugin<TTarget>>();
+        private readonly List<Action<TTarget>> _actions = new List<Action<TTarget>>();
         /// <summary>
         /// Initializes the container with the default settings.
         /// </summary>
@@ -16,23 +17,28 @@ namespace LinFu.Reflection
         {
             DirectoryLister = new DefaultDirectoryLister();
         }
-
         /// <summary>
-        /// Gets or sets the target to load.
+        /// The list of actions that will execute
+        /// every time a target instance is configured.
         /// </summary>
-        public TTarget Target
+        public IList<Action<TTarget>> QueuedActions
         {
-            get;
-            set;
+            get { return _actions; }
         }
 
+        /// <summary>
+        /// The list of <see cref="ILoaderPlugin{TTarget}"/>
+        /// instances that will be used to
+        /// signal the beginning and end of the
+        /// load sequence.
+        /// </summary>
         public IList<ILoaderPlugin<TTarget>> Plugins
         {
             get { return _plugins; }
         }
         /// <summary>
         /// The list of <see cref="IActionLoader{TTarget, TInput}"/>
-        /// instances responsible for configuring the <see cref="Target"/> instance.
+        /// instances responsible for configuring the target instance.
         /// </summary>
         public IList<IActionLoader<TTarget, string>> FileLoaders
         {
@@ -59,14 +65,8 @@ namespace LinFu.Reflection
         /// <param name="filespec">The wildcard file pattern string to use when specifying the target files.</param>
         public void LoadDirectory(string directory, string filespec)
         {
-            // Abort the load if the container
-            // is invalid
-            if (Target == null)
-                return;
-
             // Determine which files exist
             var files = DirectoryLister.GetFiles(directory, filespec);
-            var actionList = new List<Action<TTarget>>();
 
             foreach (var currentFile in files)
             {
@@ -79,26 +79,35 @@ namespace LinFu.Reflection
                     if (actions.Count() == 0)
                         continue;
 
-                    actionList.AddRange(actions);
+                    _actions.AddRange(actions);
                 }
             }
+        }
+
+
+        public void LoadInto(TTarget target)
+        {
+            // Abort the load if the container
+            // is invalid
+            if (ReferenceEquals(target, null))
+                return;
 
             // Signal the beginning of the load
-            foreach(var plugin in Plugins)
+            foreach (var plugin in Plugins)
             {
                 if (plugin == null)
                     continue;
 
-                plugin.BeginLoad(Target);
+                plugin.BeginLoad(target);
             }
 
             // Configure the container
-            foreach (var action in actionList)
+            foreach (var action in QueuedActions)
             {
                 if (action == null)
                     continue;
 
-                action(Target);
+                action(target);
             }
 
             // Signal the end of the load
@@ -107,7 +116,7 @@ namespace LinFu.Reflection
                 if (plugin == null)
                     continue;
 
-                plugin.EndLoad(Target);
+                plugin.EndLoad(target);
             }
         }
     }

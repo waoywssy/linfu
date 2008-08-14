@@ -6,6 +6,7 @@ using LinFu.IoC;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Factories;
+using LinFu.IoC.Interfaces;
 using Moq;
 using NUnit.Framework;
 using SampleLibrary;
@@ -66,10 +67,47 @@ namespace LinFu.UnitTests.IOC.Configuration
         #endregion
 
         [Test]
+        public void FactoryAttributeLoaderMustInjectOpenGenericServiceTypeIntoContainer()
+        {
+            var mockContainer = new Mock<IServiceContainer>();
+            var serviceType = typeof(ISampleGenericService<>);
+            var mockPostProcessors = new Mock<IList<IPostProcessor>>();
+
+            ITypeLoader loader = new FactoryAttributeLoader();
+            var actions = loader.Load(typeof(SampleOpenGenericFactory));
+
+            // The loader should load the mock container
+            // using the generic open type as the service type
+            mockContainer.Expect(container => container.PostProcessors)
+                .Returns(mockPostProcessors.Object);
+
+            mockContainer.Expect(container => container.AddFactory(string.Empty,
+                serviceType, It.IsAny<SampleOpenGenericFactory>()));
+
+            // The postprocessor list should have an additional element added
+            mockPostProcessors.Expect(p => p.Add(It.IsAny<IPostProcessor>()));
+
+            Action<IServiceContainer> applyActions =
+                container =>
+                {
+                    foreach (var action in actions)
+                    {
+                        action(container);
+                    }
+                };
+
+            applyActions(mockContainer.Object);
+
+            // Apply the actions to a real container and verify
+            // it with the expected service instance
+            var realContainer = new ServiceContainer();
+            applyActions(realContainer);
+        }
+        [Test]
         public void FactoryAttributeLoaderMustInjectUnnamedCustomFactoryIntoContainer()
         {
             var mockContainer = new Mock<IServiceContainer>();
-            var serviceType = typeof (ISampleService);
+            var serviceType = typeof(ISampleService);
             var serviceName = string.Empty;
 
             // The container should add the expected
@@ -78,12 +116,12 @@ namespace LinFu.UnitTests.IOC.Configuration
                                                                    It.IsAny<SampleFactory>()));
 
             ITypeLoader loader = new FactoryAttributeLoader();
-            var actions = loader.Load(typeof (SampleFactory));
+            var actions = loader.Load(typeof(SampleFactory));
 
             // The factory loader should return a set of actions
             // that will inject that custom factory into the container
             // itself
-            foreach(var action in actions)
+            foreach (var action in actions)
             {
                 action(mockContainer.Object);
             }

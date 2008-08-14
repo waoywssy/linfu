@@ -7,12 +7,13 @@ using LinFu.IoC.Configuration;
 
 namespace SampleLibrary
 {
-    [Factory(typeof(ISampleService))]
-    public class SampleFactory : IFactory
+    [Factory(typeof(ISampleGenericService<>))]
+    public class SampleOpenGenericFactory : IFactory
     {
         public object CreateInstance(Type serviceType, IContainer container)
         {
-            return new SampleClass();
+            var typeArgument = serviceType.GetGenericArguments()[0];
+            return typeof (SampleGenericImplementation<>).MakeGenericType(typeArgument);
         }
     }
 }

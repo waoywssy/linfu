@@ -26,7 +26,6 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             var loader = new Loader
             {
-                Target = mockContainer.Object,
                 DirectoryLister = mockListing.Object
             };
 
@@ -44,6 +43,7 @@ namespace LinFu.UnitTests.IOC.Configuration
             mockLoader.Expect(l => l.Load(filename)).Returns(emptyActions);
 
             loader.LoadDirectory(path, filename);
+            loader.LoadInto(mockContainer.Object);
 
             mockLoader.VerifyAll();
             mockListing.VerifyAll();
@@ -94,7 +94,6 @@ namespace LinFu.UnitTests.IOC.Configuration
             
             // Initialize the loader
             loader.DirectoryLister = mockListing.Object;
-            loader.Target = container.Object;
             loader.Plugins.Add(mockPlugin.Object);
 
             // Both the BeginLoad and EndLoad methods should be called
@@ -103,6 +102,7 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             // Execute the loader
             loader.LoadDirectory(string.Empty, string.Empty);
+            loader.LoadInto(container.Object);
 
             mockPlugin.VerifyAll();
             mockListing.VerifyAll();

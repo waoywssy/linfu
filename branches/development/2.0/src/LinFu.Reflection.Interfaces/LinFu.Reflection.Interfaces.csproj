@@ -53,6 +53,7 @@
     <Compile Include="IActionLoader.cs" />
     <Compile Include="IAssemblyLoader.cs" />
     <Compile Include="IDirectoryListing.cs" />
+    <Compile Include="ILoader.cs" />
     <Compile Include="ILoaderPlugin.cs" />
     <Compile Include="ITypeExtractor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

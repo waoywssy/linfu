@@ -112,8 +112,19 @@ namespace LinFu.IoC.Configuration
                 var serviceType = currentService.ServiceType;
                 var factory = currentService.FactoryInstance;
 
+
                 // Add each service to the container on initialization
-                results.Add(container => container.AddFactory(serviceName, serviceType, factory));
+                if (!serviceType.IsGenericTypeDefinition)
+                {
+                    results.Add(container => container.AddFactory(serviceName, serviceType, factory));
+                    continue;
+                }
+
+                // HACK: Use a GenericTypeSurrogate to route
+                // generic service requests to a 
+                // single factory instance
+                var surrogate = new GenericTypeSurrogate(serviceType, factory);
+                results.Add(container => container.PostProcessors.Add(surrogate));
             }
 
             return results;

@@ -91,7 +91,7 @@ namespace LinFu.IoC
             object result = null;
             // Make sure that the factory exists
             if (factory != null)
-                result = factory.CreateInstance(this);
+                result = factory.CreateInstance(serviceType, this);
 
             return result;
         }

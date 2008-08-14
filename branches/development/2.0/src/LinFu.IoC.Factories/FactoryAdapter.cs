@@ -32,8 +32,9 @@ namespace LinFu.IoC
         /// is called.
         /// </summary>
         /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
+        /// <param name="serviceType">The type of service to create.</param>
         /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
-        public object CreateInstance(IContainer container)
+        public object CreateInstance(Type serviceType, IContainer container)
         {
             if (_factory == null)
                 return default(T);

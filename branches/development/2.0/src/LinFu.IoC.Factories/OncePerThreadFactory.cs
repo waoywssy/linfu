@@ -13,7 +13,7 @@ namespace LinFu.IoC.Factories
     /// <typeparam name="T">The type of service to instantiate.</typeparam>
     public class OncePerThreadFactory<T> : BaseFactory<T>
     {
-        private readonly Func<IContainer, T> _createInstance;
+        private readonly Func<Type, IContainer, T> _createInstance;
         private static Dictionary<int, T> _storage = new Dictionary<int, T>();
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace LinFu.IoC.Factories
         /// </code>
         /// </example>
         /// <param name="createInstance">The delegate that will be used to create each new service instance.</param>
-        public OncePerThreadFactory(Func<IContainer, T> createInstance)
+        public OncePerThreadFactory(Func<Type, IContainer, T> createInstance)
         {
             _createInstance = createInstance;
         }
@@ -57,7 +57,7 @@ namespace LinFu.IoC.Factories
             {
                 // Create the service instance only once
                 if (!_storage.ContainsKey(threadId))
-                    _storage[threadId] = _createInstance(container);
+                    _storage[threadId] = _createInstance(typeof(T), container);
 
                 result = _storage[threadId];
             }

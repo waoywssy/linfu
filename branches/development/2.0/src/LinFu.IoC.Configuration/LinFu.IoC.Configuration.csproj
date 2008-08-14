@@ -52,6 +52,7 @@
     <Compile Include="AssemblyContainerLoader.cs" />
     <Compile Include="FactoryAttribute.cs" />
     <Compile Include="FactoryAttributeLoader.cs" />
+    <Compile Include="GenericTypeSurrogate.cs" />
     <Compile Include="ImplementsAttribute.cs" />
     <Compile Include="ImplementsAttributeLoader.cs" />
     <Compile Include="LifecycleType.cs" />

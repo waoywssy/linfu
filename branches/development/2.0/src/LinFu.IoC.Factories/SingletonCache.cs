@@ -22,16 +22,17 @@ namespace LinFu.IoC.Factories
         /// <param name="createInstance">The factory delegate that will be used in creating the unique service instance.</param>
         /// <returns>A non-null reference pointing to the unique service instance.</returns>
         public static T CreateInstance<T>(IContainer container, 
-            Func<IContainer, T> createInstance)
+            Func<Type, IContainer, T> createInstance)
         {
+            var serviceType = typeof (T);
             lock (_singletons)
             {
                 // Add a new instance, if necessary
-                if (!_singletons.ContainsKey(typeof(T)))
-                    _singletons[typeof(T)] = createInstance(container);
+                if (!_singletons.ContainsKey(serviceType))
+                    _singletons[serviceType] = createInstance(serviceType, container);
             }
 
-            return (T)_singletons[typeof(T)];
+            return (T)_singletons[serviceType];
         }
     }
 }

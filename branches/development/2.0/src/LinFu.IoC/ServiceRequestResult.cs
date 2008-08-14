@@ -54,7 +54,7 @@ namespace LinFu.IoC
         /// <summary>
         /// The container that will handle the service request.
         /// </summary>
-        public IContainer Container
+        public IServiceContainer Container
         {
             get;
             internal set;

@@ -14,7 +14,8 @@ namespace LinFu.IoC
         /// Creates a service instance using the given <paramref name="container"/>.
         /// </summary>
         /// <param name="container">The container that will ultimately hold the given service instance</param>
+        /// <param name="serviceType">The type of service to create.</param>
         /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
-        object CreateInstance(IContainer container);
+        object CreateInstance(Type serviceType, IContainer container);
     }
 }

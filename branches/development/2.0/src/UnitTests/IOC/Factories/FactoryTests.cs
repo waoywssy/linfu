@@ -13,14 +13,14 @@ namespace LinFu.UnitTests.IOC.Factories
     [TestFixture]
     public class FactoryTests
     {
-        private Func<IContainer, ISerializable> createInstance;
+        private Func<Type, IContainer, ISerializable> createInstance;
         [SetUp]
         public void Init()
         {
             // Create a new mock service instance on each
             // factory method call
             createInstance = 
-                container => (new Mock<ISerializable>()).Object;
+                (type, container) => (new Mock<ISerializable>()).Object;
         }
         
         [TearDown]
@@ -121,7 +121,7 @@ namespace LinFu.UnitTests.IOC.Factories
 
             Assert.IsInstanceOfType(typeof(IFactory), adapter);
 
-            adapter.CreateInstance(container);
+            adapter.CreateInstance(typeof(ISerializable), container);
 
             mockFactory.VerifyAll();
         }

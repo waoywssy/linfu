@@ -7,7 +7,7 @@ namespace LinFu.IoC.Interfaces
 {
     /// <summary>
     /// Represents the results returned when a service request
-    /// is made against an <see cref="IContainer"/> instance.
+    /// is made against an <see cref="IServiceContainer"/> instance.
     /// </summary>
     public interface IServiceRequestResult
     {
@@ -37,6 +37,6 @@ namespace LinFu.IoC.Interfaces
         /// <summary>
         /// The container that will handle the service request.
         /// </summary>
-        IContainer Container { get; }
+        IServiceContainer Container { get; }
     }
 }

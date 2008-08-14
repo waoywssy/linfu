@@ -12,7 +12,7 @@ namespace LinFu.IoC.Factories
     /// <typeparam name="T">The type of service to instantiate.</typeparam>
     public class OncePerRequestFactory<T> : BaseFactory<T>
     {
-        private readonly Func<IContainer, T> _createInstance;
+        private readonly Func<Type, IContainer, T> _createInstance;
 
         /// <summary>
         /// Initializes the factory class using the <paramref name="createInstance"/>
@@ -35,7 +35,7 @@ namespace LinFu.IoC.Factories
         /// </code>
         /// </example>
         /// <param name="createInstance">The delegate that will be used to create each new service instance.</param>
-        public OncePerRequestFactory(Func<IContainer, T> createInstance)
+        public OncePerRequestFactory(Func<Type, IContainer, T> createInstance)
         {
             _createInstance = createInstance;
         }
@@ -48,7 +48,7 @@ namespace LinFu.IoC.Factories
         /// <returns>A non-null object reference.</returns>
         public override T CreateInstance(IContainer container)
         {
-            return _createInstance(container);
+            return _createInstance(typeof(T), container);
         }        
     }
 }

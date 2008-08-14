@@ -73,7 +73,7 @@ namespace LinFu.IoC
             // and create the service instance
             var factory = _factories[serviceType];
             if (factory != null)
-                result = factory.CreateInstance(this);
+                result = factory.CreateInstance(serviceType, this);
 
             return result;
         }
