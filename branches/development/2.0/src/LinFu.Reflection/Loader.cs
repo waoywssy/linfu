@@ -44,8 +44,11 @@ namespace LinFu.Reflection
 
         /// <summary>
         /// The custom list of actions that will be
-        /// performed prior to the beginning of a load operation.
+        /// performed prior to the beginning of the first load operation.
         /// </summary>
+        /// <remarks>
+        /// These actions will be performed only once per reset.
+        /// </remarks>
         public IList<Action<ILoader<TTarget>>> CustomLoaderActions
         {
             get { return _loaderActions; }
@@ -129,13 +132,17 @@ namespace LinFu.Reflection
             // is invalid
             if (ReferenceEquals(target, null))
                 return;
-            
-            // Execute any custom loader actions associated
-            // with this loader
+
+            // Avoid duplicate actions by making 
+            // sure that the loader executes
+            // the list of custom actions once
             foreach(var customAction in CustomLoaderActions)
             {
                 customAction(this);
             }
+
+            CustomLoaderActions.Clear();
+            
 
             // Signal the beginning of the load
             foreach (var plugin in Plugins)
