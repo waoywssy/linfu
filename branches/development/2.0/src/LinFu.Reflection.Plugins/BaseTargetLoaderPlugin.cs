@@ -5,23 +5,21 @@ using System.Text;
 using LinFu.Reflection;
 
 namespace LinFu.Reflection.Plugins
-{
+{    
     /// <summary>
     /// A plugin class that provides the basic implementation
     /// for plugins that work with <see cref="IAssemblyTargetLoader{TTarget}"/> instances.
     /// </summary>
     /// <typeparam name="TTarget">The target type being configured.</typeparam>
-    public abstract class BaseTargetLoaderPlugin<TTarget> : ILoaderPlugin<TTarget>,
+    public abstract class BaseTargetLoaderPlugin<TTarget> : BaseLoaderPlugin<TTarget>,
         IInitialize<ILoader<TTarget>>
     {
-        public virtual void BeginLoad(TTarget target)
-        {
-        }
-
-        public virtual void EndLoad(TTarget target)
-        {
-        }
-
+        /// <summary>
+        /// Searches the loader for an <see cref="IAssemblyTargetLoader{T}"/>
+        /// instance and uses its derived classes to initialize
+        /// the assembly target loader.
+        /// </summary>
+        /// <param name="source">The <see cref="ILoader{TTarget}"/> instance that will hold the plugin.</param>
         public void Initialize(ILoader<TTarget> source)
         {
             // Use an existing AssemblyContainerLoader
