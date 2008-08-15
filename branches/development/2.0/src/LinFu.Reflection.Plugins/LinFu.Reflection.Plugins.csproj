@@ -5,14 +5,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}</ProjectGuid>
+    <ProjectGuid>{E931E87A-3ED8-4028-8990-F0F4054C0847}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LinFu.Reflection</RootNamespace>
-    <AssemblyName>LinFu.Reflection.Interfaces</AssemblyName>
+    <RootNamespace>LinFu.Reflection.Plugins</RootNamespace>
+    <AssemblyName>LinFu.Reflection.Plugins</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkSubset>Full</TargetFrameworkSubset>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\LinFu.Reflection.Interfaces.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\LinFu.Reflection.Plugins.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,15 +49,18 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="IActionLoader.cs" />
-    <Compile Include="IAssemblyLoader.cs" />
-    <Compile Include="IAssemblyTargetLoader.cs" />
-    <Compile Include="IDirectoryListing.cs" />
-    <Compile Include="IInitialize.cs" />
-    <Compile Include="ILoader.cs" />
-    <Compile Include="ILoaderPlugin.cs" />
-    <Compile Include="ITypeExtractor.cs" />
+    <Compile Include="BaseTargetLoaderPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LinFu.Reflection.Interfaces\LinFu.Reflection.Interfaces.csproj">
+      <Project>{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}</Project>
+      <Name>LinFu.Reflection.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection\LinFu.Reflection.csproj">
+      <Project>{22EEB00F-F471-486C-A6AD-60F088821C78}</Project>
+      <Name>LinFu.Reflection</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

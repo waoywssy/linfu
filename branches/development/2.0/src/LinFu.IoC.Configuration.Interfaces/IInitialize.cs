@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LinFu.Reflection;
 
 namespace LinFu.IoC.Configuration
 {
@@ -10,13 +11,8 @@ namespace LinFu.IoC.Configuration
     /// every time a particular <see cref="IServiceContainer"/>
     /// instance creates that type.
     /// </summary>
-    public interface IInitialize
+    public interface IInitialize : IInitialize<IServiceContainer>
     {
-        /// <summary>
-        /// Initializes the target with the
-        /// particular <paramref name="container"/> instance.
-        /// </summary>
-        /// <param name="container">The <see cref="IServiceContainer"/> instance that will hold the target type.</param>
-        void Initialize(IServiceContainer container);
+        
     }
 }

@@ -15,15 +15,15 @@ namespace LinFu.Reflection
     /// <typeparam name="TAttribute">The attribute type that marks a type as a plugin type.</typeparam>
     public class PluginLoader<TTarget, TAttribute> : IActionLoader<ILoader<TTarget>, Type>
         where TAttribute : Attribute
-    {        
+    {
         /// <summary>
         /// Determines if the PluginLoader can load the <paramref name="inputType"/>.
         /// </summary>
         /// <param name="inputType">The target type that might contain the target <typeparamref name="TAttribute"/> instance.</param>
         /// <returns><c>true</c> if the type can be loaded; otherwise, it returns <c>false</c>.</returns>
         public bool CanLoad(Type inputType)
-        {            
-            var attributes = inputType.GetCustomAttributes(typeof (TAttribute), true)
+        {
+            var attributes = inputType.GetCustomAttributes(typeof(TAttribute), true)
                 .Cast<TAttribute>();
 
             // The type must have a default constructor
@@ -33,8 +33,8 @@ namespace LinFu.Reflection
 
             // The target must implement the ILoaderPlugin<TTarget> interface
             // and be marked with the custom attribute
-            return attributes.Count() > 0 && 
-                typeof (ILoaderPlugin<TTarget>).IsAssignableFrom(inputType);
+            return attributes.Count() > 0 &&
+                typeof(ILoaderPlugin<TTarget>).IsAssignableFrom(inputType);
         }
 
         /// <summary>
@@ -52,10 +52,22 @@ namespace LinFu.Reflection
                 return new Action<ILoader<TTarget>>[0];
 
             // Assign it to the target loader
-            Action<ILoader<TTarget>> result = loader => loader.Plugins.Add(plugin);
+            Action<ILoader<TTarget>> result =
+                loader =>
+                {
+                    // If possible, initialize the plugin
+                    // with the loader
+                    if (plugin is IInitialize<ILoader<TTarget>>)
+                    {
+                        var target = plugin as IInitialize<ILoader<TTarget>>;
+                        target.Initialize(loader);
+                    }
+
+                    loader.Plugins.Add(plugin);
+                };
 
             // Package it into an array and return the result
-            return new []{result};
+            return new[] { result };
         }
     }
 }

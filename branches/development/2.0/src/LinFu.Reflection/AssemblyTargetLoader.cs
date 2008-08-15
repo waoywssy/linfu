@@ -7,7 +7,7 @@ using System.Text;
 
 
 namespace LinFu.Reflection
-{
+{    
     /// <summary>
     /// Represents a loader class that takes <see cref="System.Type"/>
     /// instances as input and generates <see cref="Action{T}"/>
@@ -15,7 +15,7 @@ namespace LinFu.Reflection
     /// instance.
     /// </summary>
     /// <typeparam name="TTarget">The target type to configure.</typeparam>
-    public class AssemblyTargetLoader<TTarget> : IActionLoader<TTarget, string>
+    public class AssemblyTargetLoader<TTarget> : IAssemblyTargetLoader<TTarget>
     {
         private readonly IList<IActionLoader<TTarget, Type>> typeLoaders = new List<IActionLoader<TTarget, Type>>();
 
