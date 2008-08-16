@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("LinFu.DynamicProxy2.Interfaces")]
 [assembly: AssemblyProduct("LinFu.DynamicProxy2.Interfaces")]
-[assembly: AssemblyCulture("")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("b7233fa5-e4b7-4b85-ae3c-bb4beff9cbd7")]
