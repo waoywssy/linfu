@@ -17,8 +17,6 @@ namespace LinFu.IoC
 
         private readonly List<IPostProcessor> _postProcessors = new List<IPostProcessor>();
 
-        #region IServiceContainer Members
-
         /// <summary>
         /// Adds an <see cref="IFactory"/> instance and associates it
         /// with the given <paramref name="serviceType">service type</paramref> and
@@ -104,7 +102,5 @@ namespace LinFu.IoC
         {
             get { return _postProcessors; }
         }
-
-        #endregion
     }
 }

@@ -32,8 +32,6 @@ namespace LinFu.Reflection
             _pluginLoader.TypeLoaders.Add(pluginTypeLoader);
         }
 
-        #region ILoader<TTarget> Members
-
         /// <summary>
         /// The list of actions that will execute
         /// every time a target instance is configured.
@@ -176,8 +174,6 @@ namespace LinFu.Reflection
             _actions.Clear();
             _loaderActions.Clear();
         }
-
-        #endregion
 
         /// <summary>
         /// Loads the <paramref name="currentFile">current file</paramref>
