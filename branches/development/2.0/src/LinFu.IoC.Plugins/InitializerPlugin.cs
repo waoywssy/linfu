@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LinFu.Reflection;
+﻿using LinFu.Reflection;
 
 namespace LinFu.IoC.Plugins
 {
@@ -14,6 +10,8 @@ namespace LinFu.IoC.Plugins
     [LoaderPlugin]
     public class InitializerPlugin : ILoaderPlugin<IServiceContainer>
     {
+        #region ILoaderPlugin<IServiceContainer> Members
+
         /// <summary>
         /// Injects the initializer into the <paramref name="target"/>
         /// container instance at the beginning of the load operation.
@@ -24,7 +22,7 @@ namespace LinFu.IoC.Plugins
             // Inject the initializer
             target.PostProcessors.Add(new Initializer());
         }
-        
+
         /// <summary>
         /// Overridden. This method implementation does absolutely nothing.
         /// </summary>
@@ -33,5 +31,7 @@ namespace LinFu.IoC.Plugins
         {
             // Do nothing.
         }
+
+        #endregion
     }
 }

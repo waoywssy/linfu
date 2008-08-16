@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Security.Policy;
-using System.Text;
-
+﻿using System.Reflection;
 
 namespace LinFu.Reflection
 {
@@ -14,6 +8,8 @@ namespace LinFu.Reflection
     /// </summary>
     public class AssemblyLoader : IAssemblyLoader
     {
+        #region IAssemblyLoader Members
+
         /// <summary>
         /// Loads the target assembly into memory.
         /// </summary>
@@ -23,5 +19,7 @@ namespace LinFu.Reflection
         {
             return Assembly.LoadFrom(assemblyFile);
         }
+
+        #endregion
     }
 }

@@ -11,7 +11,7 @@
         /// will be created on each call.
         /// </summary>
         OncePerRequest = 0,
-        
+
         /// <summary>
         /// This means that a new object instance 
         /// will be created only once per thread.

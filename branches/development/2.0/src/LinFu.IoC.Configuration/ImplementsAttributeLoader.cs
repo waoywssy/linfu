@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using LinFu.IoC.Factories;
 
 namespace LinFu.IoC.Configuration
@@ -15,9 +14,9 @@ namespace LinFu.IoC.Configuration
     /// <seealso cref="IFactory"/>
     public class ImplementsAttributeLoader : ITypeLoader
     {
-        private static readonly Dictionary<LifecycleType, Type> _factoryTypes = 
+        private static readonly Dictionary<LifecycleType, Type> _factoryTypes =
             new Dictionary<LifecycleType, Type>();
-        
+
         /// <summary>
         /// Initializes the list of factory types.
         /// </summary>
@@ -27,6 +26,8 @@ namespace LinFu.IoC.Configuration
             _factoryTypes[LifecycleType.OncePerThread] = typeof (OncePerThreadFactory<>);
             _factoryTypes[LifecycleType.Singleton] = typeof (SingletonFactory<>);
         }
+
+        #region ITypeLoader Members
 
         /// <summary>
         /// Converts a given <see cref="System.Type"/> into
@@ -41,18 +42,18 @@ namespace LinFu.IoC.Configuration
         {
             // Extract the Implements attribute from the source type
             ICustomAttributeProvider provider = sourceType;
-            var attributes = provider.GetCustomAttributes(typeof (ImplementsAttribute), true);
-            var attributeList = attributes.Cast<ImplementsAttribute>().ToList();
+            object[] attributes = provider.GetCustomAttributes(typeof (ImplementsAttribute), true);
+            List<ImplementsAttribute> attributeList = attributes.Cast<ImplementsAttribute>().ToList();
 
             var results = new List<Action<IServiceContainer>>();
             IFactory singletonFactory = null;
-            foreach(var attribute in attributeList)
+            foreach (ImplementsAttribute attribute in attributeList)
             {
-                var serviceName = attribute.ServiceName ?? string.Empty;
-                var serviceType = attribute.ServiceType;
-                var lifeCycle = attribute.LifecycleType;
+                string serviceName = attribute.ServiceName ?? string.Empty;
+                Type serviceType = attribute.ServiceType;
+                LifecycleType lifeCycle = attribute.LifecycleType;
 
-                var currentFactory = CreateFactory(serviceType, sourceType, lifeCycle);
+                IFactory currentFactory = CreateFactory(serviceType, sourceType, lifeCycle);
                 if (currentFactory == null)
                     continue;
 
@@ -64,7 +65,6 @@ namespace LinFu.IoC.Configuration
                     {
                         // Initialize the singleton instance only once
                         singletonFactory = currentFactory;
-                        
                     }
                     else
                     {
@@ -72,15 +72,22 @@ namespace LinFu.IoC.Configuration
                         // is assigned to every single point
                         // where it is marked as a singleton
                         currentFactory = singletonFactory;
-                    }                                     
+                    }
                 }
 
-                results.Add(container => 
-                    container.AddFactory(serviceName, serviceType, currentFactory));
+                results.Add(container =>
+                            container.AddFactory(serviceName, serviceType, currentFactory));
             }
 
             return results;
         }
+
+        public bool CanLoad(Type sourceType)
+        {
+            return sourceType.IsClass;
+        }
+
+        #endregion
 
         /// <summary>
         /// Creates a factory instance that can create instaces of the given
@@ -94,13 +101,13 @@ namespace LinFu.IoC.Configuration
         private IFactory CreateFactory(Type serviceType, Type implementingType, LifecycleType lifecycle)
         {
             // Determine the factory type
-            var factoryTypeDefinition = _factoryTypes[lifecycle];
-            var factoryType = factoryTypeDefinition.MakeGenericType(serviceType);
+            Type factoryTypeDefinition = _factoryTypes[lifecycle];
+            Type factoryType = factoryTypeDefinition.MakeGenericType(serviceType);
 
             // Create the factory itself
-            var factoryMethod = CreateFactoryMethod(serviceType, implementingType);
-            var factoryInstance = Activator.CreateInstance(factoryType, new object[] {factoryMethod});
-            IFactory result = factoryInstance as IFactory;
+            MulticastDelegate factoryMethod = CreateFactoryMethod(serviceType, implementingType);
+            object factoryInstance = Activator.CreateInstance(factoryType, new object[] {factoryMethod});
+            var result = factoryInstance as IFactory;
 
             return result;
         }
@@ -117,20 +124,15 @@ namespace LinFu.IoC.Configuration
         /// <returns>A factory method delegate that can create the given service.</returns>
         private MulticastDelegate CreateFactoryMethod(Type serviceType, Type implementingType)
         {
-            var flags = BindingFlags.NonPublic | BindingFlags.Static;
+            BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Static;
 
-            var factoryMethodDefinition = typeof (ImplementsAttributeLoader).GetMethod("CreateFactoryMethodInternal", flags);
-            var factoryMethod = factoryMethodDefinition.MakeGenericMethod(serviceType, implementingType);
+            MethodInfo factoryMethodDefinition = typeof (ImplementsAttributeLoader).GetMethod("CreateFactoryMethodInternal", flags);
+            MethodInfo factoryMethod = factoryMethodDefinition.MakeGenericMethod(serviceType, implementingType);
 
             // Create the Func<Type, IContainer, TService> factory delegate
             var result = factoryMethod.Invoke(null, new object[0]) as MulticastDelegate;
 
             return result;
-        }
-
-        public bool CanLoad(Type sourceType)
-        {
-            return sourceType.IsClass;
         }
 
         /// <summary>

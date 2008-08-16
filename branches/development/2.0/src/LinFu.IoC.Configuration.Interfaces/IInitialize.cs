@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LinFu.Reflection;
+﻿using LinFu.Reflection;
 
 namespace LinFu.IoC.Configuration
 {
@@ -13,6 +9,5 @@ namespace LinFu.IoC.Configuration
     /// </summary>
     public interface IInitialize : IInitialize<IServiceContainer>
     {
-        
     }
 }

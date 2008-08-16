@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Reflection;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
 using LinFu.Reflection;
@@ -14,9 +12,8 @@ namespace LinFu.UnitTests.IOC.Configuration
     [TestFixture]
     public class AssemblyContainerLoaderTests
     {
-        private Mock<IAssemblyLoader> _mockAssemblyLoader;
-        private Mock<ITypeExtractor> _mockTypeExtractor;
-        private Mock<ITypeLoader> _mockTypeLoader;
+        #region Setup/Teardown
+
         [SetUp]
         public void Init()
         {
@@ -24,6 +21,7 @@ namespace LinFu.UnitTests.IOC.Configuration
             _mockTypeExtractor = new Mock<ITypeExtractor>();
             _mockTypeLoader = new Mock<ITypeLoader>();
         }
+
         [TearDown]
         public void Term()
         {
@@ -36,21 +34,12 @@ namespace LinFu.UnitTests.IOC.Configuration
             _mockTypeLoader = null;
         }
 
-        [Test]
-        public void AssemblyContainerLoaderShouldOnlyLoadDllFiles()
-        {
-            var mockTypeLoader = new Mock<ITypeLoader>();
-            var containerLoader = new AssemblyContainerLoader();
-            containerLoader.TypeLoaders.Add(mockTypeLoader.Object);
+        #endregion
 
-            // This should return true
-            string validFile = typeof(AssemblyContainerLoaderTests).Assembly.Location;
-            Assert.IsTrue(containerLoader.CanLoad(validFile));
+        private Mock<IAssemblyLoader> _mockAssemblyLoader;
+        private Mock<ITypeExtractor> _mockTypeExtractor;
+        private Mock<ITypeLoader> _mockTypeLoader;
 
-            // This should return false;
-            string invalidFile = "input.txt";
-            Assert.IsFalse(containerLoader.CanLoad(invalidFile));
-        }
         [Test]
         public void AssemblyContainerLoaderShouldCallAssemblyLoader()
         {
@@ -59,8 +48,8 @@ namespace LinFu.UnitTests.IOC.Configuration
             // The container loader should use the assembly loader
             // to load the assembly
             string filename = "input.dll";
-            
-            _mockAssemblyLoader.Expect(loader => loader.Load(filename)).Returns(typeof(SampleClass).Assembly);
+
+            _mockAssemblyLoader.Expect(loader => loader.Load(filename)).Returns(typeof (SampleClass).Assembly);
 
             containerLoader.AssemblyLoader = _mockAssemblyLoader.Object;
             containerLoader.Load(filename);
@@ -72,18 +61,18 @@ namespace LinFu.UnitTests.IOC.Configuration
             var containerLoader = new AssemblyContainerLoader();
             string filename = "input.dll";
 
-            var targetAssembly = typeof (SampleClass).Assembly;
-            
+            Assembly targetAssembly = typeof (SampleClass).Assembly;
+
             // Make sure that it calls the assembly loader
             _mockAssemblyLoader.Expect(loader => loader.Load(filename)).Returns(targetAssembly);
 
             // It must call the Type Extractor
             _mockTypeExtractor.Expect(extractor => extractor.GetTypes(targetAssembly))
-                .Returns(new Type[]{typeof(SampleClass)});
+                .Returns(new[] {typeof (SampleClass)});
 
             containerLoader.AssemblyLoader = _mockAssemblyLoader.Object;
             containerLoader.TypeExtractor = _mockTypeExtractor.Object;
-            containerLoader.Load(filename);            
+            containerLoader.Load(filename);
         }
 
         [Test]
@@ -93,14 +82,14 @@ namespace LinFu.UnitTests.IOC.Configuration
             var containerLoader = new AssemblyContainerLoader();
             string filename = "input.dll";
 
-            var targetAssembly = typeof(SampleClass).Assembly;
+            Assembly targetAssembly = typeof (SampleClass).Assembly;
 
             // Make sure that it calls the assembly loader
             _mockAssemblyLoader.Expect(loader => loader.Load(filename)).Returns(targetAssembly);
 
             // It must call the Type Extractor
             _mockTypeExtractor.Expect(extractor => extractor.GetTypes(targetAssembly))
-                .Returns(new Type[] { typeof(SampleClass) });
+                .Returns(new[] {typeof (SampleClass)});
 
             // Make sure that it calls the type loaders
             _mockTypeLoader.Expect(loader => loader.CanLoad(typeof (SampleClass))).Returns(true);
@@ -114,7 +103,23 @@ namespace LinFu.UnitTests.IOC.Configuration
             // once the load method is called
             containerLoader.TypeLoaders.Add(_mockTypeLoader.Object);
 
-            containerLoader.Load(filename);            
+            containerLoader.Load(filename);
+        }
+
+        [Test]
+        public void AssemblyContainerLoaderShouldOnlyLoadDllFiles()
+        {
+            var mockTypeLoader = new Mock<ITypeLoader>();
+            var containerLoader = new AssemblyContainerLoader();
+            containerLoader.TypeLoaders.Add(mockTypeLoader.Object);
+
+            // This should return true
+            string validFile = typeof (AssemblyContainerLoaderTests).Assembly.Location;
+            Assert.IsTrue(containerLoader.CanLoad(validFile));
+
+            // This should return false;
+            string invalidFile = "input.txt";
+            Assert.IsFalse(containerLoader.CanLoad(invalidFile));
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace LinFu.Reflection
 {
@@ -13,12 +12,12 @@ namespace LinFu.Reflection
     /// <typeparam name="TTarget"></typeparam>
     public class Loader<TTarget> : ILoader<TTarget>
     {
-        private readonly List<IActionLoader<TTarget, string>> _loaders = new List<IActionLoader<TTarget, string>>();
-        private readonly List<ILoaderPlugin<TTarget>> _plugins = new List<ILoaderPlugin<TTarget>>();
         private readonly List<Action<TTarget>> _actions = new List<Action<TTarget>>();
-        private readonly List<Action<ILoader<TTarget>>>  _loaderActions = new List<Action<ILoader<TTarget>>>();
+        private readonly List<Action<ILoader<TTarget>>> _loaderActions = new List<Action<ILoader<TTarget>>>();
+        private readonly List<IActionLoader<TTarget, string>> _loaders = new List<IActionLoader<TTarget, string>>();
 
         private readonly AssemblyTargetLoader<ILoader<TTarget>> _pluginLoader = new AssemblyTargetLoader<ILoader<TTarget>>();
+        private readonly List<ILoaderPlugin<TTarget>> _plugins = new List<ILoaderPlugin<TTarget>>();
 
         /// <summary>
         /// Initializes the target with the default settings.
@@ -32,6 +31,8 @@ namespace LinFu.Reflection
             var pluginTypeLoader = new PluginLoader<TTarget, LoaderPluginAttribute>();
             _pluginLoader.TypeLoaders.Add(pluginTypeLoader);
         }
+
+        #region ILoader<TTarget> Members
 
         /// <summary>
         /// The list of actions that will execute
@@ -71,10 +72,7 @@ namespace LinFu.Reflection
         /// </summary>
         public IList<IActionLoader<TTarget, string>> FileLoaders
         {
-            get
-            {
-                return _loaders;
-            }
+            get { return _loaders; }
         }
 
         /// <summary>
@@ -95,29 +93,24 @@ namespace LinFu.Reflection
         public void LoadDirectory(string directory, string filespec)
         {
             // Determine which files exist
-            var files = DirectoryLister.GetFiles(directory, filespec);
+            IEnumerable<string> files = DirectoryLister.GetFiles(directory, filespec);
 
-            foreach (var currentFile in files)
+            foreach (string currentFile in files)
             {
                 // HACK: Manually load any loader plugins
                 // into the loader
                 if (_pluginLoader.CanLoad(currentFile))
                 {
-                    var customActions = _pluginLoader.Load(currentFile);
-                    _loaderActions.AddRange(customActions);
+                    // Immediately execute any custom loader actions
+                    // embedded in the file itself
+                    IEnumerable<Action<ILoader<TTarget>>> customActions = _pluginLoader.Load(currentFile);
+                    foreach (var customAction in customActions)
+                    {
+                        customAction(this);
+                    }
                 }
 
-                foreach (var loader in FileLoaders)
-                {
-                    if (loader == null || !loader.CanLoad(currentFile))
-                        continue;
-
-                    var actions = loader.Load(currentFile);
-                    if (actions.Count() == 0)
-                        continue;
-
-                    _actions.AddRange(actions);
-                }                
+                Load(currentFile);
             }
         }
 
@@ -136,13 +129,13 @@ namespace LinFu.Reflection
             // Avoid duplicate actions by making 
             // sure that the loader executes
             // the list of custom actions once
-            foreach(var customAction in CustomLoaderActions)
+            foreach (var customAction in CustomLoaderActions)
             {
                 customAction(this);
             }
 
             CustomLoaderActions.Clear();
-            
+
 
             // Signal the beginning of the load
             foreach (var plugin in Plugins)
@@ -182,6 +175,28 @@ namespace LinFu.Reflection
             _plugins.Clear();
             _actions.Clear();
             _loaderActions.Clear();
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Loads the <paramref name="currentFile">current file</paramref>
+        /// using the list of associated <see cref="FileLoaders"/>.
+        /// </summary>
+        /// <param name="currentFile">The full path and filename being loaded.</param>
+        private void Load(string currentFile)
+        {
+            foreach (var loader in FileLoaders)
+            {
+                if (loader == null || !loader.CanLoad(currentFile))
+                    continue;
+
+                IEnumerable<Action<TTarget>> actions = loader.Load(currentFile);
+                if (actions.Count() == 0)
+                    continue;
+
+                _actions.AddRange(actions);
+            }
         }
     }
 }

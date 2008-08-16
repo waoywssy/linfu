@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using LinFu.IoC;
 using LinFu.IoC.Factories;
 using Moq;
@@ -13,20 +11,43 @@ namespace LinFu.UnitTests.IOC.Factories
     [TestFixture]
     public class FactoryTests
     {
-        private Func<Type, IContainer, ISerializable> createInstance;
+        #region Setup/Teardown
+
         [SetUp]
         public void Init()
         {
             // Create a new mock service instance on each
             // factory method call
-            createInstance = 
+            createInstance =
                 (type, container) => (new Mock<ISerializable>()).Object;
         }
-        
+
         [TearDown]
         public void Term()
         {
             createInstance = null;
+        }
+
+        #endregion
+
+        private Func<Type, IContainer, ISerializable> createInstance;
+
+        [Test]
+        public void GenericFactoryAdapterShouldCallUntypedFactoryInstance()
+        {
+            var container = new ServiceContainer();
+            var mockFactory = new Mock<IFactory<ISerializable>>();
+            var mockService = new Mock<ISerializable>();
+            var adapter = new FactoryAdapter<ISerializable>(mockFactory.Object);
+
+            // The adapter itself should call the container on creation
+            mockFactory.Expect(f => f.CreateInstance(container)).Returns(mockService.Object);
+
+            Assert.IsInstanceOfType(typeof (IFactory), adapter);
+
+            adapter.CreateInstance(typeof (ISerializable), container);
+
+            mockFactory.VerifyAll();
         }
 
         [Test]
@@ -34,8 +55,8 @@ namespace LinFu.UnitTests.IOC.Factories
         {
             var factory = new OncePerRequestFactory<ISerializable>(createInstance);
 
-            var first = factory.CreateInstance(null);
-            var second = factory.CreateInstance(null);
+            ISerializable first = factory.CreateInstance(null);
+            ISerializable second = factory.CreateInstance(null);
 
             // Both instances must be unique
             Assert.AreNotSame(first, second);
@@ -48,13 +69,13 @@ namespace LinFu.UnitTests.IOC.Factories
         {
             IFactory<ISerializable> localFactory = new OncePerThreadFactory<ISerializable>(createInstance);
 
-            var first = localFactory.CreateInstance(null);
-            var second = localFactory.CreateInstance(null);
+            ISerializable first = localFactory.CreateInstance(null);
+            ISerializable second = localFactory.CreateInstance(null);
 
             // The two instances should be the same
             // since they were created from the same thread
             Assert.IsNotNull(first);
-            Assert.AreSame(first, second);            
+            Assert.AreSame(first, second);
         }
 
         [Test]
@@ -64,23 +85,23 @@ namespace LinFu.UnitTests.IOC.Factories
             var resultList = new List<ISerializable>();
 
             Action<IFactory<ISerializable>> doCreate = factory =>
-            {
-                var instance = factory.CreateInstance(null);
-                var otherInstance = factory.CreateInstance(null);
+                                                           {
+                                                               ISerializable instance = factory.CreateInstance(null);
+                                                               ISerializable otherInstance = factory.CreateInstance(null);
 
-                // The two instances 
-                // within the same thread must match
-                Assert.AreSame(instance, otherInstance);
-                lock (resultList)
-                {
-                    resultList.Add(instance);
-                }
-            };
-            
+                                                               // The two instances 
+                                                               // within the same thread must match
+                                                               Assert.AreSame(instance, otherInstance);
+                                                               lock (resultList)
+                                                               {
+                                                                   resultList.Add(instance);
+                                                               }
+                                                           };
+
 
             // Create the instance in another thread
-            var asyncResult = doCreate.BeginInvoke(localFactory, null, null);
-            var localInstance = localFactory.CreateInstance(null);
+            IAsyncResult asyncResult = doCreate.BeginInvoke(localFactory, null, null);
+            ISerializable localInstance = localFactory.CreateInstance(null);
 
             // Wait for the previous thread
             // to finish executing
@@ -89,41 +110,25 @@ namespace LinFu.UnitTests.IOC.Factories
             Assert.IsTrue(resultList.Count > 0);
 
             // Collect the results from the other thread
-            var instanceFromOtherThread = resultList[0];
+            ISerializable instanceFromOtherThread = resultList[0];
 
             Assert.IsNotNull(localInstance);
             Assert.IsNotNull(instanceFromOtherThread);
             Assert.AreNotSame(localInstance, instanceFromOtherThread);
         }
+
         [Test]
         public void SingletonFactoryShouldCreateTheSameInstanceOnce()
         {
             var factory = new SingletonFactory<ISerializable>(createInstance);
 
-            var first = factory.CreateInstance(null);
-            var second = factory.CreateInstance(null);
+            ISerializable first = factory.CreateInstance(null);
+            ISerializable second = factory.CreateInstance(null);
 
             // Both instances must be the same
             Assert.AreSame(first, second);
             Assert.IsNotNull(first);
             Assert.IsNotNull(second);
-        }
-        [Test]
-        public void GenericFactoryAdapterShouldCallUntypedFactoryInstance()
-        {
-            var container = new ServiceContainer();
-            var mockFactory = new Mock<IFactory<ISerializable>>();
-            var mockService = new Mock<ISerializable>();
-            var adapter = new FactoryAdapter<ISerializable>(mockFactory.Object);
-
-            // The adapter itself should call the container on creation
-            mockFactory.Expect(f => f.CreateInstance(container)).Returns(mockService.Object);
-
-            Assert.IsInstanceOfType(typeof(IFactory), adapter);
-
-            adapter.CreateInstance(typeof(ISerializable), container);
-
-            mockFactory.VerifyAll();
         }
     }
 }

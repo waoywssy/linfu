@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
@@ -29,15 +26,15 @@ namespace LinFu.IoC
             object instance = null;
 
             // Save the old state
-            var suppressErrors = SuppressErrors;
+            bool suppressErrors = SuppressErrors;
             lock (this)
             {
                 SuppressErrors = true;
                 instance = base.GetService(serviceName, serviceType);
                 SuppressErrors = suppressErrors;
             }
-            
-            var result = PostProcess(serviceName, serviceType, instance);
+
+            IServiceRequestResult result = PostProcess(serviceName, serviceType, instance);
 
             // Use the modified result, if possible; otherwise,
             // use the original result.
@@ -68,18 +65,18 @@ namespace LinFu.IoC
             object instance = null;
 
             // Save the old state
-            var suppressErrors = SuppressErrors;
+            bool suppressErrors = SuppressErrors;
 
             // Attempt to create the service
             // without throwing an exception
             lock (this)
-            {                
-                this.SuppressErrors = true;
+            {
+                SuppressErrors = true;
                 instance = base.GetService(serviceType);
-                this.SuppressErrors = suppressErrors;
+                SuppressErrors = suppressErrors;
             }
-            
-            var result = PostProcess(string.Empty, serviceType, instance);
+
+            IServiceRequestResult result = PostProcess(string.Empty, serviceType, instance);
 
             // Use the modified result, if possible; otherwise,
             // use the original result.
@@ -104,26 +101,26 @@ namespace LinFu.IoC
         private IServiceRequestResult PostProcess(string serviceName, Type serviceType, object instance)
         {
             // Initialize the results
-            var result = new ServiceRequestResult()
-            {
-                ServiceName = serviceName ?? string.Empty,
-                ActualResult = instance,
-                Container = this,
-                OriginalResult = instance,
-                ServiceType = serviceType
-            };
+            var result = new ServiceRequestResult
+                             {
+                                 ServiceName = serviceName ?? string.Empty,
+                                 ActualResult = instance,
+                                 Container = this,
+                                 OriginalResult = instance,
+                                 ServiceType = serviceType
+                             };
 
             // Let each postprocessor inspect 
             // the results and/or modify the 
             // returned object instance
-            foreach (var postProcessor in PostProcessors)
+            foreach (IPostProcessor postProcessor in PostProcessors)
             {
                 if (postProcessor == null)
                     continue;
 
                 postProcessor.PostProcess(result);
             }
-            
+
             return result;
         }
     }

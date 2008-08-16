@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace LinFu.Reflection
 {
     /// <summary>
     /// A class that lists the contents of a given directory.
     /// </summary>
-    class DefaultDirectoryLister : IDirectoryListing
+    internal class DefaultDirectoryLister : IDirectoryListing
     {
+        #region IDirectoryListing Members
+
         /// <summary>
         /// Returns a list of files that match the <paramref name="searchPattern"/>
         /// from the given directory <paramref name="path"/>.
@@ -22,5 +21,7 @@ namespace LinFu.Reflection
         {
             return Directory.GetFiles(path, searchPattern);
         }
+
+        #endregion
     }
 }

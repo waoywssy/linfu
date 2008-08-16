@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
-using LinFu.IoC.Factories;
+using LinFu.IoC.Interfaces;
 using LinFu.Reflection;
-using NUnit.Framework;
 using Moq;
+using NUnit.Framework;
 using SampleLibrary;
 
 namespace LinFu.UnitTests.IOC.Configuration
@@ -17,6 +16,57 @@ namespace LinFu.UnitTests.IOC.Configuration
     public class ConfigurationTests
     {
         [Test]
+        public void AssemblyLoaderMustLoadTargetAssemblyFromDisk()
+        {
+            IAssemblyLoader loader = new AssemblyLoader();
+
+            // The loader should return a valid assembly
+            Assembly result = loader.Load(typeof (SampleClass).Assembly.Location);
+            Assert.IsNotNull(result);
+        }
+
+        [Test]
+        public void ClassMarkedWithPostProcessorAttributeMustBeInjectedIntoContainer()
+        {
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var loader = new Loader();
+            loader.LoadDirectory(baseDirectory, "*.dll");
+            var container = new ServiceContainer();
+
+            loader.LoadInto(container);
+
+            IEnumerable<IPostProcessor> matches = from p in container.PostProcessors
+                                                  where p != null &&
+                                                        p.GetType() == typeof (SamplePostProcessor)
+                                                  select p;
+
+            Assert.IsTrue(matches.Count() > 0, "The postprocessor failed to load.");
+        }
+
+        [Test]
+        public void CreatedServicesMustBeAbleToInitializeThemselves()
+        {
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var loader = new Loader();
+            loader.LoadDirectory(baseDirectory, "*.dll");
+
+            var mockInitialize = new Mock<IInitialize>();
+            var container = new ServiceContainer();
+
+            // The service container should call the Initialize method
+            mockInitialize.Expect(target => target.Initialize(container));
+            loader.LoadInto(container);
+
+            container.AddService(mockInitialize.Object);
+
+            var result = container.GetService<IInitialize>();
+            Assert.IsNotNull(result);
+            Assert.AreSame(mockInitialize.Object, result);
+
+            mockInitialize.VerifyAll();
+        }
+
+        [Test]
         public void LoaderMustCallCustomLoaderActions()
         {
             var mockContainer = new Mock<IServiceContainer>();
@@ -24,14 +74,14 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             var loader = new Loader();
             loader.DirectoryLister = mockListing.Object;
-            
+
             // Return an empty file listing
             mockListing.Expect(listing => listing.GetFiles(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(new string[0]);
 
             // Use the initializer mock to verify
             // that the custom action was called
-            
+
             var mockInitializer = new Mock<IInitialize>();
             mockInitializer.Expect(initializer => initializer.Initialize(mockContainer.Object));
 
@@ -41,20 +91,21 @@ namespace LinFu.UnitTests.IOC.Configuration
             Action<ILoader<IServiceContainer>> customAction =
                 targetLoader =>
                     {
-                        var initializer = mockInitializer.Object;
-                        var container = mockContainer.Object;
-                        
+                        IInitialize initializer = mockInitializer.Object;
+                        IServiceContainer container = mockContainer.Object;
+
                         // The test will only succeed if
                         // the following line of code
                         // is invoked:
                         initializer.Initialize(container);
                     };
-                                                                  
+
             loader.CustomLoaderActions.Add(customAction);
             loader.LoadInto(mockContainer.Object);
 
             mockInitializer.VerifyAll();
         }
+
         [Test]
         public void LoaderMustPassFilenameToContainerLoaders()
         {
@@ -63,20 +114,20 @@ namespace LinFu.UnitTests.IOC.Configuration
             var mockListing = new Mock<IDirectoryListing>();
 
             var loader = new Loader
-            {
-                DirectoryLister = mockListing.Object
-            };
+                             {
+                                 DirectoryLister = mockListing.Object
+                             };
 
-            var filename = "input.dll";
+            string filename = "input.dll";
             mockListing.Expect(listing => listing.GetFiles(It.IsAny<string>(), filename))
-                .Returns(new[] { filename });
+                .Returns(new[] {filename});
 
             loader.FileLoaders.Add(mockLoader.Object);
             // The container should call the load method
             // with the given filename
             string path = string.Empty;
 
-            var emptyActions = new Action<IServiceContainer>[] { };
+            var emptyActions = new Action<IServiceContainer>[] {};
             mockLoader.Expect(l => l.CanLoad(filename)).Returns(true);
             mockLoader.Expect(l => l.Load(filename)).Returns(emptyActions);
 
@@ -85,35 +136,6 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             mockLoader.VerifyAll();
             mockListing.VerifyAll();
-        }
-
-        [Test]
-        public void AssemblyLoaderMustLoadTargetAssemblyFromDisk()
-        {
-            IAssemblyLoader loader = new AssemblyLoader();
-
-            // The loader should return a valid assembly
-            var result = loader.Load(typeof(SampleClass).Assembly.Location);
-            Assert.IsNotNull(result);
-        }
-
-        [Test]
-        public void TypeExtractorMustListTypesFromGivenAssembly()
-        {
-            var targetAssembly = typeof(SampleClass).Assembly;
-
-            ITypeExtractor extractor = new TypeExtractor();
-            var results = extractor.GetTypes(targetAssembly);
-            Assert.IsNotNull(results);
-            Assert.IsTrue(results.Count() > 0);
-        }
-
-
-        [Test]
-        [Ignore("TODO: Implement this")]
-        public void LoaderMustLoadContainerLoadersMarkedWithContainerLoaderAttribute()
-        {
-            throw new NotImplementedException();
         }
 
         [Test]
@@ -168,19 +190,15 @@ namespace LinFu.UnitTests.IOC.Configuration
             mockListing.VerifyAll();
         }
 
-
         [Test]
-        [Ignore("TODO: Implement this")]
-        public void CreatedServicesMustBeAbleToInitializeThemselves()
+        public void TypeExtractorMustListTypesFromGivenAssembly()
         {
-            throw new NotImplementedException();
-        }
+            Assembly targetAssembly = typeof (SampleClass).Assembly;
 
-        [Test]
-        [Ignore("TODO: Implement this")]
-        public void BootstrapTypeLoaderMustLoadOtherTypeLoadersWithTypeLoaderAttribute()
-        {
-            throw new NotImplementedException();
+            ITypeExtractor extractor = new TypeExtractor();
+            IEnumerable<Type> results = extractor.GetTypes(targetAssembly);
+            Assert.IsNotNull(results);
+            Assert.IsTrue(results.Count() > 0);
         }
     }
 }

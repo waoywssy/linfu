@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace LinFu.IoC
 {
@@ -13,7 +10,7 @@ namespace LinFu.IoC
     public class FactoryAdapter<T> : IFactory
     {
         private readonly IFactory<T> _factory;
-        
+
         /// <summary>
         /// Creates the factory adapter using the given
         /// IFactory&lt;T&gt; instance.
@@ -25,6 +22,9 @@ namespace LinFu.IoC
         {
             _factory = factory;
         }
+
+        #region IFactory Members
+
         /// <summary>
         /// Overridden. Uses the strongly-typed factory
         /// to create the service instance every time
@@ -41,5 +41,7 @@ namespace LinFu.IoC
 
             return _factory.CreateInstance(container);
         }
+
+        #endregion
     }
 }

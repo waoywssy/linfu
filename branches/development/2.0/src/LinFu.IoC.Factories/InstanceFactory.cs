@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LinFu.IoC;
 
 namespace LinFu.IoC
 {
@@ -22,6 +18,9 @@ namespace LinFu.IoC
         {
             _instance = instance;
         }
+
+        #region IFactory Members
+
         /// <summary>
         /// A method that returns the existing object reference associated with
         /// this factory. 
@@ -32,5 +31,7 @@ namespace LinFu.IoC
         {
             return _instance;
         }
+
+        #endregion
     }
 }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace LinFu.IoC.Interfaces
 {
@@ -32,7 +29,7 @@ namespace LinFu.IoC.Interfaces
         /// <summary>
         /// The type of service being requested.
         /// </summary>
-        Type ServiceType { get;  }
+        Type ServiceType { get; }
 
         /// <summary>
         /// The container that will handle the service request.

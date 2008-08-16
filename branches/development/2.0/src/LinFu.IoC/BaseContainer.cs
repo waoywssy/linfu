@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LinFu.IoC;
 
 namespace LinFu.IoC
 {
@@ -12,11 +9,9 @@ namespace LinFu.IoC
     /// </summary>
     public abstract class BaseContainer : IContainer
     {
-        private readonly Dictionary<Type, IFactory> _factories = new Dictionary<Type, IFactory>();        
-        
-        protected BaseContainer()
-        {
-        }
+        private readonly Dictionary<Type, IFactory> _factories = new Dictionary<Type, IFactory>();
+
+        #region IContainer Members
 
         /// <summary>
         /// Gets or sets a <see cref="bool">System.Boolean</see> value
@@ -24,10 +19,7 @@ namespace LinFu.IoC
         /// a <see cref="ServiceNotFoundException"/> if a requested service
         /// cannot be found or created.
         /// </summary>
-        public virtual bool SuppressErrors
-        {
-            get; set;
-        }
+        public virtual bool SuppressErrors { get; set; }
 
         /// <summary>
         /// Adds an <see cref="IFactory"/> instance and associates it
@@ -50,7 +42,7 @@ namespace LinFu.IoC
         {
             return _factories.ContainsKey(serviceType);
         }
-        
+
         /// <summary>
         /// Causes the container to instantiate the service with the given
         /// <paramref name="serviceType">service type</paramref>. If the service type cannot be created, then an
@@ -68,14 +60,16 @@ namespace LinFu.IoC
 
             if (!_factories.ContainsKey(serviceType) && SuppressErrors)
                 return null;
-            
+
             // Use the corresponding factory 
             // and create the service instance
-            var factory = _factories[serviceType];
+            IFactory factory = _factories[serviceType];
             if (factory != null)
                 result = factory.CreateInstance(serviceType, this);
 
             return result;
         }
+
+        #endregion
     }
 }

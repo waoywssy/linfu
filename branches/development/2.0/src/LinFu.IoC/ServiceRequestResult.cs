@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
@@ -11,25 +8,18 @@ namespace LinFu.IoC
     /// is made against an <see cref="IContainer"/> instance.
     /// </summary>
     internal class ServiceRequestResult : IServiceRequestResult
-    {        
+    {
+        #region IServiceRequestResult Members
+
         /// <summary>
         /// The name of the service being created. By default, this property is blank.
         /// </summary>
-        public string ServiceName
-        {
-            get; internal set;
-
-        }
+        public string ServiceName { get; internal set; }
 
         /// <summary>
         /// The raw object reference created by the container itself.
         /// </summary>
-        public object OriginalResult
-        { 
-            get;
-            internal set;
-
-        }
+        public object OriginalResult { get; internal set; }
 
         /// <summary>
         /// The result that will be returned from the container
@@ -37,27 +27,18 @@ namespace LinFu.IoC
         /// 
         /// If this property is null, then the original result will be used.
         /// </summary>
-        public object ActualResult
-        { 
-            get; set;
-        }
-        
+        public object ActualResult { get; set; }
+
         /// <summary>
         /// The type of service being requested.
         /// </summary>
-        public Type ServiceType
-        {
-            get;
-            internal set;
-        }
+        public Type ServiceType { get; internal set; }
 
         /// <summary>
         /// The container that will handle the service request.
         /// </summary>
-        public IServiceContainer Container
-        {
-            get;
-            internal set;
-        }        
+        public IServiceContainer Container { get; internal set; }
+
+        #endregion
     }
 }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LinFu.IoC;
 
 namespace LinFu.IoC
 {
@@ -24,9 +20,10 @@ namespace LinFu.IoC
         public static T GetService<T>(this IContainer container)
             where T : class
         {
-            var serviceType = typeof (T);
+            Type serviceType = typeof (T);
             return container.GetService(serviceType) as T;
         }
+
         /// <summary>
         /// Creates an instance of <typeparamref name="T"/>
         /// using the given <paramref name="container"/>.
@@ -41,6 +38,7 @@ namespace LinFu.IoC
         {
             return container.GetService(serviceName, typeof (T)) as T;
         }
+
         /// <summary>
         /// Adds an <see cref="IFactory"/> instance and associates it
         /// with the given <typeparamref name="T">service type</paramref> and
@@ -64,7 +62,7 @@ namespace LinFu.IoC
         public static void AddFactory<T>(this IContainer container, IFactory<T> factory)
         {
             IFactory adapter = new FactoryAdapter<T>(factory);
-            container.AddFactory(typeof(T), adapter);
+            container.AddFactory(typeof (T), adapter);
         }
 
         /// <summary>

@@ -1,19 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LinFu.IoC.Configuration;
+﻿using LinFu.IoC.Configuration;
 using LinFu.Reflection;
 using LinFu.Reflection.Plugins;
 
 namespace LinFu.IoC.Plugins
 {
+    /// <summary>
+    /// A plugin that adds support for injecting factory types marked with the
+    /// <see cref="FactoryAttribute"/> into a <see cref="IServiceContainer"/>
+    /// instance.
+    /// </summary>
     [LoaderPlugin]
     public class FactoryAttributePlugin : BaseTargetLoaderPlugin<IServiceContainer>
     {
-        protected override void Initialize(IAssemblyTargetLoader<IServiceContainer> assemblyLoader)
+        /// <summary>
+        /// Injects an <see cref="FactoryAttributeLoader"/>
+        /// </summary>
+        /// <param name="assemblyLoader">The assembly loader that will configure the service container instance.</param>
+        protected override void Initialize(ILoader<IServiceContainer> loader, IAssemblyTargetLoader<IServiceContainer> assemblyLoader)
         {
-            assemblyLoader.TypeLoaders.Add(new FactoryAttributeLoader());            
+            assemblyLoader.TypeLoaders.Add(new FactoryAttributeLoader());
         }
-    }    
+    }
 }

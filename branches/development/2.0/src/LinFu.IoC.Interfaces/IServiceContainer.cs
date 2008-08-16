@@ -12,6 +12,12 @@ namespace LinFu.IoC
     public interface IServiceContainer : IContainer
     {
         /// <summary>
+        /// The list of postprocessors that will handle every
+        /// service request result.
+        /// </summary>
+        IList<IPostProcessor> PostProcessors { get; }
+
+        /// <summary>
         /// Adds an <see cref="IFactory"/> instance and associates it
         /// with the given <paramref name="serviceType">service type</paramref> and
         /// <paramref name="serviceName">service name</paramref>.
@@ -20,7 +26,7 @@ namespace LinFu.IoC
         /// <param name="serviceType">The type of service that the factory will be able to create.</param>
         /// <param name="factory">The <see cref="IFactory"/> instance that will create the object instance.</param>
         void AddFactory(string serviceName, Type serviceType, IFactory factory);
-        
+
         /// <summary>
         /// Determines whether or not a service can be created using
         /// the given <paramref name="serviceName">service name</paramref>
@@ -42,11 +48,5 @@ namespace LinFu.IoC
         /// <returns>If successful, it will return a service instance that is compatible with the given type;
         /// otherwise, it will just return a <c>null</c> value.</returns>
         object GetService(string serviceName, Type serviceType);
-
-        /// <summary>
-        /// The list of postprocessors that will handle every
-        /// service request result.
-        /// </summary>
-        IList<IPostProcessor> PostProcessors { get; }
     }
 }

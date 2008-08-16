@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using LinFu.Reflection;
 
 namespace LinFu.Reflection.Plugins
-{    
+{
     /// <summary>
     /// A plugin class that provides the basic implementation
     /// for plugins that work with <see cref="IAssemblyTargetLoader{TTarget}"/> instances.
     /// </summary>
     /// <typeparam name="TTarget">The target type being configured.</typeparam>
     public abstract class BaseTargetLoaderPlugin<TTarget> : BaseLoaderPlugin<TTarget>,
-        IInitialize<ILoader<TTarget>>
+                                                            IInitialize<ILoader<TTarget>>
     {
+        #region IInitialize<ILoader<TTarget>> Members
+
         /// <summary>
         /// Searches the loader for an <see cref="IAssemblyTargetLoader{T}"/>
         /// instance and uses its derived classes to initialize
@@ -26,10 +25,10 @@ namespace LinFu.Reflection.Plugins
             // instance, if possible
             IAssemblyTargetLoader<TTarget> assemblyLoader = null;
 
-            var matches = (from currentInstance in source.FileLoaders
-                           where currentInstance != null &&
-                                 currentInstance is IAssemblyTargetLoader<TTarget>
-                           select (IAssemblyTargetLoader<TTarget>)currentInstance).ToList();
+            List<IAssemblyTargetLoader<TTarget>> matches = (from currentInstance in source.FileLoaders
+                                                            where currentInstance != null &&
+                                                                  currentInstance is IAssemblyTargetLoader<TTarget>
+                                                            select (IAssemblyTargetLoader<TTarget>) currentInstance).ToList();
 
             if (matches.Count > 0)
                 assemblyLoader = matches[0];
@@ -46,9 +45,18 @@ namespace LinFu.Reflection.Plugins
             if (assemblyLoader == null)
                 return;
 
-            Initialize(assemblyLoader);
+            Initialize(source, assemblyLoader);
         }
 
-        protected abstract void Initialize(IAssemblyTargetLoader<TTarget> assemblyLoader);
+        #endregion
+
+        /// <summary>
+        /// Initializes the <paramref name="loader"/> instance
+        /// with the given <paramref name="assemblyLoader"/> instance.
+        /// </summary>
+        /// <param name="loader">The loader being configured.</param>
+        /// <param name="assemblyLoader">The assembly loader that will load the types into the loader itself.</param>
+        protected abstract void Initialize(ILoader<TTarget> loader,
+                                           IAssemblyTargetLoader<TTarget> assemblyLoader);
     }
 }

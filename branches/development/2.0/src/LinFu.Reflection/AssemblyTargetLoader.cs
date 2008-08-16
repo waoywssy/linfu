@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-
 
 namespace LinFu.Reflection
-{    
+{
     /// <summary>
     /// Represents a loader class that takes <see cref="System.Type"/>
     /// instances as input and generates <see cref="Action{T}"/>
@@ -27,6 +25,9 @@ namespace LinFu.Reflection
             AssemblyLoader = new AssemblyLoader();
             TypeExtractor = new TypeExtractor();
         }
+
+        #region IAssemblyTargetLoader<TTarget> Members
+
         /// <summary>
         /// The <see cref="IAssemblyLoader"/> instance that will load
         /// the target assemblies.
@@ -37,11 +38,8 @@ namespace LinFu.Reflection
         /// The <see cref="ITypeExtractor"/> instance that will
         /// determine which types will be extracted from an assembly.
         /// </summary>
-        public ITypeExtractor TypeExtractor
-        {
-            get;
-            set;
-        }
+        public ITypeExtractor TypeExtractor { get; set; }
+
         /// <summary>
         /// The list of ActionLoaders that will be used to
         /// configure the target.
@@ -50,6 +48,7 @@ namespace LinFu.Reflection
         {
             get { return typeLoaders; }
         }
+
         /// <summary>
         /// Determines whether or not the current type loader
         /// instance can load the current file type.
@@ -60,10 +59,10 @@ namespace LinFu.Reflection
         /// <param name="filename">The filename and full path of the target file.</param>
         /// <returns>Returns <c>true</c> if the file can be loaded; otherwise, the result is <c>false</c>.</returns>
         public bool CanLoad(string filename)
-        {            
+        {
             return TypeLoaders.Count > 0 &&
-                Path.GetExtension(filename).ToLower() == ".dll" &&
-                File.Exists(filename);
+                   Path.GetExtension(filename).ToLower() == ".dll" &&
+                   File.Exists(filename);
         }
 
         /// <summary>
@@ -98,7 +97,7 @@ namespace LinFu.Reflection
             // the type loaders for processing
             var results = new List<Action<TTarget>>();
 
-            foreach (var type in types)
+            foreach (Type type in types)
             {
                 // Skip any invalid types
                 if (type == null)
@@ -109,6 +108,9 @@ namespace LinFu.Reflection
 
             return results;
         }
+
+        #endregion
+
         /// <summary>
         /// Generates the list of <see cref="Action{TTarget}"/>
         /// instances which will be used to configure a target instance.
@@ -122,7 +124,7 @@ namespace LinFu.Reflection
                 if (typeLoader == null || !typeLoader.CanLoad(type))
                     continue;
 
-                var actions = typeLoader.Load(type);
+                IEnumerable<Action<TTarget>> actions = typeLoader.Load(type);
 
                 if (actions.Count() == 0)
                     continue;

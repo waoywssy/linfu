@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace LinFu.IoC.Factories
 {
@@ -12,6 +9,22 @@ namespace LinFu.IoC.Factories
     /// <typeparam name="T"></typeparam>
     public abstract class BaseFactory<T> : IFactory<T>, IFactory
     {
+        #region IFactory Members
+
+        /// <summary>
+        /// Creates a service instance using the given container.
+        /// </summary>
+        /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
+        /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
+        object IFactory.CreateInstance(Type serviceType, IContainer container)
+        {
+            return CreateInstance(container);
+        }
+
+        #endregion
+
+        #region IFactory<T> Members
+
         /// <summary>
         /// Creates a service instance using the given container.
         /// </summary>
@@ -25,14 +38,6 @@ namespace LinFu.IoC.Factories
         /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
         public abstract T CreateInstance(IContainer container);
 
-        /// <summary>
-        /// Creates a service instance using the given container.
-        /// </summary>
-        /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
-        /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
-        object IFactory.CreateInstance(Type serviceType, IContainer container)
-        {
-            return (T) CreateInstance(container);
-        }
+        #endregion
     }
 }

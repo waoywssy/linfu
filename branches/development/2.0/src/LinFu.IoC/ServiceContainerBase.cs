@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LinFu.IoC;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
@@ -19,6 +16,9 @@ namespace LinFu.IoC
             new Dictionary<string, Dictionary<Type, IFactory>>();
 
         private readonly List<IPostProcessor> _postProcessors = new List<IPostProcessor>();
+
+        #region IServiceContainer Members
+
         /// <summary>
         /// Adds an <see cref="IFactory"/> instance and associates it
         /// with the given <paramref name="serviceType">service type</paramref> and
@@ -38,7 +38,7 @@ namespace LinFu.IoC
             if (!_namedFactories.ContainsKey(serviceName))
                 _namedFactories[serviceName] = new Dictionary<Type, IFactory>();
 
-            _namedFactories[serviceName][serviceType] = factory;            
+            _namedFactories[serviceName][serviceType] = factory;
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace LinFu.IoC
             if (serviceName == string.Empty)
                 return Contains(serviceType);
 
-            return _namedFactories.ContainsKey(serviceName) && 
+            return _namedFactories.ContainsKey(serviceName) &&
                    _namedFactories[serviceName].ContainsKey(serviceType);
         }
 
@@ -79,14 +79,14 @@ namespace LinFu.IoC
 
             // Determine if the service exists, and
             // suppress the errors if necessary
-            var exists = Contains(serviceName, serviceType);
+            bool exists = Contains(serviceName, serviceType);
             if (!exists && SuppressErrors)
                 return null;
 
             if (!exists && SuppressErrors != true)
                 throw new NamedServiceNotFoundException(serviceName, serviceType);
 
-            var factory = _namedFactories[serviceName][serviceType];
+            IFactory factory = _namedFactories[serviceName][serviceType];
 
             object result = null;
             // Make sure that the factory exists
@@ -95,6 +95,7 @@ namespace LinFu.IoC
 
             return result;
         }
+
         /// <summary>
         /// The list of postprocessors that will handle every
         /// service request result.
@@ -103,5 +104,7 @@ namespace LinFu.IoC
         {
             get { return _postProcessors; }
         }
+
+        #endregion
     }
 }

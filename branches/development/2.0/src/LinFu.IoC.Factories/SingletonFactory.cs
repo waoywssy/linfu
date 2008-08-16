@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
 
 namespace LinFu.IoC.Factories
 {
@@ -48,6 +44,6 @@ namespace LinFu.IoC.Factories
         public override T CreateInstance(IContainer container)
         {
             return SingletonCache.CreateInstance(container, _createInstance);
-        }       
+        }
     }
 }

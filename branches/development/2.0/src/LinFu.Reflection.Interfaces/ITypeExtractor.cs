@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace LinFu.Reflection
 {
@@ -16,7 +14,7 @@ namespace LinFu.Reflection
         /// Returns a set of types from a given assembly.
         /// </summary>
         /// <param name="targetAssembly">The <see cref="Assembly"/> that contains the target types.</param>
-        /// <returns>An <see cref="IEnumerable{Type}"/> of types from the target assembly.</returns>
+        /// <returns>An <see cref="IEnumerable{T}"/> of types from the target assembly.</returns>
         IEnumerable<Type> GetTypes(Assembly targetAssembly);
     }
 }

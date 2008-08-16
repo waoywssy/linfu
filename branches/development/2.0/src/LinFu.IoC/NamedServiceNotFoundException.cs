@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace LinFu.IoC
 {
@@ -14,11 +11,13 @@ namespace LinFu.IoC
     {
         private readonly string _serviceName;
         private readonly Type _serviceType;
+
         public NamedServiceNotFoundException(string serviceName, Type serviceType) : base(serviceType)
         {
             _serviceName = serviceName;
             _serviceType = serviceType;
         }
+
         public override string Message
         {
             get

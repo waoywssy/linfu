@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace LinFu.Reflection.Plugins
+﻿namespace LinFu.Reflection.Plugins
 {
     /// <summary>
     /// A class that implements the basic functionality of
@@ -12,6 +7,8 @@ namespace LinFu.Reflection.Plugins
     /// <typeparam name="TTarget">The type being loaded.</typeparam>
     public abstract class BaseLoaderPlugin<TTarget> : ILoaderPlugin<TTarget>
     {
+        #region ILoaderPlugin<TTarget> Members
+
         /// <summary>
         /// Signals the beginning of a load.
         /// </summary>
@@ -27,5 +24,7 @@ namespace LinFu.Reflection.Plugins
         public virtual void EndLoad(TTarget target)
         {
         }
+
+        #endregion
     }
 }

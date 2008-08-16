@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace LinFu.IoC
+﻿namespace LinFu.IoC
 {
     /// <summary>
     /// A strongly-typed version of <see cref="IFactory"/>. Allows users

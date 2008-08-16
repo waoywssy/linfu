@@ -5,14 +5,14 @@ namespace LinFu.IoC
     /// <summary>
     /// An inversion of control container interface.
     /// </summary>
-    public interface IContainer 
+    public interface IContainer
     {
         /// <summary>
         /// Determines whether or not a container will throw an exception
         /// if the requested service is not found.
         /// </summary>
         bool SuppressErrors { get; set; }
-        
+
         /// <summary>
         /// Adds an <see cref="IFactory"/> instance and associates it
         /// with the given <paramref name="serviceType">service type</paramref>.

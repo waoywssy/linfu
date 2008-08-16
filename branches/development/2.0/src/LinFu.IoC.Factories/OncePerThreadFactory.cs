@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace LinFu.IoC.Factories
@@ -13,8 +11,8 @@ namespace LinFu.IoC.Factories
     /// <typeparam name="T">The type of service to instantiate.</typeparam>
     public class OncePerThreadFactory<T> : BaseFactory<T>
     {
+        private static readonly Dictionary<int, T> _storage = new Dictionary<int, T>();
         private readonly Func<Type, IContainer, T> _createInstance;
-        private static Dictionary<int, T> _storage = new Dictionary<int, T>();
 
         /// <summary>
         /// Initializes the factory class using the <paramref name="createInstance"/>
@@ -41,6 +39,7 @@ namespace LinFu.IoC.Factories
         {
             _createInstance = createInstance;
         }
+
         /// <summary>
         /// Creates the service instance using the given <paramref name="container"/>
         /// instance. Every service instance created from this factory will
@@ -50,14 +49,14 @@ namespace LinFu.IoC.Factories
         /// <returns>A a service instance as thread-wide singleton.</returns>
         public override T CreateInstance(IContainer container)
         {
-            var threadId = Thread.CurrentThread.ManagedThreadId;
+            int threadId = Thread.CurrentThread.ManagedThreadId;
 
             T result = default(T);
             lock (_storage)
             {
                 // Create the service instance only once
                 if (!_storage.ContainsKey(threadId))
-                    _storage[threadId] = _createInstance(typeof(T), container);
+                    _storage[threadId] = _createInstance(typeof (T), container);
 
                 result = _storage[threadId];
             }

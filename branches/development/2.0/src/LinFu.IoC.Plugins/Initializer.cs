@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LinFu.IoC.Configuration;
+﻿using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC.Plugins
@@ -13,6 +9,8 @@ namespace LinFu.IoC.Plugins
     /// </summary>
     internal class Initializer : IPostProcessor
     {
+        #region IPostProcessor Members
+
         /// <summary>
         /// Initializes every service that implements
         /// the <see cref="IInitialize"/> interface.
@@ -23,8 +21,10 @@ namespace LinFu.IoC.Plugins
             var target = result.OriginalResult as IInitialize;
             if (target == null)
                 return;
-            
+
             target.Initialize(result.Container);
         }
+
+        #endregion
     }
 }

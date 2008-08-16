@@ -52,6 +52,7 @@
     <Compile Include="SampleFactory.cs" />
     <Compile Include="SampleGenericImplementation.cs" />
     <Compile Include="SampleOpenGenericFactory.cs" />
+    <Compile Include="SamplePostProcessor.cs" />
     <Compile Include="SampleStronglyTypedFactory.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -37,7 +37,13 @@ namespace LinFu.Reflection
         /// performed prior to the beginning of a load operation.
         /// </summary>
         IList<Action<ILoader<TTarget>>> CustomLoaderActions { get; }
-        
+
+        /// <summary>
+        /// The list of actions that will execute
+        /// every time a target instance is configured.
+        /// </summary>
+        IList<Action<TTarget>> QueuedActions { get; }
+
         /// <summary>
         /// Loads the configuration using the files listed in 
         /// the target <paramref name="directory"/> that match 
