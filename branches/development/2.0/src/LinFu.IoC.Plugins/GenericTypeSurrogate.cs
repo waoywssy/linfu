@@ -1,7 +1,7 @@
 ﻿using System;
 using LinFu.IoC.Interfaces;
 
-namespace LinFu.IoC.Configuration
+namespace LinFu.IoC.Plugins
 {
     /// <summary>
     /// A postprocessor that routes all service requests

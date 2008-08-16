@@ -5,6 +5,7 @@ using LinFu.IoC;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Factories;
 using LinFu.IoC.Interfaces;
+using LinFu.IoC.Plugins;
 using Moq;
 using NUnit.Framework;
 using SampleLibrary;

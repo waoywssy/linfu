@@ -1,6 +1,6 @@
 ﻿using LinFu.Reflection;
 
-namespace LinFu.IoC.Configuration
+namespace LinFu.IoC.Plugins
 {
     /// <summary>
     /// Represents a class that loads configuration information

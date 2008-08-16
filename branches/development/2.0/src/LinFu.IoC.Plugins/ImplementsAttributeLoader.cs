@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using LinFu.IoC.Configuration;
 using LinFu.IoC.Factories;
 
-namespace LinFu.IoC.Configuration
+namespace LinFu.IoC.Plugins
 {
     /// <summary>
     /// A loader class that scans a type for <see cref="ImplementsAttribute"/>

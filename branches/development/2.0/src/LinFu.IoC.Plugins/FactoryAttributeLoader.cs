@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using LinFu.IoC.Configuration;
+using LinFu.IoC.Plugins;
 
-namespace LinFu.IoC.Configuration
+namespace LinFu.IoC.Plugins
 {
     /// <summary>
     /// A class that injects custom <see cref="IFactory"/> and <see cref="IFactory{T}"/>
