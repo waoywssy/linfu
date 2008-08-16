@@ -7,7 +7,8 @@ namespace LinFu.IoC.Plugins
     /// A class that initializes service instances that use
     /// the <see cref="IInitialize"/> interface.
     /// </summary>
-    internal class Initializer : IPostProcessor
+    [PostProcessor]
+    public class Initializer : IPostProcessor
     {
         #region IPostProcessor Members
 
