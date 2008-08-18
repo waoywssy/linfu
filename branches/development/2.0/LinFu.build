@@ -5,7 +5,7 @@
 
 	<!-- User targets -->
 	<target name="clean" description="Delete Automated Build artifacts">
-		<delete dir="${build.dir}" if="${directory::exists(build.dir)}"/>
+		<delete dir="${build.dir}\Debug" if="${directory::exists(build.dir)}"/>
 	</target>
 
 	<target name="compile" description="Compiles using the AutomatedDebug Configuration">
@@ -13,7 +13,9 @@
 			<property name="Configuration" value="AutomatedDebug" />
 		</msbuild>
 	</target>
-
+	<target name="merge" depends="compile, run-unit-tests">
+		<msbuild project="src\ILMerge.MSBuild"/>
+	</target>
 	<target name="test" depends="compile, run-unit-tests" 
 		description="Compile and Run Tests" />
 		
