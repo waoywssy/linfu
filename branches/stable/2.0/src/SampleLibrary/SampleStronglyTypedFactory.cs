@@ -4,7 +4,7 @@ using LinFu.IoC.Interfaces;
 namespace SampleLibrary
 {
     [Factory(typeof (ISampleService))]
-    internal class SampleStronglyTypedFactory : IFactory<ISampleService>
+    public class SampleStronglyTypedFactory : IFactory<ISampleService>
     {
         #region IFactory<ISampleService> Members
 
