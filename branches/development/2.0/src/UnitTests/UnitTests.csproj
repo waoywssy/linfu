@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="IOC\FluentExtensionTests.Implementation.cs" />
     <Compile Include="IOC\Configuration\AssemblyContainerLoaderTests.cs" />
     <Compile Include="IOC\Configuration\ConfigurationTests.cs" />
     <Compile Include="IOC\Configuration\LoaderAttributeTests.cs" />

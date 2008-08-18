@@ -78,6 +78,25 @@ namespace LinFu.UnitTests.IOC.Configuration
         }
 
         [Test]
+        public void FactoryAttributeLoaderMustInjectStronglyTypedFactoryIntoContainer()
+        {
+            var container = new ServiceContainer();
+            Type serviceType = typeof(ISampleService);
+
+            ITypeLoader loader = new FactoryAttributeLoader();
+            IEnumerable<Action<IServiceContainer>> actions = loader.Load(typeof(SampleStronglyTypedFactory));
+
+            // The factory loader should return a set of actions
+            // that will inject that custom factory into the container
+            // itself
+            foreach (var action in actions)
+            {
+                action(container);
+            }
+
+            Assert.IsTrue(container.Contains(serviceType));
+        }
+        [Test]
         public void FactoryAttributeLoaderMustInjectUnnamedCustomFactoryIntoContainer()
         {
             var mockContainer = new Mock<IServiceContainer>();
