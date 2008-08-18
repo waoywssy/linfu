@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Factories;
+using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC.Plugins
 {

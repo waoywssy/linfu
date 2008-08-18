@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using LinFu.IoC.Interfaces;
 
-namespace LinFu.IoC
+namespace LinFu.IoC.Interfaces
 {
     /// <summary>
     /// An inversion of control container that supports

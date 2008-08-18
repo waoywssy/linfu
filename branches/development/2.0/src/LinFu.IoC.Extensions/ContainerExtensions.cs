@@ -1,4 +1,6 @@
 ﻿using System;
+using LinFu.IoC.Extensions;
+using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
 {
@@ -20,7 +22,7 @@ namespace LinFu.IoC
         public static T GetService<T>(this IContainer container)
             where T : class
         {
-            Type serviceType = typeof (T);
+            Type serviceType = typeof(T);
             return container.GetService(serviceType) as T;
         }
 
@@ -36,7 +38,7 @@ namespace LinFu.IoC
         public static T GetService<T>(this IServiceContainer container, string serviceName)
             where T : class
         {
-            return container.GetService(serviceName, typeof (T)) as T;
+            return container.GetService(serviceName, typeof(T)) as T;
         }
 
         /// <summary>
@@ -50,7 +52,7 @@ namespace LinFu.IoC
         public static void AddFactory<T>(this IServiceContainer container, string serviceName, IFactory<T> factory)
         {
             IFactory adapter = new FactoryAdapter<T>(factory);
-            container.AddFactory(serviceName, typeof (T), adapter);
+            container.AddFactory(serviceName, typeof(T), adapter);
         }
 
         /// <summary>
@@ -62,7 +64,7 @@ namespace LinFu.IoC
         public static void AddFactory<T>(this IContainer container, IFactory<T> factory)
         {
             IFactory adapter = new FactoryAdapter<T>(factory);
-            container.AddFactory(typeof (T), adapter);
+            container.AddFactory(typeof(T), adapter);
         }
 
         /// <summary>
@@ -73,7 +75,7 @@ namespace LinFu.IoC
         /// <param name="instance">The service instance itself.</param>
         public static void AddService<T>(this IContainer container, T instance)
         {
-            container.AddFactory(typeof (T), new InstanceFactory(instance));
-        }
+            container.AddFactory(typeof(T), new InstanceFactory(instance));
+        }        
     }
 }

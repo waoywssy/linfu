@@ -1,6 +1,6 @@
 using System;
 
-namespace LinFu.IoC
+namespace LinFu.IoC.Interfaces
 {
     /// <summary>
     /// An inversion of control container interface.

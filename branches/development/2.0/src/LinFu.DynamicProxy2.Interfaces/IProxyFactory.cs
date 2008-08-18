@@ -12,7 +12,7 @@ namespace LinFu.DynamicProxy2.Interfaces
     public interface IProxyFactory
     {
         /// <summary>
-        /// Generates a dynamic proxy instance
+        /// Generates a dynamic proxy type
         /// that derives from the <paramref name="baseType"/>
         /// and implements the given <paramref name="baseInterfaces">interfaces</paramref>.
         /// </summary>

@@ -1,6 +1,7 @@
 ﻿using System;
+using LinFu.IoC.Interfaces;
 
-namespace LinFu.IoC
+namespace LinFu.IoC.Interfaces
 {
     /// <summary>
     /// Allows an object to create its own service instances.

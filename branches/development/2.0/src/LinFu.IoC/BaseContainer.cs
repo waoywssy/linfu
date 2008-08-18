@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
 {

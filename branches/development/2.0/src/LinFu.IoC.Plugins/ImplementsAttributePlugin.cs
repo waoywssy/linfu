@@ -1,4 +1,5 @@
-﻿using LinFu.Reflection;
+﻿using LinFu.IoC.Interfaces;
+using LinFu.Reflection;
 using LinFu.Reflection.Plugins;
 
 namespace LinFu.IoC.Plugins

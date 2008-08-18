@@ -1,4 +1,5 @@
 ﻿using System;
+using LinFu.IoC.Interfaces;
 using LinFu.Reflection;
 
 namespace LinFu.IoC.Configuration

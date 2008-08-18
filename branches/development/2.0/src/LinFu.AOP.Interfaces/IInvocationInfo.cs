@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace LinFu.DynamicProxy2.Interfaces
+namespace LinFu.AOP.Interfaces
 {
     /// <summary>
     /// Represents the information associated with 
@@ -36,6 +36,27 @@ namespace LinFu.DynamicProxy2.Interfaces
         MethodInfo CallingMethod { get; }
 
         /// <summary>
+        /// The return type of the <see cref="TargetMethod"/>.
+        /// </summary>
+        Type ReturnType { get; }
+
+        /// <summary>
+        /// The parameter types for the current target method.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This could be very useful in cases where the actual target method
+        /// is based on a generic type definition. In such cases, 
+        /// the <see cref="IInvocationInfo"/> instance needs to be able
+        /// to describe the actual parameter types being used by the
+        /// current generic type instantiation. This property helps
+        /// users determine which parameter types are actually being used
+        /// at the time of the method call.
+        /// </para>
+        /// </remarks>
+        Type[] ParameterTypes { get; }
+
+        /// <summary>
         /// If the <see cref="TargetMethod"/> method is a generic method, 
         /// this will hold the generic type arguments used to construct the
         /// method.
@@ -45,6 +66,6 @@ namespace LinFu.DynamicProxy2.Interfaces
         /// <summary>
         /// The arguments used in the method call.
         /// </summary>
-        object[] Arguments { get; }
+        object[] Arguments { get; }        
     }
 }

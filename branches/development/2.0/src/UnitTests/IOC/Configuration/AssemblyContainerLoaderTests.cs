@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
-using LinFu.IoC;
 using LinFu.IoC.Configuration;
+using LinFu.IoC.Interfaces;
 using LinFu.IoC.Plugins;
 using LinFu.Reflection;
 using Moq;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LinFu.AOP.Interfaces;
 
 namespace LinFu.DynamicProxy2.Interfaces
 {

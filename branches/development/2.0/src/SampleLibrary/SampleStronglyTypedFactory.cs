@@ -1,5 +1,5 @@
-﻿using LinFu.IoC;
-using LinFu.IoC.Configuration;
+﻿using LinFu.IoC.Configuration;
+using LinFu.IoC.Interfaces;
 
 namespace SampleLibrary
 {
