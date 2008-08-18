@@ -24,6 +24,13 @@ namespace LinFu.IoC
             _factory = factory;
         }
 
+        /// <summary>
+        /// The factory that will create the service instance.
+        /// </summary>
+        public IFactory<T> Factory
+        {
+            get { return _factory; }
+        }
         #region IFactory Members
 
         /// <summary>
