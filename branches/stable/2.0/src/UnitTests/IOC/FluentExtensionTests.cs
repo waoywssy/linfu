@@ -127,6 +127,5 @@ namespace LinFu.UnitTests.IOC
             TestSingleton("MyService", inject => inject.Using(container => new SampleClass()));
         }
         #endregion
-
     }
 }
