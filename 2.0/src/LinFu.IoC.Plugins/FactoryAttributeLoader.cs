@@ -29,7 +29,7 @@ namespace LinFu.IoC.Plugins
                 throw new ArgumentNullException("sourceType");
 
             // Extract the factory attributes from the current type
-            object[] attributes = sourceType.GetCustomAttributes(typeof (FactoryAttribute), true);
+            object[] attributes = sourceType.GetCustomAttributes(typeof (FactoryAttribute), false);
             List<FactoryAttribute> attributeList = attributes.Cast<FactoryAttribute>()
                 .Where(f => f != null).ToList();
 
