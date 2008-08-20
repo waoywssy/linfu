@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FirstOncePerRequestService.cs" />
     <Compile Include="FirstSingletonService.cs" />
     <Compile Include="ISampleGenericService.cs" />
     <Compile Include="ISampleService.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="SampleOpenGenericFactory.cs" />
     <Compile Include="SamplePostProcessor.cs" />
     <Compile Include="SampleStronglyTypedFactory.cs" />
+    <Compile Include="SecondOncePerRequestService.cs" />
     <Compile Include="SecondSingletonService.cs" />
   </ItemGroup>
   <ItemGroup>

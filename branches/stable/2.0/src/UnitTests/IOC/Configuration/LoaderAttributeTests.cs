@@ -122,14 +122,18 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             mockContainer.VerifyAll();
         }
-
+        // TODO: Refactor the next to methods and eliminate duplication
         [Test]
         public void LoaderMustLoadTheCorrectSingletonTypes()
         {
             var location = typeof (SamplePostProcessor).Assembly.Location ?? string.Empty;
-            var loader = new Loader();
-            loader.LoadDirectory(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
+            var loader = new Loader();            
             var directory = Path.GetDirectoryName(location);
+
+            // Load the default plugins first
+            loader.LoadDirectory(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
+
+            // Load the sample library
             loader.LoadDirectory(directory, Path.GetFileName(location));
 
             var filename = Path.Combine(directory, location);
@@ -146,6 +150,35 @@ namespace LinFu.UnitTests.IOC.Configuration
             Assert.IsNotNull(second);
             Assert.IsTrue(first.GetType() == typeof (FirstSingletonService));
             Assert.IsTrue(second.GetType() == typeof (SecondSingletonService));
+        }
+
+        [Test]
+        public void LoaderMustLoadTheCorrectOncePerRequestTypes()
+        {
+            var location = typeof(SamplePostProcessor).Assembly.Location ?? string.Empty;
+            var loader = new Loader();
+            var directory = Path.GetDirectoryName(location);
+
+            // Load the default plugins first
+            loader.LoadDirectory(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
+
+            // Load the sample library
+            loader.LoadDirectory(directory, Path.GetFileName(location));
+
+            var filename = Path.Combine(directory, location);
+            Assert.IsTrue(File.Exists(filename));
+
+            var container = new ServiceContainer();
+
+            loader.LoadInto(container);
+
+            var first = container.GetService<ISampleService>("FirstOncePerRequestService");
+            var second = container.GetService<ISampleService>("SecondOncePerRequestService");
+
+            Assert.IsNotNull(first);
+            Assert.IsNotNull(second);
+            Assert.IsTrue(first.GetType() == typeof(FirstOncePerRequestService));
+            Assert.IsTrue(second.GetType() == typeof(SecondOncePerRequestService));
         }
         [Test]
         public void NamedOncePerRequestFactoryMustBeCreatedFromTypeWithImplementsAttribute()
