@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
@@ -122,6 +123,30 @@ namespace LinFu.UnitTests.IOC.Configuration
             mockContainer.VerifyAll();
         }
 
+        [Test]
+        public void LoaderMustLoadTheCorrectSingletonTypes()
+        {
+            var location = typeof (SamplePostProcessor).Assembly.Location ?? string.Empty;
+            var loader = new Loader();
+            loader.LoadDirectory(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
+            var directory = Path.GetDirectoryName(location);
+            loader.LoadDirectory(directory, Path.GetFileName(location));
+
+            var filename = Path.Combine(directory, location);
+            Assert.IsTrue(File.Exists(filename));
+
+            var container = new ServiceContainer();
+
+            loader.LoadInto(container);
+
+            var first = container.GetService<ISampleService>("First");
+            var second = container.GetService<ISampleService>("Second");
+
+            Assert.IsNotNull(first);
+            Assert.IsNotNull(second);
+            Assert.IsTrue(first.GetType() == typeof (FirstSingletonService));
+            Assert.IsTrue(second.GetType() == typeof (SecondSingletonService));
+        }
         [Test]
         public void NamedOncePerRequestFactoryMustBeCreatedFromTypeWithImplementsAttribute()
         {
