@@ -44,7 +44,7 @@ namespace LinFu.IoC.Plugins
         {
             // Extract the Implements attribute from the source type
             ICustomAttributeProvider provider = sourceType;
-            object[] attributes = provider.GetCustomAttributes(typeof (ImplementsAttribute), true);
+            object[] attributes = provider.GetCustomAttributes(typeof (ImplementsAttribute), false);
             List<ImplementsAttribute> attributeList = attributes.Cast<ImplementsAttribute>().ToList();
 
             var results = new List<Action<IServiceContainer>>();
