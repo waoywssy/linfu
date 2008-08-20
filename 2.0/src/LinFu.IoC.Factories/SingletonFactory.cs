@@ -10,7 +10,8 @@ namespace LinFu.IoC.Factories
     public class SingletonFactory<T> : BaseFactory<T>
     {
         private readonly Func<Type, IContainer, T> _createInstance;
-
+        private T _instance;
+        private object _lock = new object();
         /// <summary>
         /// Initializes the factory class using the <paramref name="createInstance"/>
         /// parameter as a factory delegate.
@@ -44,7 +45,15 @@ namespace LinFu.IoC.Factories
         /// <returns>A service instance as a singleton.</returns>
         public override T CreateInstance(IContainer container)
         {
-            return SingletonCache.CreateInstance(container, _createInstance);
+            if (ReferenceEquals(_instance, null))
+            {
+                lock(_lock)
+                {
+                    _instance = _createInstance(typeof (T), container);
+                }
+            }
+
+            return _instance;
         }
     }
 }

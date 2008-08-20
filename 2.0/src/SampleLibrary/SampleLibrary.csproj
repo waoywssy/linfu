@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FirstSingletonService.cs" />
     <Compile Include="ISampleGenericService.cs" />
     <Compile Include="ISampleService.cs" />
     <Compile Include="SampleClass.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="SampleOpenGenericFactory.cs" />
     <Compile Include="SamplePostProcessor.cs" />
     <Compile Include="SampleStronglyTypedFactory.cs" />
+    <Compile Include="SecondSingletonService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.IoC.Configuration\LinFu.IoC.Configuration.csproj">

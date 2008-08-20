@@ -55,7 +55,6 @@
     <Compile Include="OncePerRequestFactory.cs" />
     <Compile Include="OncePerThreadFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SingletonCache.cs" />
     <Compile Include="SingletonFactory.cs" />
   </ItemGroup>
   <ItemGroup>
