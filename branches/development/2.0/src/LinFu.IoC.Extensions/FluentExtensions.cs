@@ -7,6 +7,10 @@ using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
 {
+    /// <summary>
+    /// Adds fluent interface support for <see cref="IServiceContainer"/>
+    /// instances.
+    /// </summary>
     public static class FluentExtensions
     {
         /// <summary>

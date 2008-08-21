@@ -29,8 +29,6 @@ namespace LinFu.IoC.Plugins
             _factoryTypes[LifecycleType.Singleton] = typeof (SingletonFactory<>);
         }
 
-        #region ITypeLoader Members
-
         /// <summary>
         /// Converts a given <see cref="System.Type"/> into
         /// a set of <see cref="Action{IServiceContainer}"/> instances so that
@@ -44,7 +42,7 @@ namespace LinFu.IoC.Plugins
         {
             // Extract the Implements attribute from the source type
             ICustomAttributeProvider provider = sourceType;
-            object[] attributes = provider.GetCustomAttributes(typeof (ImplementsAttribute), true);
+            object[] attributes = provider.GetCustomAttributes(typeof (ImplementsAttribute), false);
             List<ImplementsAttribute> attributeList = attributes.Cast<ImplementsAttribute>().ToList();
 
             var results = new List<Action<IServiceContainer>>();
@@ -84,12 +82,16 @@ namespace LinFu.IoC.Plugins
             return results;
         }
 
+        /// <summary>
+        /// Determines whether or not the current <paramref name="sourceType"/>
+        /// can be loaded.
+        /// </summary>
+        /// <param name="sourceType">The source type currently being loaded.</param>
+        /// <returns>Returns <c>true</c> if the type is a class type; otherwise, it returns <c>false</c>.</returns>
         public bool CanLoad(Type sourceType)
         {
             return sourceType.IsClass;
         }
-
-        #endregion
 
         /// <summary>
         /// Creates a factory instance that can create instaces of the given

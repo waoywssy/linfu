@@ -4,10 +4,10 @@
 	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     </PropertyGroup>
     <ItemGroup Condition=" '$(Configuration)' == 'Release' ">
-        <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Release\*.dll"/>
+        <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Release\LinFu*.dll"/>
     </ItemGroup>
     <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Debug\*.dll"/>
+        <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Debug\LinFu*.dll"/>
     </ItemGroup>
 
     <Target Name="Merge">

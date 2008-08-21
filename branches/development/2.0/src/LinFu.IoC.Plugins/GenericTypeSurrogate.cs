@@ -12,24 +12,44 @@ namespace LinFu.IoC.Plugins
         private readonly IFactory _factory;
         private readonly Type _typeDefinition;
 
+        /// <summary>
+        /// Initializes the class using the <paramref name="typeDefinition"/>
+        /// parameter as the generic type definition type that the <paramref name="factory"/>
+        /// will be able to create.
+        /// </summary>
+        /// <param name="typeDefinition">The class of generic types that this factory will be able to create.</param>
+        /// <param name="factory">The <see cref="IFactory"/> instance itself.</param>
         public GenericTypeSurrogate(Type typeDefinition, IFactory factory)
         {
             _typeDefinition = typeDefinition;
             _factory = factory;
         }
 
+        /// <summary>
+        /// The generic type definition that will define
+        /// the family of types that can be created by the
+        /// <see cref="Factory"/> instance.
+        /// </summary>
         public Type GenericTypeDefinition
         {
             get { return _typeDefinition; }
         }
 
+        /// <summary>
+        /// The <see cref="IFactory">factory</see> responsible
+        /// for creating the generic types.
+        /// </summary>
         public IFactory Factory
         {
             get { return _factory; }
         }
 
-        #region IPostProcessor Members
-
+        /// <summary>
+        /// This method routes all service requests
+        /// for a generic type to the <see cref="Factory"/> instance.
+        /// </summary>
+        /// <param name="result">The result of the original service request.</param>
+        /// <seealso cref="IServiceRequestResult"/>
         public void PostProcess(IServiceRequestResult result)
         {
             // Replace the result if and only
@@ -52,7 +72,5 @@ namespace LinFu.IoC.Plugins
             // Pass the call to the factory
             result.ActualResult = Factory.CreateInstance(serviceType, result.Container);
         }
-
-        #endregion
     }
 }

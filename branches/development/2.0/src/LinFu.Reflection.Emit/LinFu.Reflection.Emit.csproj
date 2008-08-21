@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9FFE90E0-49C0-4C37-91AE-ADB9B2F3D832}</ProjectGuid>
+    <ProjectGuid>{22B3D63C-29E9-49D3-86CB-28FF7D2C70E7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LinFu.IoC.Extensions</RootNamespace>
-    <AssemblyName>LinFu.IoC.Extensions</AssemblyName>
+    <RootNamespace>LinFu.Reflection.Emit</RootNamespace>
+    <AssemblyName>LinFu.Reflection.Emit</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\LinFu.IoC.Extensions.XML</DocumentationFile>
+    <DocumentationFile>..\..\build\Debug\LinFu.Reflection.Emit.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Cecil, Version=0.6.8.8607, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Mono.Cecil.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -49,22 +53,21 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ContainerExtensions.cs" />
-    <Compile Include="FluentExtensions.cs" />
-    <Compile Include="GenerateFactory.cs" />
-    <Compile Include="Interfaces\IGenerateFactory.cs" />
-    <Compile Include="InjectionContext.cs" />
-    <Compile Include="Interfaces\IUsingLambda.cs" />
-    <Compile Include="UsingLambda.cs" />
+    <Compile Include="AssemblyDefinitionExtensions.cs" />
+    <Compile Include="DefaultAssemblyFactory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LinFu.IoC.Factories\LinFu.IoC.Factories.csproj">
-      <Project>{14DB06BE-3178-4A01-98AB-DFC65485E567}</Project>
-      <Name>LinFu.IoC.Factories</Name>
+    <ProjectReference Include="..\LinFu.IoC.Configuration\LinFu.IoC.Configuration.csproj">
+      <Project>{EFBACCF3-C834-4114-9FC1-1F190DD6CE98}</Project>
+      <Name>LinFu.IoC.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LinFu.IoC.Interfaces\LinFu.IoC.Interfaces.csproj">
-      <Project>{C6AC7707-9288-4ADF-9053-34FE71FFE0BE}</Project>
-      <Name>LinFu.IoC.Interfaces</Name>
+    <ProjectReference Include="..\LinFu.IoC.Plugins\LinFu.IoC.Plugins.csproj">
+      <Project>{2554BD3F-0054-4963-A42C-8ADA07590E04}</Project>
+      <Name>LinFu.IoC.Plugins</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection.Emit.Interfaces\LinFu.Reflection.Emit.Interfaces.csproj">
+      <Project>{5DDB50DF-F14A-4D05-9A6B-99AC348617F1}</Project>
+      <Name>LinFu.Reflection.Emit.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

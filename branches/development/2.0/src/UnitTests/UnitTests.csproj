@@ -40,6 +40,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Cecil, Version=0.6.8.8607, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Mono.Cecil.dll</HintPath>
+    </Reference>
     <Reference Include="Moq, Version=2.0.2991.26580, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Moq.dll</HintPath>
@@ -49,6 +53,7 @@
       <HintPath>..\..\lib\NUnit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -70,8 +75,16 @@
     <Compile Include="IOC\Factories\FactoryTests.cs" />
     <Compile Include="IOC\FluentExtensionTests.cs" />
     <Compile Include="IOC\InversionOfControlTests.cs" />
+    <Compile Include="Reflection\BuilderChainTests.cs" />
+    <Compile Include="Reflection\BasePEVerifyTestCase.cs" />
+    <Compile Include="Reflection\ReflectionEmitTests.cs" />
+    <Compile Include="Tools\IMoqTrigger.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LinFu.DynamicProxy2.Interfaces\LinFu.DynamicProxy2.Interfaces.csproj">
+      <Project>{6C29A409-6148-49AC-A192-DC6F33F3304C}</Project>
+      <Name>LinFu.DynamicProxy2.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LinFu.IoC.Configuration.Interfaces\LinFu.IoC.Configuration.Interfaces.csproj">
       <Project>{857A7827-0969-4BC7-A941-61A060B9BBA8}</Project>
       <Name>LinFu.IoC.Configuration.Interfaces</Name>
@@ -100,6 +113,14 @@
       <Project>{FA3D5517-EFF4-4363-AFF2-EF67B981334E}</Project>
       <Name>LinFu.IoC</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection.Emit.Interfaces\LinFu.Reflection.Emit.Interfaces.csproj">
+      <Project>{5DDB50DF-F14A-4D05-9A6B-99AC348617F1}</Project>
+      <Name>LinFu.Reflection.Emit.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection.Emit\LinFu.Reflection.Emit.csproj">
+      <Project>{22B3D63C-29E9-49D3-86CB-28FF7D2C70E7}</Project>
+      <Name>LinFu.Reflection.Emit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LinFu.Reflection.Interfaces\LinFu.Reflection.Interfaces.csproj">
       <Project>{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}</Project>
       <Name>LinFu.Reflection.Interfaces</Name>
@@ -116,6 +137,9 @@
       <Project>{DEFBEF97-B03C-448F-9518-394735439E2E}</Project>
       <Name>SampleLibrary</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

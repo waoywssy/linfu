@@ -52,7 +52,6 @@
     <Compile Include="IContainerLoader.cs" />
     <Compile Include="IInitialize.cs" />
     <Compile Include="ITypeLoader.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.IoC.Interfaces\LinFu.IoC.Interfaces.csproj">

@@ -26,7 +26,7 @@ namespace LinFu.AOP.Interfaces
         /// instance.
         /// </summary>
         /// <param name="info">The <see cref="IInvocationInfo"/> associated with the method call.</param>
-        /// <returns>The actual return value from the <see cref="IInvocationInfo.TargetMethod">.</returns>
+        /// <returns>The actual return value from the <see cref="IInvocationInfo.TargetMethod"/>.</returns>
         object DoInvoke(IInvocationInfo info);
 
         /// <summary>

@@ -8,8 +8,8 @@ namespace LinFu.IoC
     /// Represents a basic inversion of control container that supports
     /// named services.
     /// </summary>
-    /// <seealso name="IContainer/>
-    /// <seealso name="INamedContainer"/>
+    /// <seealso name="IContainer"/>
+    /// <seealso name="IServiceContainer"/>
     public abstract class ServiceContainerBase : BaseContainer, IServiceContainer
     {
         private readonly Dictionary<string, Dictionary<Type, IFactory>> _namedFactories =
