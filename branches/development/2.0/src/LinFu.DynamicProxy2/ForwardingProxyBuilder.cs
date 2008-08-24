@@ -1,0 +1,75 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using LinFu.AOP.Interfaces;
+using LinFu.DynamicProxy2.Interfaces;
+using LinFu.IoC;
+using LinFu.IoC.Configuration;
+using LinFu.IoC.Interfaces;
+using LinFu.Reflection.Emit.Interfaces;
+using Mono.Cecil;
+
+namespace LinFu.DynamicProxy2
+{   
+    /// <summary>
+    /// A <see cref="IProxyBuilder"/> type that generates
+    /// proxies that forward all virtual method calls to a 
+    /// single interceptor.
+    /// </summary>
+    [Implements(typeof(IProxyBuilder), LifecycleType.OncePerRequest)]
+    public class ForwardingProxyBuilder : IProxyBuilder, IInitialize
+    {
+        /// <summary>
+        /// Initializes the current class with the default values.
+        /// </summary>
+        public ForwardingProxyBuilder()
+        {
+            InterfaceExtractor = new InterfaceExtractor();
+        }
+        /// <summary>
+        /// Generates a proxy that forwards all virtual method calls
+        /// to a single <see cref="IInterceptor"/> instance.
+        /// </summary>
+        /// <param name="baseType">The base class of the type being constructed.</param>
+        /// <param name="baseInterfaces">The list of interfaces that the new type must implement.</param>
+        /// <param name="module">The module that will hold the brand new type.</param>
+        /// <param name="targetType">The <see cref="TypeDefinition"/> that represents the type to be created.</param>
+        public void Construct(Type baseType, IEnumerable<Type> baseInterfaces,
+                                          ModuleDefinition module, TypeDefinition targetType)
+        {
+            // Determine which interfaces need to be implemented
+            var interfaces = new HashSet<Type>(baseInterfaces);
+
+            if (InterfaceExtractor != null)
+                InterfaceExtractor.GetInterfaces(baseType, interfaces);
+
+            if (ProxyImplementor != null)
+                ProxyImplementor.Construct(module, targetType);
+
+            // TODO: Finish this
+        }
+
+        /// <summary>
+        /// Gets or sets the <see cref="IExtractInterfaces"/> type that will be
+        /// responsible for determining which interfaces
+        /// the proxy type should implement.
+        /// </summary>
+        public IExtractInterfaces InterfaceExtractor { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="ITypeBuilder"/> interface
+        /// which will emit the actual implementation of the IProxy interface.
+        /// </summary>
+        public ITypeBuilder ProxyImplementor { get; set; }
+
+        /// <summary>
+        /// Initializes the current instance
+        /// with the <paramref name="source"/> container.
+        /// </summary>
+        /// <param name="source">The <see cref="IServiceContainer"/> instance that will hold the current instance.</param>
+        public void Initialize(IServiceContainer source)
+        {
+            InterfaceExtractor = source.GetService<IExtractInterfaces>();
+        }
+    }
+}

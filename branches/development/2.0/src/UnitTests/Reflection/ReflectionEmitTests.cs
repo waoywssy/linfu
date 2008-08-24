@@ -10,6 +10,7 @@ using LinFu.Reflection;
 using LinFu.Reflection.Emit;
 using LinFu.Reflection.Emit.Interfaces;
 using Mono.Cecil;
+using Moq;
 using NUnit.Framework;
 
 namespace LinFu.UnitTests.Reflection
@@ -42,41 +43,12 @@ namespace LinFu.UnitTests.Reflection
 
             PEVerify(filename);
         }
-        [Test]
-        public void AssemblyFactoryMustEmitValidAssembly()
-        {
-            IAssemblyFactory factory = container.GetService<IAssemblyFactory>();
-            Assert.IsTrue(container.Contains(typeof(IAssemblyFactory)));
 
-            string assemblyName = "testAssembly";
-            AssemblyDefinition assembly = factory.DefineAssembly(assemblyName, AssemblyKind.Dll);
-            Assert.IsNotNull(assembly);
-
-            // Save the assembly and verify the result
-            AssemblyFactory.SaveAssembly(assembly, filename);
-        }        
-
-        [Test]
-        public void AssemblyFactoryMustEmitBlankAssembly()
-        {
-            IAssemblyFactory factory = container.GetService<IAssemblyFactory>();
-            Assert.IsTrue(container.Contains(typeof(IAssemblyFactory)));
-
-            string assemblyName = "testAssembly";
-            AssemblyDefinition assembly = factory.DefineAssembly(assemblyName, AssemblyKind.Dll);
-            Assert.IsNotNull(assembly);
-
-            Assert.IsTrue(assembly.MainModule.Types.Count == 0);
-        }
 
         [Test]
         public void AssemblyDefinitionMustBeConvertibleToActualAssembly()
         {
-            IAssemblyFactory factory = container.GetService<IAssemblyFactory>();
-            Assert.IsNotNull(factory);
-
-            Assert.IsTrue(container.Contains(typeof(IAssemblyFactory)));
-            var definition = factory.DefineAssembly("testAssembly", AssemblyKind.Dll);
+            var definition = AssemblyFactory.DefineAssembly("testAssembly", AssemblyKind.Dll);
 
             Assembly assembly = definition.ToAssembly();
             Assert.IsTrue(assembly != null);

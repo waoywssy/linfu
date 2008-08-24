@@ -1,6 +1,6 @@
 ﻿namespace SampleLibrary
 {
-    public class SampleClass : ISampleService
+    public class SampleClass : ISampleService, ISampleGenericService<int>
     {
     }
 }

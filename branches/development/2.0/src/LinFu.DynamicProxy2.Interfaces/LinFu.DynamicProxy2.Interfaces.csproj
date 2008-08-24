@@ -34,6 +34,10 @@
     </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Cecil, Version=0.6.8.8607, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Mono.Cecil.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -51,8 +55,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="IExtractInterfaces.cs" />
     <Compile Include="IProxy.cs" />
-    <Compile Include="IProxyBuilderContext.cs" />
+    <Compile Include="IProxyBuilder.cs" />
     <Compile Include="IProxyFactory.cs" />
   </ItemGroup>
   <ItemGroup>

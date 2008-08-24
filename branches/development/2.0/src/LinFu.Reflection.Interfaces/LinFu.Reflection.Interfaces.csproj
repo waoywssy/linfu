@@ -59,7 +59,6 @@
     <Compile Include="IActionLoader.cs" />
     <Compile Include="IAssemblyLoader.cs" />
     <Compile Include="IAssemblyTargetLoader.cs" />
-    <Compile Include="IBuilder.cs" />
     <Compile Include="IDirectoryListing.cs" />
     <Compile Include="IInitialize.cs" />
     <Compile Include="ILoader.cs" />
