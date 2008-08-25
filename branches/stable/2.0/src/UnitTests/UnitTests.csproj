@@ -69,6 +69,7 @@
     <Compile Include="IOC\Configuration\SingletonSampleService.cs" />
     <Compile Include="IOC\Factories\FactoryTests.cs" />
     <Compile Include="IOC\FluentExtensionTests.cs" />
+    <Compile Include="IOC\FluentPropertyInjectionTests.cs" />
     <Compile Include="IOC\InversionOfControlTests.cs" />
   </ItemGroup>
   <ItemGroup>

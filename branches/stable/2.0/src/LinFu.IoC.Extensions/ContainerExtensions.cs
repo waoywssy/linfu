@@ -76,6 +76,18 @@ namespace LinFu.IoC
         public static void AddService<T>(this IContainer container, T instance)
         {
             container.AddFactory(typeof(T), new InstanceFactory(instance));
-        }        
+        }
+
+        /// <summary>
+        /// Adds an existing service instance to the container and
+        /// associates it with the <paramref name="serviceName"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of service being added.</typeparam>
+        /// <param name="container">The container that will hold the service instance.</param>
+        /// <param name="instance">The service instance itself.</param>
+        public static void AddService<T>(this IServiceContainer container, string serviceName, T instance)
+        {
+            container.AddFactory(serviceName, typeof(T), new InstanceFactory(instance));
+        }
     }
 }
