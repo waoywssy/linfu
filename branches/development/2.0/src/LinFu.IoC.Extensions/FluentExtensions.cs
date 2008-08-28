@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using LinFu.IoC.Extensions;
+using LinFu.IoC.Extensions.Interfaces;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
 {
     /// <summary>
-    /// Adds fluent interface support for <see cref="IServiceContainer"/>
+    /// A class that adds fluent syntax support to <see cref="IServiceContainer"/>
     /// instances.
     /// </summary>
     public static class FluentExtensions
@@ -51,6 +52,34 @@ namespace LinFu.IoC
             return new UsingLambda<TService>(context);
         }
 
+        /// <summary>
+        /// Initializes services that match the given <typeparamref name="TService"/> type.
+        /// </summary>
+        /// <typeparam name="TService">The service type to initialize.</typeparam>
+        /// <param name="container">The container that will create the service itself.</param>        
+        /// <returns>A <see cref="IPropertyInjectionLambda{T}"/> instance. This cannot be <c>null</c>.</returns>
+        public static IPropertyInjectionLambda<TService> Initialize<TService>(this IServiceContainer container)
+        {
+            return container.Initialize<TService>(string.Empty);
+        }
+
+        /// <summary>
+        /// Initializes services that match the given <paramref name="serviceName"/> and <typeparamref name="TService"/> type.
+        /// </summary>
+        /// <typeparam name="TService">The service type to initialize.</typeparam>
+        /// <param name="container">The container that will create the service itself.</param>
+        /// <param name="serviceName">The name of the service to initialize.</param>
+        /// <returns>A <see cref="IPropertyInjectionLambda{T}"/> instance. This cannot be <c>null</c>.</returns>
+        public static IPropertyInjectionLambda<TService> Initialize<TService>(this IServiceContainer container, string serviceName)
+        {
+            var context = new ActionContext<TService>()
+                              {
+                                  ServiceName = serviceName,
+                                  Container = container,
+                              };
+
+            return new PropertyInjectionLambda<TService>(context);
+        }
         /// <summary>
         /// Converts a <see cref="Func{Type, IServiceContainer, TService}"/>
         /// lambda into an equivalent <see cref="Func{Type, IContainer, TService}"/>

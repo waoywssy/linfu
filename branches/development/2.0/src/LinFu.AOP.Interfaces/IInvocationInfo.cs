@@ -33,7 +33,7 @@ namespace LinFu.AOP.Interfaces
         /// <summary>
         /// This is the actual calling method that invoked the <see cref="TargetMethod"/>.
         /// </summary>
-        MethodInfo CallingMethod { get; }
+        MethodBase CallingMethod { get; }
 
         /// <summary>
         /// The return type of the <see cref="TargetMethod"/>.

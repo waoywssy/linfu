@@ -56,6 +56,10 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="IExtractInterfaces.cs" />
+    <Compile Include="IMethodBodyEmitter.cs" />
+    <Compile Include="IMethodPicker.cs" />
+    <Compile Include="IMethodBuilder.cs" />
+    <Compile Include="IProxyMethodBuilder.cs" />
     <Compile Include="IProxy.cs" />
     <Compile Include="IProxyBuilder.cs" />
     <Compile Include="IProxyFactory.cs" />

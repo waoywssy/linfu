@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using LinFu.AOP.Interfaces;
 using LinFu.DynamicProxy2.Interfaces;
 using LinFu.IoC;
@@ -17,15 +18,19 @@ namespace LinFu.DynamicProxy2
     /// single interceptor.
     /// </summary>
     [Implements(typeof(IProxyBuilder), LifecycleType.OncePerRequest)]
-    public class ForwardingProxyBuilder : IProxyBuilder, IInitialize
+    public class ProxyBuilder : IProxyBuilder, IInitialize
     {
         /// <summary>
         /// Initializes the current class with the default values.
         /// </summary>
-        public ForwardingProxyBuilder()
+        public ProxyBuilder()
         {
             InterfaceExtractor = new InterfaceExtractor();
+            ProxyImplementor = new ProxyImplementor();
+            MethodPicker = new MethodPicker();
+            ProxyMethodBuilder = new ProxyMethodBuilder();
         }
+
         /// <summary>
         /// Generates a proxy that forwards all virtual method calls
         /// to a single <see cref="IInterceptor"/> instance.
@@ -43,10 +48,24 @@ namespace LinFu.DynamicProxy2
             if (InterfaceExtractor != null)
                 InterfaceExtractor.GetInterfaces(baseType, interfaces);
 
+            // Implement the IProxy interface
             if (ProxyImplementor != null)
                 ProxyImplementor.Construct(module, targetType);
 
-            // TODO: Finish this
+            // Determine which methods should be proxied
+            IEnumerable<MethodInfo> targetMethods = new MethodInfo[0];
+            if (MethodPicker != null)
+                targetMethods = MethodPicker.ChooseProxyMethodsFrom(baseType, interfaces);
+
+            if (ProxyMethodBuilder == null)
+                return;
+
+            // Generate a proxy method for each
+            // target method
+            foreach(var method in targetMethods)
+            {
+                ProxyMethodBuilder.CreateMethod(targetType, method);
+            }
         }
 
         /// <summary>
@@ -63,6 +82,22 @@ namespace LinFu.DynamicProxy2
         public ITypeBuilder ProxyImplementor { get; set; }
 
         /// <summary>
+        /// Gets or sets the <see cref="IMethodPicker"/>
+        /// instance that will determine which methods
+        /// will be proxied by the proxy builder.
+        /// </summary>
+        public IMethodPicker MethodPicker { get; set; }
+
+        /// <summary>
+        /// The <see cref="IMethodBuilder"/> instance
+        /// that will be responsible for generating each method
+        /// for the current target type.
+        /// </summary>
+        public IMethodBuilder ProxyMethodBuilder
+        {
+            get; set;
+        }
+        /// <summary>
         /// Initializes the current instance
         /// with the <paramref name="source"/> container.
         /// </summary>
@@ -70,6 +105,9 @@ namespace LinFu.DynamicProxy2
         public void Initialize(IServiceContainer source)
         {
             InterfaceExtractor = source.GetService<IExtractInterfaces>();
+            ProxyImplementor = source.GetService<ITypeBuilder>("ProxyImplementor");
+            MethodPicker = source.GetService<IMethodPicker>();
+            ProxyMethodBuilder = source.GetService<IMethodBuilder>("ProxyMethodBuilder");
         }
     }
 }

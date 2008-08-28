@@ -9,9 +9,9 @@
     {
         /// <summary>
         /// Initializes the target with the
-        /// particular <typeparamref cref="T"/> instance.
+        /// particular <typeparamref name="T"/> instance.
         /// </summary>
-        /// <param name="source">The <typeparamref cref="T"/> instance that will hold the target type.</param>
+        /// <param name="source">The <typeparamref name="T"/> instance that will hold the target type.</param>
         void Initialize(T source);
     }
 }

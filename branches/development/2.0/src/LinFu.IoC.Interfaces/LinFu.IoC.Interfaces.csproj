@@ -54,6 +54,7 @@
     <Compile Include="IFactoryOfT.cs" />
     <Compile Include="IServiceContainer.cs" />
     <Compile Include="IPostProcessor.cs" />
+    <Compile Include="IServiceInfo.cs" />
     <Compile Include="IServiceRequestResult.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

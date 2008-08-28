@@ -24,7 +24,7 @@ namespace LinFu.DynamicProxy2
         public ProxyFactory()
         {
             // Use the forwarding proxy type by default
-            ProxyBuilder = new ForwardingProxyBuilder();
+            ProxyBuilder = new ProxyBuilder();
         }
         #region IProxyFactory Members
 

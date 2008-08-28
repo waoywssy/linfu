@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="FirstOncePerRequestService.cs" />
     <Compile Include="FirstSingletonService.cs" />
+    <Compile Include="IInjectionTarget.cs" />
     <Compile Include="ISampleGenericService.cs" />
     <Compile Include="ISampleService.cs" />
     <Compile Include="SampleClass.cs" />

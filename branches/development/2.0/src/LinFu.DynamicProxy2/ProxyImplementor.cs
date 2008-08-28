@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using LinFu.AOP.Interfaces;
 using LinFu.DynamicProxy2.Interfaces;
+using LinFu.IoC.Configuration;
 using LinFu.Reflection.Emit.Interfaces;
 using LinFu.Reflection.Emit;
 using Mono.Cecil;
@@ -16,6 +17,7 @@ namespace LinFu.DynamicProxy2
     /// A class that provides the default implementation
     /// for the IProxy interface.
     /// </summary>
+    [Implements(typeof(ITypeBuilder), LifecycleType.OncePerRequest, ServiceName = "ProxyImplementor")]
     public class ProxyImplementor : ITypeBuilder
     {
         /// <summary>
@@ -33,8 +35,8 @@ namespace LinFu.DynamicProxy2
             if (targetType.Interfaces.Contains(proxyInterfaceType))
                 return;
 
-            targetType.Interfaces.Add(proxyInterfaceType);            
-            targetType.AddProperty("Interceptor", interceptorType);            
+            targetType.Interfaces.Add(proxyInterfaceType);
+            targetType.AddProperty("Interceptor", interceptorType);
         }
     }
 }
