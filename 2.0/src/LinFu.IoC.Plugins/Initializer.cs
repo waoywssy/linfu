@@ -1,4 +1,5 @@
-﻿using LinFu.IoC.Configuration;
+﻿using System.Collections.Generic;
+using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC.Plugins
@@ -10,6 +11,7 @@ namespace LinFu.IoC.Plugins
     [PostProcessor]
     public class Initializer : IPostProcessor
     {
+        private static readonly HashSet<IInitialize> _instances = new HashSet<IInitialize>();
         #region IPostProcessor Members
 
         /// <summary>
@@ -23,7 +25,13 @@ namespace LinFu.IoC.Plugins
             if (target == null)
                 return;
 
+            // Make sure that the target is initialized only once
+            if (_instances.Contains(target))
+                return;
+
+            // Initialize the target
             target.Initialize(result.Container);
+            _instances.Add(target);                                    
         }
 
         #endregion

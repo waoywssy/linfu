@@ -18,7 +18,7 @@ namespace LinFu.Reflection
 
         private readonly AssemblyTargetLoader<ILoader<TTarget>> _pluginLoader = new AssemblyTargetLoader<ILoader<TTarget>>();
         private readonly List<ILoaderPlugin<TTarget>> _plugins = new List<ILoaderPlugin<TTarget>>();
-
+        private readonly HashSet<string> _loadedFiles = new HashSet<string>();
         /// <summary>
         /// Initializes the target with the default settings.
         /// </summary>
@@ -95,6 +95,10 @@ namespace LinFu.Reflection
 
             foreach (string currentFile in files)
             {
+                // Make sure the file is loaded only once
+                if (_loadedFiles.Contains(currentFile))
+                    continue;
+
                 // HACK: Manually load any loader plugins
                 // into the loader
                 if (_pluginLoader.CanLoad(currentFile))
@@ -109,6 +113,7 @@ namespace LinFu.Reflection
                 }
 
                 Load(currentFile);
+                _loadedFiles.Add(currentFile);
             }
         }
 
@@ -173,6 +178,7 @@ namespace LinFu.Reflection
             _plugins.Clear();
             _actions.Clear();
             _loaderActions.Clear();
+            _loadedFiles.Clear();
         }
 
         /// <summary>
