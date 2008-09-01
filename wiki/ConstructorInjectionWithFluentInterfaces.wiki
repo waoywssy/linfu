@@ -109,3 +109,5 @@ LinFu's IoC v2.0 container also supports injection for concrete service types th
 }}}
 
 As you can see, the syntax is very straightforward, and that's the style of programming that LinFu offers.
+
+*NOTE:* You can also find out how to download the example project by clicking [DownloadingTheIoCExamples here]
