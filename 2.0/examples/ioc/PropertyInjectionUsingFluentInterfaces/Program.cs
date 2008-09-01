@@ -46,7 +46,7 @@ namespace PropertyInjectionUsingFluentInterfaces
             container.Inject<IEngine>("OldEngine").Using<OldEngine>()
                 .OncePerRequest();
 
-            // Inject the BrokenVehicle type into the containerC:\Documents and Settings\Philip\My Documents\Simple.IoC.Examples\PropertyInjectionSample\Program.cs
+            // Inject the BrokenVehicle type into the container
             container.Inject<IVehicle>("BrokenVehicle")
                 .Using(ioc => new Car(ioc.GetService<IEngine>("DeadEngine"),
                                       ioc.GetService<IPerson>("YoungPerson")))
