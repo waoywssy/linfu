@@ -14,11 +14,6 @@ namespace CarLibrary3
         private IEngine _engine;
         private IPerson _person;
 
-        public Car(IEngine engine, IPerson driver)
-        {
-            _engine = engine;
-            _person = driver;
-        }
 
         public IEngine Engine
         {

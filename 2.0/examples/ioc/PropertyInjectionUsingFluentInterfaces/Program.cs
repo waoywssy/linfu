@@ -35,7 +35,7 @@ namespace PropertyInjectionUsingFluentInterfaces
                 .With(p =>
                 {
                     p.Age = 16;
-                    p.Name = "OldPerson";
+                    p.Name = "YoungPerson";
                 });
 
             // Inject the DeadEngine type
@@ -48,15 +48,23 @@ namespace PropertyInjectionUsingFluentInterfaces
 
             // Inject the BrokenVehicle type into the container
             container.Inject<IVehicle>("BrokenVehicle")
-                .Using(ioc => new Car(ioc.GetService<IEngine>("DeadEngine"),
-                                      ioc.GetService<IPerson>("YoungPerson")))
-                                      .OncePerRequest();
+                .Using<Car>().OncePerRequest();
+
+            #region Broken Vehicle Configuration
+
+            AddVehicle(container, "BrokenVehicle", "DeadEngine", "YoungPerson");
+
+            #endregion
+
+            #region Old Vehicle Configuration
+
+            AddVehicle(container, "OldVehicle", "OldEngine", "OldPerson");
+
+            #endregion
 
             // Inject the OldVehicle type into the container
             container.Inject<IVehicle>("OldVehicle")
-                .Using(ioc => new Car(ioc.GetService<IEngine>("OldEngine"),
-                                      ioc.GetService<IPerson>("OldPerson")))
-                                      .OncePerRequest();
+                .Using<Car>().OncePerRequest();
 
             Person person = new Person();
             person.Name = "Someone";
@@ -74,6 +82,16 @@ namespace PropertyInjectionUsingFluentInterfaces
 
             Console.WriteLine("Press ENTER to continue...");
             Console.ReadLine();
+        }
+
+        private static void AddVehicle(IServiceContainer container, string vehicleName, string engineName, string personName)
+        {
+            container.Initialize<IVehicle>(vehicleName)
+                .With((ioc, vehicle) => vehicle.Engine = ioc.GetService<IEngine>(engineName));
+
+            // Set the person type
+            container.Initialize<IVehicle>(vehicleName)
+                .With((ioc, vehicle) => vehicle.Driver = ioc.GetService<IPerson>(personName));
         }
     }
 }
