@@ -55,3 +55,5 @@ Let's assume that we have a sample service named _IVehicle_, and a _Car_ class t
 }}}
 
 The _Initialize()_ method allows you to inject different services into service properties. You can even decide which properties and services should be injected on a per-service name basis. It's just that simple.
+
+*NOTE:* You can also find out how to download the example project by clicking [DownloadingTheIoCExamples here]
