@@ -1,3 +1,5 @@
+# Instructions on how to download the sample projects for LinFu.IoC v2.0
+
 = Downloading the example ioc projects =
 
 You can use subversion to download a complete example of using LinFu.IoC v2.0 using the following command:
