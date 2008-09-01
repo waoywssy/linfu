@@ -15,8 +15,6 @@ namespace LinFu.IoC.Plugins
     /// </summary>
     internal class PostProcessorLoader : IActionLoader<IServiceContainer, Type>
     {
-        #region IActionLoader<IServiceContainer,Type> Members
-
         /// <summary>
         /// Determines if the plugin loader can load the <paramref name="inputType"/>.
         /// </summary>
@@ -26,7 +24,7 @@ namespace LinFu.IoC.Plugins
         public bool CanLoad(Type inputType)
         {
             // The type must have a default constructor
-            ConstructorInfo defaultConstructor = inputType.GetConstructor(new Type[0]);
+            var defaultConstructor = inputType.GetConstructor(new Type[0]);
             if (defaultConstructor == null)
                 return false;
 
@@ -62,7 +60,5 @@ namespace LinFu.IoC.Plugins
 
             return new[] {assignPostProcessor};
         }
-
-        #endregion
     }
 }

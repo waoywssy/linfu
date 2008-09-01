@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 using LinFu.IoC;
+using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
 using Moq;
 using NUnit.Framework;
@@ -24,6 +25,33 @@ namespace LinFu.UnitTests.IOC
         public void ContainerMustAllowSurrogatesForNonExistentServiceInstances()
         {
             throw new NotImplementedException();
+        }
+
+        [Test]        
+        public void InitializerShouldOnlyBeCalledOncePerLifetime()
+        {
+            var container = new ServiceContainer();
+            var mockService = new Mock<IInitialize>();
+
+            VerifyInitializeCall(container, mockService);
+            VerifyInitializeCall(container, new Mock<IInitialize>());
+        }
+
+        private static void VerifyInitializeCall(ServiceContainer container, Mock<IInitialize> mockService)
+        {
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "*.dll");                        
+            container.AddService(mockService.Object);
+
+
+            mockService.Expect(i => i.Initialize(container)).AtMostOnce();
+
+            // The container should return the same instance
+            var firstResult = container.GetService<IInitialize>();
+            var secondResult = container.GetService<IInitialize>();
+            Assert.AreSame(firstResult, secondResult);
+
+            // The Initialize() method should only be called once
+            mockService.Verify();
         }
 
         [Test]
