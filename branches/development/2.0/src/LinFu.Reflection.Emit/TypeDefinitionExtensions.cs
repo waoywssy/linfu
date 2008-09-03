@@ -120,6 +120,21 @@ namespace LinFu.Reflection.Emit
         }
 
         /// <summary>
+        /// Retrieves the method that matches the given <paramref name="methodName"/>.
+        /// </summary>
+        /// <param name="typeDef">The target type to search.</param>
+        /// <param name="methodName">The name of the target method.</param>
+        /// <returns>A method that matches the given <paramref name="methodName"/>. If the method is not found, then it will return a <c>null</c> value. </returns>
+        public static MethodDefinition GetMethod(this TypeDefinition typeDef, string methodName)
+        {
+            var result = from MethodDefinition m in typeDef.Methods
+                         where m.Name == methodName
+                         select m;
+
+            return result.FirstOrDefault();
+        }
+
+        /// <summary>
         /// Resolves the backing field for a generic type declaration.
         /// </summary>
         /// <param name="fieldName">The name of the field to reference.</param>

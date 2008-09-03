@@ -64,6 +64,10 @@
     <Compile Include="UsingLambda.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LinFu.IoC.Configuration\LinFu.IoC.Configuration.csproj">
+      <Project>{EFBACCF3-C834-4114-9FC1-1F190DD6CE98}</Project>
+      <Name>LinFu.IoC.Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LinFu.IoC.Factories\LinFu.IoC.Factories.csproj">
       <Project>{14DB06BE-3178-4A01-98AB-DFC65485E567}</Project>
       <Name>LinFu.IoC.Factories</Name>
@@ -71,6 +75,14 @@
     <ProjectReference Include="..\LinFu.IoC.Interfaces\LinFu.IoC.Interfaces.csproj">
       <Project>{C6AC7707-9288-4ADF-9053-34FE71FFE0BE}</Project>
       <Name>LinFu.IoC.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection.Interfaces\LinFu.Reflection.Interfaces.csproj">
+      <Project>{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}</Project>
+      <Name>LinFu.Reflection.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection\LinFu.Reflection.csproj">
+      <Project>{22EEB00F-F471-486C-A6AD-60F088821C78}</Project>
+      <Name>LinFu.Reflection</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

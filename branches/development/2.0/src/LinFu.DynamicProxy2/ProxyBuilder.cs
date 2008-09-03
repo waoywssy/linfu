@@ -97,6 +97,7 @@ namespace LinFu.DynamicProxy2
         {
             get; set;
         }
+
         /// <summary>
         /// Initializes the current instance
         /// with the <paramref name="source"/> container.

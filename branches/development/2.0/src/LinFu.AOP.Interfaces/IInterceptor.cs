@@ -18,7 +18,8 @@ namespace LinFu.AOP.Interfaces
         /// <param name="info">The <see cref="IInvocationInfo"/> instance that will 
         /// contain all the necessary information associated with a 
         /// particular method call.</param>
-        /// <returns></returns>
+        /// <returns>The return value of the target method. If the return type of the target
+        /// method is <see cref="Void"/>, then the return value will be ignored.</returns>
         object Intercept(IInvocationInfo info);
     }
 }

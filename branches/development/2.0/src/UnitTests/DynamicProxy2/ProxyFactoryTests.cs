@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using LinFu.AOP;
 using LinFu.DynamicProxy2;
 using LinFu.DynamicProxy2.Interfaces;
 using LinFu.IoC;
@@ -20,10 +22,21 @@ namespace LinFu.UnitTests.DynamicProxy2
             loader = new Loader();
             container = new ServiceContainer();
 
-            loader.LoadDirectory(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
-            loader.LoadDirectory(AppDomain.CurrentDomain.BaseDirectory, "LinFu.DynamicProxy2.dll");
-            loader.LoadInto(container);
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+            
+            LoadAssemblyUsing(typeof(ProxyFactory));
+            LoadAssemblyUsing(typeof (InvocationInfoEmitter));
         }
+
+        private void LoadAssemblyUsing(Type embeddedType)
+        {
+            var location = embeddedType.Assembly.Location;
+            var directory = Path.GetDirectoryName(location);
+            var filename = Path.GetFileName(location);
+            
+            container.LoadFrom(directory, filename);
+        }
+
         public override void Term()
         {
             loader = null;

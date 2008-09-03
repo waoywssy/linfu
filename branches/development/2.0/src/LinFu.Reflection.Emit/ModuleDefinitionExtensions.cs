@@ -163,10 +163,25 @@ namespace LinFu.Reflection.Emit
         /// </summary>
         /// <param name="targetType">The type that will be imported into the <see cref="ModuleDefinition"/> instance itself.</param>
         /// <param name="module">The module that will store the imported type.</param>
-        /// <returns>A <see cref="TypeReference"/> instance that represents the imported type.</returns>
+        /// <returns>A <see cref="TypeDefinition"/> instance that represents the imported type.</returns>
         public static TypeReference ImportType(this ModuleDefinition module, Type targetType)
         {
             return module.Import(targetType);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="TypeDefinition"/> that matches the given <paramref name="typeName"/>.
+        /// </summary>
+        /// <param name="module">The target module to search.</param>
+        /// <param name="typeName">The name of the target type.</param>
+        /// <returns>A type that matches the given type name. If the type cannot be found, then this method will return <c>null</c>.</returns>
+        public static TypeDefinition GetType(this ModuleDefinition module, string typeName)
+        {
+            TypeDefinition result = (from TypeDefinition t in module.Types
+                          where t.Name == typeName
+                          select t).FirstOrDefault();
+
+            return result;
         }
     }
 }

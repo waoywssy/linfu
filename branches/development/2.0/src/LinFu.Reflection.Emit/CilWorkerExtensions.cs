@@ -16,6 +16,26 @@ namespace LinFu.Reflection.Emit
     /// </summary>
     public static class CilWorkerExtensions
     {
+        private static readonly Dictionary<string, OpCode> stindMap = new Dictionary<string, OpCode>();
+
+        static CilWorkerExtensions()
+        {
+            stindMap["Bool&"] = OpCodes.Stind_I1;
+            stindMap["Int8&"] = OpCodes.Stind_I1;
+            stindMap["Uint8&"] = OpCodes.Stind_I1;
+
+            stindMap["Int16&"] = OpCodes.Stind_I2;
+            stindMap["Uint16&"] = OpCodes.Stind_I2;
+
+            stindMap["Uint32&"] = OpCodes.Stind_I4;
+            stindMap["Int32&"] = OpCodes.Stind_I4;
+
+            stindMap["IntPtr"] = OpCodes.Stind_I4;
+            stindMap["Uint64&"] = OpCodes.Stind_I8;
+            stindMap["Int64&"] = OpCodes.Stind_I8;
+            stindMap["Float32&"] = OpCodes.Stind_R4;
+            stindMap["Float64&"] = OpCodes.Stind_R8;
+        }
         /// <summary>
         /// Pushes the current <paramref name="method"/> onto the stack.
         /// </summary>
@@ -130,10 +150,9 @@ namespace LinFu.Reflection.Emit
         /// parameters that are generic parameters specified by the type itself.
         /// </summary>
         /// <param name="IL">The <see cref="CilWorker"/> that will be used to create the instructions.</param>
-        /// <param name="method">The target method whose generic type arguments (if any) will be saved into the <paramref name="typeArguments">local variable</paramref>.</param>
+        /// <param name="method">The target method whose generic type arguments (if any) will be saved into the local variable .</param>
         /// <param name="module">The module that contains the host method.</param>
         /// <param name="parameterTypes">The local variable that will store the current method signature.</param>
-        /// <param name="instructions">The <see cref="List{Instruction}"/> instance that will store the results.</param>
         public static void SaveParameterTypes(this CilWorker IL, MethodDefinition method, ModuleDefinition module,
              VariableDefinition parameterTypes)
         {
@@ -156,9 +175,8 @@ namespace LinFu.Reflection.Emit
         /// </summary>
         /// <param name="IL">The <see cref="CilWorker"/> that will be used to create the instructions.</param>
         /// <param name="module">The module that contains the host method.</param>
-        /// <param name="instructions">The <see cref="List{Instruction}"/> instance that will store the results.</param>
         /// <param name="returnType">The method return type itself.</param>
-        public static void PackageReturnValue(this CilWorker IL, ModuleDefinition module, IList<Instruction> instructions, TypeReference returnType)
+        public static void PackageReturnValue(this CilWorker IL, ModuleDefinition module, TypeReference returnType)
         {
             var voidType = module.ImportType(typeof(void));
             if (returnType == voidType)
@@ -169,7 +187,23 @@ namespace LinFu.Reflection.Emit
 
             IL.Emit(OpCodes.Unbox_Any, returnType);
         }
-        
+
+        /// <summary>
+        /// Emits the proper Stind (store indirect) IL instruction for the <paramref name="currentType"/>.
+        /// </summary>
+        /// <param name="IL">The target <see cref="CilWorker"/> that will emit the IL.</param>
+        /// <param name="currentType">The type of data being stored.</param>
+        public static void Stind(this CilWorker IL, TypeReference currentType)
+        {
+            string typeName = currentType.Name;
+            var opCode = OpCodes.Nop;
+            if (!currentType.IsValueType && !typeName.EndsWith("&"))
+                opCode = OpCodes.Stind_Ref;
+
+            opCode = !stindMap.ContainsKey(typeName) ? OpCodes.Stind_Ref : stindMap[typeName];
+
+            IL.Emit(opCode);
+        }
         /// <summary>
         /// Stores the <paramref name="param">current parameter value</paramref>
         /// into the array of method <paramref name="arguments"/>.

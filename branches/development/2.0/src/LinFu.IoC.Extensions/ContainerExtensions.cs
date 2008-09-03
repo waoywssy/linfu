@@ -1,4 +1,5 @@
 ﻿using System;
+using LinFu.IoC.Configuration;
 using LinFu.IoC.Extensions;
 using LinFu.IoC.Interfaces;
 
@@ -88,6 +89,28 @@ namespace LinFu.IoC
         public static void AddService<T>(this IServiceContainer container, string serviceName, T instance)
         {
             container.AddFactory(serviceName, typeof(T), new InstanceFactory(instance));
+        }
+        
+        /// <summary>
+        /// Loads a set of <paramref name="searchPattern">files</paramref> from the <paramref name="directory">target directory</paramref>.
+        /// </summary>
+        /// <param name="container">The container to be loaded.</param>
+        /// <param name="directory">The target directory.</param>
+        /// <param name="searchPattern">The search pattern that describes the list of files to be loaded.</param>
+        public static void LoadFrom(this IServiceContainer container, string directory, 
+            string searchPattern)
+        {
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var loader = new Loader();
+
+            // Load the LinFu assembly by default
+            loader.LoadDirectory(baseDirectory, "LinFu*.dll");
+
+            // Load the target directory
+            loader.LoadDirectory(directory, searchPattern);
+
+            // Configure the container
+            loader.LoadInto(container);
         }
     }
 }

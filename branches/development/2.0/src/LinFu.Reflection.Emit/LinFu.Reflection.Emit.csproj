@@ -57,6 +57,7 @@
     <Compile Include="CilWorkerExtensions.cs" />
     <Compile Include="MethodDefinitionExtensions.cs" />
     <Compile Include="ModuleDefinitionExtensions.cs" />
+    <Compile Include="ParameterDefinitionExtensions.cs" />
     <Compile Include="TypeDefinitionExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
