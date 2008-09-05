@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using FieldAttributes=Mono.Cecil.FieldAttributes;
+using MethodAttributes=Mono.Cecil.MethodAttributes;
+using MethodImplAttributes=Mono.Cecil.MethodImplAttributes;
+using PropertyAttributes=Mono.Cecil.PropertyAttributes;
 
 namespace LinFu.Reflection.Emit
 {
@@ -18,7 +23,7 @@ namespace LinFu.Reflection.Emit
         /// Adds a new method to the <paramref name="typeDef">target type</paramref>.
         /// </summary>
         /// <param name="typeDef">The type that will hold the newly-created method.</param>
-        /// <param name="attributes">The <see cref="MethodAttributes"/> parameter that describes the characteristics of the method.</param>
+        /// <param name="attributes">The <see cref="Mono.Cecil.MethodAttributes"/> parameter that describes the characteristics of the method.</param>
         /// <param name="methodName">The name to be given to the new method.</param>
         /// <param name="returnType">The method return type.</param>
         /// <param name="callingConvention">The calling convention of the method being created.</param>
@@ -66,11 +71,62 @@ namespace LinFu.Reflection.Emit
                 method.Parameters.Add(param);
             }
 
-
             typeDef.Methods.Add(method);
 
             return method;
         }
+
+        /// <summary>
+        /// Adds a default constructor to the target type.
+        /// </summary>
+        /// <param name="targetType">The type that will contain the default constructor.</param>
+        public static void AddDefaultConstructor(this TypeDefinition targetType)
+        {
+            var parentType = typeof (object);
+
+            AddDefaultConstructor(targetType, parentType);
+        }
+
+        /// <summary>
+        /// Adds a default constructor to the target type.
+        /// </summary>
+        /// <param name="parentType">The base class that contains the default constructor that will be used for constructor chaining..</param>
+        /// <param name="targetType">The type that will contain the default constructor.</param>
+        public static void AddDefaultConstructor(this TypeDefinition targetType, Type parentType)
+        {
+            var module = targetType.Module;
+            var voidType = module.Import(typeof(void));
+            var methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig
+                                   | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
+
+
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+            var objectConstructor = parentType.GetConstructor(flags, null, new Type[0], null);
+
+            // Revert to the System.Object constructor
+            // if the parent type does not have a default constructor
+            if (objectConstructor == null)
+                objectConstructor = typeof (object).GetConstructor(new Type[0]);
+
+            var baseConstructor = module.Import(objectConstructor);
+
+            // Define the default constructor
+            var ctor = new MethodDefinition(".ctor", methodAttributes, voidType)
+                           {
+                               CallingConvention = MethodCallingConvention.StdCall,
+                               ImplAttributes = (MethodImplAttributes.IL | MethodImplAttributes.Managed)
+                           };
+
+            var IL = ctor.Body.CilWorker;
+
+            // Call the constructor for System.Object, and exit
+            IL.Emit(OpCodes.Ldarg_0);
+            IL.Emit(OpCodes.Call, baseConstructor);
+            IL.Emit(OpCodes.Ret);
+
+            targetType.Constructors.Add(ctor);
+        }
+
         /// <summary>
         /// Adds a rewritable property to the <paramref name="typeDef">target type</paramref>.
         /// </summary>

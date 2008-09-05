@@ -39,7 +39,7 @@ namespace LinFu.DynamicProxy2
             var returnType = module.ImportType(method.ReturnType);
             var methodName = method.Name;
             var baseAttributes = Mono.Cecil.MethodAttributes.Virtual | 
-                Mono.Cecil.MethodAttributes.HideBySig | Mono.Cecil.MethodAttributes.NewSlot;
+                Mono.Cecil.MethodAttributes.HideBySig;
 
             var attributes = default(Mono.Cecil.MethodAttributes);
 

@@ -11,7 +11,7 @@ using LinFu.Reflection.Emit.Interfaces;
 using Mono.Cecil;
 
 namespace LinFu.DynamicProxy2
-{   
+{
     /// <summary>
     /// A <see cref="IProxyBuilder"/> type that generates
     /// proxies that forward all virtual method calls to a 
@@ -25,7 +25,6 @@ namespace LinFu.DynamicProxy2
         /// </summary>
         public ProxyBuilder()
         {
-            
             ProxyImplementor = new ProxyImplementor();
             MethodPicker = new MethodPicker();
             ProxyMethodBuilder = new ProxyMethodBuilder();
@@ -59,12 +58,10 @@ namespace LinFu.DynamicProxy2
             
             // Generate a proxy method for each
             // target method
-            foreach(var method in targetMethods)
+            foreach (var method in targetMethods)
             {
                 ProxyMethodBuilder.CreateMethod(targetType, method);
             }
-
-            
         }
 
         /// <summary>
@@ -87,7 +84,8 @@ namespace LinFu.DynamicProxy2
         /// </summary>
         public IMethodBuilder ProxyMethodBuilder
         {
-            get; set;
+            get;
+            set;
         }
 
         /// <summary>
@@ -96,7 +94,7 @@ namespace LinFu.DynamicProxy2
         /// </summary>
         /// <param name="source">The <see cref="IServiceContainer"/> instance that will hold the current instance.</param>
         public void Initialize(IServiceContainer source)
-        {            
+        {
             ProxyImplementor = source.GetService<ITypeBuilder>("ProxyImplementor");
             MethodPicker = source.GetService<IMethodPicker>();
             ProxyMethodBuilder = source.GetService<IMethodBuilder>("ProxyMethodBuilder");

@@ -83,7 +83,6 @@ namespace LinFu.DynamicProxy2
 
             #region Generate the assembly
 
-
             var assemblyName = Guid.NewGuid().ToString();
             var assembly = AssemblyFactory.DefineAssembly(assemblyName, AssemblyKind.Dll);
             var mainModule = assembly.MainModule;            
@@ -94,12 +93,13 @@ namespace LinFu.DynamicProxy2
             #endregion            
            
             #region Initialize the proxy type
-            var typeName = string.Format("{0}Proxy{1}", baseType.Name, Guid.NewGuid());
+            var guid = Guid.NewGuid().ToString().Replace("-", "");
+            var typeName = string.Format("{0}Proxy-{1}", baseType.Name, guid);
             var namespaceName = "LinFu.DynamicProxy2";
             var proxyType = mainModule.DefineClass(typeName, namespaceName,
                                                               attributes, importedBaseType);
 
-            mainModule.Types.Add(proxyType);
+            proxyType.AddDefaultConstructor(actualBaseType);
             #endregion
 
             if (ProxyBuilder == null)

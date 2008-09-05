@@ -13,6 +13,7 @@ using LinFu.UnitTests.Tools;
 using Moq;
 using NUnit.Framework;
 using SampleLibrary;
+using SampleLibrary.DynamicProxy2;
 
 namespace LinFu.UnitTests.DynamicProxy2
 {
@@ -97,10 +98,25 @@ namespace LinFu.UnitTests.DynamicProxy2
         }
 
         [Test]
-        [Ignore("TODO: Implement this")]
         public void GeneratedProxyMustSupportRefArguments()
         {
-            throw new NotImplementedException();
+            var factory = container.GetService<IProxyFactory>();
+
+            // Assign the ref/out value for the int argument
+            Func<IInvocationInfo, object> implementation = info =>
+                                                               {
+                                                                   info.Arguments[0] = 54321;
+                                                                   return null;
+                                                               };
+
+            var interceptor = new MockInterceptor(implementation);
+            var proxy = factory.CreateProxy<SampleClassWithVirtualByRefMethod>(interceptor);
+
+            int value = 0;
+            proxy.ByRefMethod(ref value);
+
+            // The two given arguments should match
+            Assert.AreEqual(54321, value);
         }
 
         [Test]

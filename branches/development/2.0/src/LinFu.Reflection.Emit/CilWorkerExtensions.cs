@@ -210,7 +210,7 @@ namespace LinFu.Reflection.Emit
             IL.Emit(OpCodes.Ldc_I4, index);
 
             // Zero out the [out] parameters
-            if (param.IsOut)
+            if (param.IsOut || param.IsByRef())
             {
                 IL.Emit(OpCodes.Ldnull);
                 IL.Emit(OpCodes.Stelem_Ref);

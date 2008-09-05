@@ -133,17 +133,20 @@ namespace LinFu.DynamicProxy2
             IL.Emit(OpCodes.Callvirt, getArguments);
             IL.Emit(OpCodes.Stloc, arguments);
 
+            int index = 0;
             foreach (var param in parameters)
             {
                 if (!param.IsByRef())
+                {
+                    index++;
                     continue;
-
+                }
                 // Load the destination address
-                IL.Emit(OpCodes.Ldarg, param.Sequence + 1);
+                IL.Emit(OpCodes.Ldarg, index + 1);
 
                 // Load the argument value
                 IL.Emit(OpCodes.Ldloc, arguments);
-                IL.Emit(OpCodes.Ldc_I4, param.Sequence);
+                IL.Emit(OpCodes.Ldc_I4, index++);
                 IL.Emit(OpCodes.Ldelem_Ref);
 
                 // Determine the actual parameter type

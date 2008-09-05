@@ -26,9 +26,6 @@ namespace LinFu.Reflection.Emit
         /// <param name="attributes">The <see cref="Mono.Cecil.TypeAttributes"/> for the given type.</param>
         /// <param name="baseType">The base class of the new type.</param>
         /// <returns>A <see cref="TypeDefinition"/> representing the new class being created.</returns>
-        /// <remarks>A parameterless constructor is provided for you by default. To remove this
-        /// default constructor, all you need to do is clear the <see cref="TypeDefinition.Constructors"/> collection.
-        /// </remarks>
         public static TypeDefinition DefineClass(this ModuleDefinition mainModule,
             string typeName, string namespaceName, TypeAttributes attributes,
             TypeReference baseType)
@@ -36,33 +33,10 @@ namespace LinFu.Reflection.Emit
             var resultType = new TypeDefinition(typeName, namespaceName,
                                                attributes, baseType);
 
-
-            var voidType = mainModule.Import(typeof(void));
-            var methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig
-                                   | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
-
-            var objectConstructor = typeof(object).GetConstructor(new Type[0]);
-            var baseConstructor = mainModule.Import(objectConstructor);
-
-            // Define the default constructor
-            var ctor = new MethodDefinition(".ctor", methodAttributes, voidType)
-                           {
-                               CallingConvention = MethodCallingConvention.StdCall,
-                               ImplAttributes = (MethodImplAttributes.IL | MethodImplAttributes.Managed)
-                           };
-
-            var IL = ctor.Body.CilWorker;
-
-            // Call the constructor for System.Object, and exit
-            IL.Emit(OpCodes.Ldarg_0);
-            IL.Emit(OpCodes.Call, baseConstructor);
-            IL.Emit(OpCodes.Ret);
-
-            resultType.Constructors.Add(ctor);
-
+            mainModule.Types.Add(resultType);
             return resultType;
         }
-
+        
         /// <summary>
         /// Imports a constructor with the given <paramref name="constructorParameters"/>
         /// into the target <paramref name="module"/>.

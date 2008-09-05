@@ -47,6 +47,8 @@
   <ItemGroup>
     <Compile Include="AOP\SampleClassWithByRefMethod.cs" />
     <Compile Include="AOP\SampleClassWithMethodHavingOutParameters.cs" />
+    <Compile Include="DynamicProxy2\SampleDerivedClassWithVirtualByRefMethod.cs" />
+    <Compile Include="DynamicProxy2\SampleClassWithVirtualByRefMethod.cs" />
     <Compile Include="IOC\FirstOncePerRequestService.cs" />
     <Compile Include="IOC\FirstSingletonService.cs" />
     <Compile Include="IOC\IInjectionTarget.cs" />
