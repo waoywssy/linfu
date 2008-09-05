@@ -4,11 +4,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using LinFu.AOP;
+using LinFu.AOP.Interfaces;
 using LinFu.DynamicProxy2;
 using LinFu.DynamicProxy2.Interfaces;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
+using LinFu.UnitTests.Tools;
+using Moq;
 using NUnit.Framework;
+using SampleLibrary;
 
 namespace LinFu.UnitTests.DynamicProxy2
 {
@@ -26,6 +30,9 @@ namespace LinFu.UnitTests.DynamicProxy2
             
             LoadAssemblyUsing(typeof(ProxyFactory));
             LoadAssemblyUsing(typeof (InvocationInfoEmitter));
+
+            // Add the PEVerifier to the proxy generation process
+            container.AddService<IVerifier>(new PEVerifier());
         }
 
         private void LoadAssemblyUsing(Type embeddedType)
@@ -66,16 +73,27 @@ namespace LinFu.UnitTests.DynamicProxy2
         }
 
         [Test]
-        [Ignore("TODO: Implement this")]
         public void GeneratedProxyTypeMustCallInterceptorInstance()
         {
-            throw new NotImplementedException();
+            var factory = container.GetService<IProxyFactory>();
+            var mockInterceptor = new MockInterceptor(i => null);
+            
+            // Create the proxy instance and then make the call
+            var proxyInstance = (IMoqTrigger)factory.CreateProxy(typeof(object), mockInterceptor, typeof(IMoqTrigger));
+            proxyInstance.Execute();
+
+            // The interceptor must be called
+            Assert.IsTrue(mockInterceptor.Called);
         }
         [Test]
-        [Ignore("TODO: Implement this")]
         public void GeneratedProxyTypeMustImplementIProxy()
         {
-            throw new NotImplementedException();
+            var factory = container.GetService<IProxyFactory>();
+            var proxyType = factory.CreateProxyType(typeof (object), new Type []{typeof(ISampleService)});
+
+            var instance = Activator.CreateInstance(proxyType);
+            Assert.IsTrue(instance is IProxy);
+            Assert.IsTrue(instance is ISampleService);
         }
 
         [Test]
@@ -97,13 +115,7 @@ namespace LinFu.UnitTests.DynamicProxy2
         public void InvocationArgumentsMustMatchMethodCall()
         {
             throw new NotImplementedException();
-        }
-        [Test]
-        [Ignore("TODO: Implement this")]
-        public void ProxyFactoryMustGenerateValidIProxyInstance()
-        {
-            throw new NotImplementedException();
-        }
+        }        
 
         [Test]
         [Ignore("TODO: Implement this")]
@@ -112,6 +124,29 @@ namespace LinFu.UnitTests.DynamicProxy2
             throw new NotImplementedException();
         }
 
+
+        [Test]
+        public void GeneratedProxyTypeMustSupportSubclassingFromGenericTypes()        
+        {
+            var factory = container.GetService<IProxyFactory>();
+            var actualList = new List<int>();
+
+            Func<IInvocationInfo, object> implementation = info =>
+                                                               {
+                                                                   IList<int> list = actualList;
+                                                                   return info.Proceed(list);
+                                                               };
+            var interceptor = new MockInterceptor(implementation);
+            var proxy = factory.CreateProxy<IList<int>>(interceptor);
+           
+            // Any item added to the proxy list should be added to the 
+            // actual list
+            proxy.Add(12345);
+
+            Assert.IsTrue(interceptor.Called);
+            Assert.IsTrue(actualList.Count > 0);
+            Assert.IsTrue(actualList[0] == 12345);
+        }
         [Test]
         [Ignore("TODO: Implement this")]
         public void GeneratedProxyTypeMustImplementGivenInterfaces()

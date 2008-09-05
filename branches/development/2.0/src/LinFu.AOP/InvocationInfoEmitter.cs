@@ -38,7 +38,7 @@ namespace LinFu.AOP
         }
         #region IEmitInvocationInfo Members
 
-        public void Emit(MethodDefinition targetMethod, VariableDefinition invocationInfo)
+        public void Emit(MethodInfo method, MethodDefinition targetMethod, VariableDefinition invocationInfo)
         {
             var module = targetMethod.DeclaringType.Module;
             var currentMethod = targetMethod.AddLocal(typeof(MethodBase));
@@ -63,9 +63,10 @@ namespace LinFu.AOP
             // object[] arguments = new object[argumentCount];            
             IL.PushArguments(targetMethod, module, arguments);
 
+            var interceptedMethod = module.Import(method);
             // object target = this;
-            IL.PushInstance(targetMethod);
-            IL.PushMethod(targetMethod, module);
+            IL.Emit(OpCodes.Ldarg_0);
+            IL.PushMethod(interceptedMethod, module);
 
             IL.Emit(OpCodes.Stloc, currentMethod);
 

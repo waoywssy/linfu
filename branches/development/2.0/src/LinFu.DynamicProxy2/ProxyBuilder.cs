@@ -25,7 +25,7 @@ namespace LinFu.DynamicProxy2
         /// </summary>
         public ProxyBuilder()
         {
-            InterfaceExtractor = new InterfaceExtractor();
+            
             ProxyImplementor = new ProxyImplementor();
             MethodPicker = new MethodPicker();
             ProxyMethodBuilder = new ProxyMethodBuilder();
@@ -35,18 +35,15 @@ namespace LinFu.DynamicProxy2
         /// Generates a proxy that forwards all virtual method calls
         /// to a single <see cref="IInterceptor"/> instance.
         /// </summary>
-        /// <param name="baseType">The base class of the type being constructed.</param>
+        /// <param name="originalBaseType">The base class of the type being constructed.</param>
         /// <param name="baseInterfaces">The list of interfaces that the new type must implement.</param>
         /// <param name="module">The module that will hold the brand new type.</param>
         /// <param name="targetType">The <see cref="TypeDefinition"/> that represents the type to be created.</param>
-        public void Construct(Type baseType, IEnumerable<Type> baseInterfaces,
+        public void Construct(Type originalBaseType, IEnumerable<Type> baseInterfaces,
                                           ModuleDefinition module, TypeDefinition targetType)
         {
             // Determine which interfaces need to be implemented
             var interfaces = new HashSet<Type>(baseInterfaces);
-
-            if (InterfaceExtractor != null)
-                InterfaceExtractor.GetInterfaces(baseType, interfaces);
 
             // Implement the IProxy interface
             if (ProxyImplementor != null)
@@ -55,25 +52,20 @@ namespace LinFu.DynamicProxy2
             // Determine which methods should be proxied
             IEnumerable<MethodInfo> targetMethods = new MethodInfo[0];
             if (MethodPicker != null)
-                targetMethods = MethodPicker.ChooseProxyMethodsFrom(baseType, interfaces);
+                targetMethods = MethodPicker.ChooseProxyMethodsFrom(originalBaseType, interfaces);
 
             if (ProxyMethodBuilder == null)
                 return;
-
+            
             // Generate a proxy method for each
             // target method
             foreach(var method in targetMethods)
             {
                 ProxyMethodBuilder.CreateMethod(targetType, method);
             }
-        }
 
-        /// <summary>
-        /// Gets or sets the <see cref="IExtractInterfaces"/> type that will be
-        /// responsible for determining which interfaces
-        /// the proxy type should implement.
-        /// </summary>
-        public IExtractInterfaces InterfaceExtractor { get; set; }
+            
+        }
 
         /// <summary>
         /// Gets or sets the <see cref="ITypeBuilder"/> interface
@@ -104,8 +96,7 @@ namespace LinFu.DynamicProxy2
         /// </summary>
         /// <param name="source">The <see cref="IServiceContainer"/> instance that will hold the current instance.</param>
         public void Initialize(IServiceContainer source)
-        {
-            InterfaceExtractor = source.GetService<IExtractInterfaces>();
+        {            
             ProxyImplementor = source.GetService<ITypeBuilder>("ProxyImplementor");
             MethodPicker = source.GetService<IMethodPicker>();
             ProxyMethodBuilder = source.GetService<IMethodBuilder>("ProxyMethodBuilder");

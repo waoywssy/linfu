@@ -38,18 +38,22 @@ namespace LinFu.DynamicProxy2
             var module = targetType.Module;
             var returnType = module.ImportType(method.ReturnType);
             var methodName = method.Name;
-            var baseAttributes = Mono.Cecil.MethodAttributes.Virtual;
-            var attributes = Mono.Cecil.MethodAttributes.HideBySig;
+            var baseAttributes = Mono.Cecil.MethodAttributes.Virtual | 
+                Mono.Cecil.MethodAttributes.HideBySig | Mono.Cecil.MethodAttributes.NewSlot;
+
+            var attributes = default(Mono.Cecil.MethodAttributes);
 
             #region Match the visibility of the target method
-            if (method.IsPublic)
-                attributes = baseAttributes | Mono.Cecil.MethodAttributes.Public;
 
             if (method.IsFamilyOrAssembly)
                 attributes = baseAttributes | Mono.Cecil.MethodAttributes.FamORAssem;
 
             if (method.IsFamilyAndAssembly)
                 attributes = baseAttributes | Mono.Cecil.MethodAttributes.FamANDAssem;
+
+            if (method.IsPublic)
+                attributes = baseAttributes | Mono.Cecil.MethodAttributes.Public;
+            
             #endregion
 
             // Build the list of parameter types
@@ -59,22 +63,25 @@ namespace LinFu.DynamicProxy2
                                   where importedType != null
                                   select importedType).ToArray();
             
-            // Generate the method signature
-            var newMethod = targetType.DefineMethod(methodName, attributes, MethodCallingConvention.ThisCall,
+            
+            var newMethod = targetType.DefineMethod(methodName, attributes,
                                                     returnType, parameterTypes);
 
+            newMethod.Body.InitLocals = true;
+            newMethod.ImplAttributes = Mono.Cecil.MethodImplAttributes.IL | Mono.Cecil.MethodImplAttributes.Managed;
+            newMethod.HasThis = true;
+            
             // Match the generic type arguments
             var typeArguments = method.GetGenericArguments();
 
-            if (typeArguments == null || typeArguments.Length == 0)
-                return newMethod;
-
-            MatchGenericArguments(newMethod, typeArguments);
+            if (typeArguments != null || typeArguments.Length > 0)
+                MatchGenericArguments(newMethod, typeArguments);
+            
             #endregion
 
             // Define the method body
             if (Emitter != null)
-                Emitter.Emit(newMethod);
+                Emitter.Emit(method, newMethod);
 
             return newMethod;
         }

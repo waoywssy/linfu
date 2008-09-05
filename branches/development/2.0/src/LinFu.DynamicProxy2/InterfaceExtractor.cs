@@ -18,20 +18,21 @@ namespace LinFu.DynamicProxy2
         /// Determines which interfaces a given type should implement.
         /// </summary>
         /// <param name="currentType">The base type that holds the list of interfaces to implement.</param>
-        /// <param name="interfaces">The list of interfaces already being implemented. </param>
-        public void GetInterfaces(Type currentType, HashSet<Type> interfaces)
+        /// <param name="interfaceList">The list of interfaces already being implemented. </param>
+        public void GetInterfaces(Type currentType, HashSet<Type> interfaceList)
         {
-            var currentInterfaces = from t in currentType.GetInterfaces()
-                                    where !interfaces.Contains(t) && t.IsInterface
-                                    select t;
+            var interfaces = currentType.GetInterfaces();
+            if (interfaces == null || interfaces.Length == 0)
+                return;
 
-            foreach (var type in currentInterfaces)
+            foreach (Type current in interfaces)
             {
-                GetInterfaces(type, interfaces);
-            }
+                if (interfaceList.Contains(current))
+                    continue;
 
-            if (currentType.IsInterface)
-                interfaces.Add(currentType);
+                interfaceList.Add(current);
+                GetInterfaces(current, interfaceList);
+            }
         }
     }
 }

@@ -65,6 +65,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BaseTestFixture.cs" />
     <Compile Include="DynamicProxy2\InterfaceExtractorTests.cs" />
+    <Compile Include="DynamicProxy2\MockInterceptor.cs" />
     <Compile Include="DynamicProxy2\ProxyFactoryTests.cs" />
     <Compile Include="Finders\FinderTests.cs" />
     <Compile Include="IOC\FluentExtensionTests.Implementation.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Reflection\BasePEVerifyTestCase.cs" />
     <Compile Include="Reflection\ReflectionEmitTests.cs" />
     <Compile Include="Tools\IMoqTrigger.cs" />
+    <Compile Include="Tools\PEVerifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.AOP.Interfaces\LinFu.AOP.Interfaces.csproj">

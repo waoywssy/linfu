@@ -20,9 +20,9 @@ namespace LinFu.DynamicProxy2
     /// Provides the default implementation for the
     /// <see cref="IMethodBodyEmitter"/> interface.
     /// </summary>
-    [Implements(typeof (IMethodBodyEmitter), LifecycleType.OncePerRequest)]
-    public class MethodBodyEmitter : IMethodBodyEmitter, IInitialize 
-    {        
+    [Implements(typeof(IMethodBodyEmitter), LifecycleType.OncePerRequest)]
+    public class MethodBodyEmitter : IMethodBodyEmitter, IInitialize
+    {
         /// <summary>
         /// Initializes the class with the default values.
         /// </summary>
@@ -39,22 +39,23 @@ namespace LinFu.DynamicProxy2
         /// <summary>
         /// Generates a method body for the <paramref name="targetMethod"/>.
         /// </summary>
+        /// <param name="originalMethod">The method currently being intercepted.</param>
         /// <param name="targetMethod">The target method that will contain the new method body.</param>
-        public void Emit(MethodDefinition targetMethod)
+        public void Emit(MethodInfo originalMethod, MethodDefinition targetMethod)
         {
             var invocationInfo = targetMethod.AddLocal<IInvocationInfo>();
 
             // Emit the code to generate the IInvocationInfo instance
             // and save it into the invocationInfo local variable
             if (InvocationInfoEmitter != null)
-                InvocationInfoEmitter.Emit(targetMethod, invocationInfo);
+                InvocationInfoEmitter.Emit(originalMethod, targetMethod, invocationInfo);
 
             var declaringType = targetMethod.DeclaringType;
             var module = declaringType.Module;
             var proxyType = module.ImportType<IProxy>();
-            var getInterceptorMethod = module.ImportMethod("get_Interceptor", typeof (IProxy));
+            var getInterceptorMethod = module.ImportMethod("get_Interceptor", typeof(IProxy));
             var interceptor = targetMethod.AddLocal<IInterceptor>();
-            var arguments = targetMethod.AddLocal(typeof (object[]));
+            var arguments = targetMethod.AddLocal(typeof(object[]));
 
             // if (!(this is IProxy))
             var IL = targetMethod.GetILGenerator();
@@ -69,16 +70,16 @@ namespace LinFu.DynamicProxy2
             IL.Emit(OpCodes.Isinst, proxyType);
             IL.Emit(OpCodes.Callvirt, getInterceptorMethod);
             IL.Emit(OpCodes.Stloc, interceptor);
-            
-            // If (interceptor == null)
-            //     throw a not implemented exception here
+
+            //If (interceptor == null)
+            //    throw a not implemented exception here
             IL.Emit(OpCodes.Ldloc, interceptor);
             IL.Emit(OpCodes.Brfalse, throwNotImplementedException);
 
 
             // var returnValue = interceptor.Intercept(info);
-            var voidType = module.ImportType(typeof (void));
-            var interceptMethod = module.ImportMethod<IInterceptor>("Intercept", typeof (IInvocationInfo));
+            var voidType = module.ImportType(typeof(void));
+            var interceptMethod = module.ImportMethod<IInterceptor>("Intercept", typeof(IInvocationInfo));
             IL.Emit(OpCodes.Ldloc, interceptor);
             IL.Emit(OpCodes.Ldloc, invocationInfo);
             IL.Emit(OpCodes.Callvirt, interceptMethod);
@@ -129,12 +130,11 @@ namespace LinFu.DynamicProxy2
             var getArguments = module.ImportMethod<IInvocationInfo>("get_Arguments");
 
             IL.Emit(OpCodes.Ldloc, invocationInfo);
-            IL.Emit(OpCodes.Call, getArguments);
+            IL.Emit(OpCodes.Callvirt, getArguments);
             IL.Emit(OpCodes.Stloc, arguments);
 
             foreach (var param in parameters)
             {
-                var typeName = param.ParameterType.Name;                
                 if (!param.IsByRef())
                     continue;
 
@@ -146,12 +146,14 @@ namespace LinFu.DynamicProxy2
                 IL.Emit(OpCodes.Ldc_I4, param.Sequence);
                 IL.Emit(OpCodes.Ldelem_Ref);
 
-                typeName = typeName.Replace("&", "");
-                Type unboxedType = Type.GetType(typeName);
-                var unboxedTypeRef = module.ImportType(unboxedType);
+                // Determine the actual parameter type
+                var referenceType = param.ParameterType as ReferenceType;
+                if (referenceType == null)
+                    continue;
 
-                IL.Emit(OpCodes.Unbox_Any, unboxedTypeRef);
-                IL.Stind(param.ParameterType);                
+                var actualParameterType = referenceType.ElementType;
+                IL.Emit(OpCodes.Unbox_Any, actualParameterType);
+                IL.Stind(param.ParameterType);
             }
         }
         /// <summary>

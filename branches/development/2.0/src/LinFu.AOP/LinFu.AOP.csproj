@@ -55,6 +55,7 @@
     </Compile>
     <Compile Include="InvocationInfo.cs" />
     <Compile Include="InvocationInfoEmitter.cs" />
+    <Compile Include="InvocationInfoExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.AOP.Interfaces\LinFu.AOP.Interfaces.csproj">

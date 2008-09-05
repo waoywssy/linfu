@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LinFu.UnitTests.Tools
+namespace SampleLibrary
 {
-    public interface IMoqTrigger
+    public interface IInjectionTarget
     {
-        object Execute();
+        void SetValue(object arg1);
     }
 }

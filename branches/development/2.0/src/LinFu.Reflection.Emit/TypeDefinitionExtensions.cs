@@ -24,7 +24,8 @@ namespace LinFu.Reflection.Emit
         /// <param name="callingConvention">The calling convention of the method being created.</param>
         /// <param name="parameterTypes">The list of argument types that will be used to define the method signature.</param>
         /// <returns>A <see cref="MethodDefinition"/> instance that represents the newly-created method.</returns>
-        public static MethodDefinition DefineMethod(this TypeDefinition typeDef, string methodName, MethodAttributes attributes, MethodCallingConvention callingConvention, TypeReference returnType, params TypeReference[] parameterTypes)
+        public static MethodDefinition DefineMethod(this TypeDefinition typeDef, string methodName, 
+            MethodAttributes attributes, MethodCallingConvention callingConvention, TypeReference returnType, params TypeReference[] parameterTypes)
         {
             var method = new MethodDefinition(methodName, attributes, returnType)
             {
@@ -37,6 +38,34 @@ namespace LinFu.Reflection.Emit
                 var param = new ParameterDefinition(type);
                 method.Parameters.Add(param);
             }
+            
+            
+            typeDef.Methods.Add(method);
+
+            return method;
+        }
+
+        /// <summary>
+        /// Adds a new method to the <paramref name="typeDef">target type</paramref>.
+        /// </summary>
+        /// <param name="typeDef">The type that will hold the newly-created method.</param>
+        /// <param name="attributes">The <see cref="MethodAttributes"/> parameter that describes the characteristics of the method.</param>
+        /// <param name="methodName">The name to be given to the new method.</param>
+        /// <param name="returnType">The method return type.</param>        
+        /// <param name="parameterTypes">The list of argument types that will be used to define the method signature.</param>
+        /// <returns>A <see cref="MethodDefinition"/> instance that represents the newly-created method.</returns>
+        public static MethodDefinition DefineMethod(this TypeDefinition typeDef, string methodName,
+            MethodAttributes attributes, TypeReference returnType, params TypeReference[] parameterTypes)
+        {
+            var method = new MethodDefinition(methodName, attributes, returnType);
+
+            // Build the parameter list
+            foreach (var type in parameterTypes)
+            {
+                var param = new ParameterDefinition(type);
+                method.Parameters.Add(param);
+            }
+
 
             typeDef.Methods.Add(method);
 

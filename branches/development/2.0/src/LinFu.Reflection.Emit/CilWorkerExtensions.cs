@@ -42,7 +42,7 @@ namespace LinFu.Reflection.Emit
         /// <param name="IL">The <see cref="CilWorker"/> that will be used to create the instructions.</param>
         /// <param name="method">The method that represents the <see cref="MethodInfo"/> that will be pushed onto the stack.</param>
         /// <param name="module">The module that contains the host method.</param>
-        public static void PushMethod(this CilWorker IL, MethodDefinition method, ModuleDefinition module)
+        public static void PushMethod(this CilWorker IL, MethodReference method, ModuleDefinition module)
         {
             var getMethodFromHandle = module.ImportMethod<MethodBase>("GetMethodFromHandle",
                 typeof(RuntimeMethodHandle), typeof(RuntimeTypeHandle));
@@ -84,22 +84,13 @@ namespace LinFu.Reflection.Emit
             if (parameterCount == 0)
                 return;
 
+            var index = 0;
             foreach (ParameterDefinition param in method.Parameters)
             {
-                IL.PushParameter(arguments, param);
+                IL.PushParameter(index++, arguments, param);
             }
         }
-
-        /// <summary>
-        /// Pushes the method target onto the stack.
-        /// </summary>
-        /// <param name="IL">The <see cref="CilWorker"/> that will be used to create the instructions.</param>
-        /// <param name="method">The target method that will be executed against the object reference that was pushed onto the stack.</param>
-        public static void PushInstance(this CilWorker IL, MethodDefinition method)
-        {
-            var opCode = method.IsStatic ? OpCodes.Ldnull : OpCodes.Ldarg_0;
-            IL.Emit(opCode);
-        }
+        
 
         /// <summary>
         /// Pushes the stack trace of the currently executing method onto the stack.
@@ -210,10 +201,10 @@ namespace LinFu.Reflection.Emit
         /// </summary>
         /// <param name="IL">The <see cref="CilWorker"/> that will be used to create the instructions.</param>
         /// <param name="arguments">The local variable that will store the method arguments.</param>
+        /// <param name="index">The array index that indicates where the parameter value will be stored in the array of arguments.</param>
         /// <param name="param">The current argument value being stored.</param>
-        private static void PushParameter(this CilWorker IL, VariableDefinition arguments, ParameterDefinition param)
-        {
-            var index = param.Sequence - 1;
+        private static void PushParameter(this CilWorker IL, int index, VariableDefinition arguments, ParameterDefinition param)
+        {            
             var parameterType = param.ParameterType;
             IL.Emit(OpCodes.Ldloc, arguments);
             IL.Emit(OpCodes.Ldc_I4, index);
