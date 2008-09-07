@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SampleLibrary.DynamicProxy2
 {
-    public abstract class SampleClassWithVirtualByRefMethod
+    public abstract class ClassWithVirtualByRefMethod
     {
         public abstract void ByRefMethod(ref int a);        
     }

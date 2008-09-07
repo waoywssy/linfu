@@ -55,11 +55,7 @@ namespace LinFu.AOP
             IL.Emit(OpCodes.Ldc_I4, genericParameterCount);
             IL.Emit(OpCodes.Newarr, systemType);
             IL.Emit(OpCodes.Stloc, typeArguments);
-
-            // Push the generic type arguments onto the stack
-            if (genericParameterCount > 0)
-                IL.PushGenericArguments(targetMethod, module, typeArguments);
-
+            
             // object[] arguments = new object[argumentCount];            
             IL.PushArguments(targetMethod, module, arguments);
 
@@ -75,18 +71,32 @@ namespace LinFu.AOP
             IL.Emit(OpCodes.Ldloc, currentMethod);
             IL.Emit(OpCodes.Isinst, methodInfoType);
 
-            // Get the current stack trace
-            IL.PushStackTrace(module);
+            // Push the generic type arguments onto the stack
+            if (genericParameterCount > 0)
+                IL.PushGenericArguments(targetMethod, module, typeArguments);
 
-            // Push the type arguments back onto the stack
-            IL.Emit(OpCodes.Ldloc, typeArguments);
+            // Make sure that the generic methodinfo is instantiated with the
+            // proper type arguments
+            if (method.IsGenericMethodDefinition && targetMethod.GenericParameters.Count > 0)
+            {
+                var makeGenericMethod = module.ImportMethod<MethodInfo>("MakeGenericMethod", typeof (Type[]));
+                IL.Emit(OpCodes.Ldloc, typeArguments);
+                IL.Emit(OpCodes.Callvirt, makeGenericMethod);
+            }
+
+            // Get the current stack trace
+            IL.PushStackTrace(module);            
 
             // Save the parameter types
             IL.Emit(OpCodes.Ldc_I4, targetMethod.Parameters.Count);
             IL.Emit(OpCodes.Newarr, systemType);
             IL.Emit(OpCodes.Stloc, parameterTypes);
+
             IL.SaveParameterTypes(targetMethod, module, parameterTypes);
-            IL.Emit(OpCodes.Ldloc, parameterTypes);
+            IL.Emit(OpCodes.Ldloc, parameterTypes);            
+
+            // Push the type arguments back onto the stack
+            IL.Emit(OpCodes.Ldloc, typeArguments);
 
             // Save the return type
             var getTypeFromHandle = module.Import(_getTypeFromHandle);

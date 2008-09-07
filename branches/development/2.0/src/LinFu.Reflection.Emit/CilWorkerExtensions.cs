@@ -62,6 +62,7 @@ namespace LinFu.Reflection.Emit
                 declaringType = genericType;
             }
 
+
             IL.Emit(OpCodes.Ldtoken, method);
             IL.Emit(OpCodes.Ldtoken, declaringType);
             IL.Emit(OpCodes.Call, getMethodFromHandle);

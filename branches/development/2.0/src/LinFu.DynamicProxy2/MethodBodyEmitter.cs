@@ -62,8 +62,8 @@ namespace LinFu.DynamicProxy2
             IL.Emit(OpCodes.Ldarg_0);
             IL.Emit(OpCodes.Isinst, proxyType);
 
-            var throwNotImplementedException = IL.Create(OpCodes.Nop);
-            IL.Emit(OpCodes.Brfalse, throwNotImplementedException);
+            var noImplementationFound = IL.Create(OpCodes.Nop);
+            IL.Emit(OpCodes.Brfalse, noImplementationFound);
 
             var endLabel = IL.Create(OpCodes.Nop);
             IL.Emit(OpCodes.Ldarg_0);
@@ -74,7 +74,7 @@ namespace LinFu.DynamicProxy2
             //If (interceptor == null)
             //    throw a not implemented exception here
             IL.Emit(OpCodes.Ldloc, interceptor);
-            IL.Emit(OpCodes.Brfalse, throwNotImplementedException);
+            IL.Emit(OpCodes.Brfalse, noImplementationFound);
 
 
             // var returnValue = interceptor.Intercept(info);
@@ -87,26 +87,41 @@ namespace LinFu.DynamicProxy2
             // Save the ref arguments
             var parameters = from ParameterDefinition param in targetMethod.Parameters
                              select param;
-
-            SaveRefArguments(IL, parameters, invocationInfo, arguments);
-
+            
             // Determine the return type
             var returnType = targetMethod.ReturnType != null ?
                 targetMethod.ReturnType.ReturnType : voidType;
 
             IL.PackageReturnValue(module, returnType);
+
+            SaveRefArguments(IL, parameters, invocationInfo, arguments);
             IL.Emit(OpCodes.Br, endLabel);
 
-            // Mark the throwNotImplementedException label            
-            IL.Append(throwNotImplementedException);
+            // This code at this point will execute if no implementation
+            // is found
+            IL.Append(noImplementationFound);
+
+            ImplementNotFound(IL);
+
+            IL.Append(endLabel);
+            IL.Emit(OpCodes.Ret);
+        }
+
+        /// <summary>
+        /// Causes the <see cref="CilWorker"/> to make the method throw a
+        /// <see cref="NotImplementedException"/> if the method cannot be found.
+        /// </summary>
+        /// <param name="IL"></param>
+        protected virtual void ImplementNotFound(CilWorker IL)
+        {
+            var body = IL.GetBody();
+            var declaringType = body.Method.DeclaringType;
+            ModuleDefinition module = declaringType.Module;
 
             // throw new NotImplementedException();
             var notImplementedConstructor = module.ImportConstructor<NotImplementedException>();
             IL.Emit(OpCodes.Newobj, notImplementedConstructor);
             IL.Emit(OpCodes.Throw);
-
-            IL.Append(endLabel);
-            IL.Emit(OpCodes.Ret);
         }
 
         /// <summary>
