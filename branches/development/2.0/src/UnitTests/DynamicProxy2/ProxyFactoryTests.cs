@@ -52,7 +52,7 @@ namespace LinFu.UnitTests.DynamicProxy2
         }
 
         [Test]
-        public void DefaultProxyFactoryMustExist()
+        public void ShouldHaveDefaultProxyFactoryInstance()
         {
             var factory = container.GetService<IProxyFactory>();
             Assert.IsNotNull(factory);
@@ -60,7 +60,7 @@ namespace LinFu.UnitTests.DynamicProxy2
         }
 
         [Test]
-        public void GeneratedProxyTypeMustHaveDefaultConstructor()
+        public void ShouldHaveDefaultConstructor()
         {
             var factory = container.GetService<IProxyFactory>();
             Type proxyType = factory.CreateProxyType(typeof(object), new Type[0]);
@@ -74,7 +74,7 @@ namespace LinFu.UnitTests.DynamicProxy2
         }
 
         [Test]
-        public void GeneratedProxyTypeMustCallInterceptorInstance()
+        public void ShouldCallInterceptorInstance()
         {
             var factory = container.GetService<IProxyFactory>();
             var mockInterceptor = new MockInterceptor(i => null);
@@ -87,7 +87,7 @@ namespace LinFu.UnitTests.DynamicProxy2
             Assert.IsTrue(mockInterceptor.Called);
         }
         [Test]
-        public void GeneratedProxyTypeMustImplementIProxy()
+        public void ShouldImplementIProxy()
         {
             var factory = container.GetService<IProxyFactory>();
             var proxyType = factory.CreateProxyType(typeof(object), new Type[] { typeof(ISampleService) });
@@ -98,7 +98,7 @@ namespace LinFu.UnitTests.DynamicProxy2
         }
 
         [Test]
-        public void GeneratedProxyMustSupportRefArguments()
+        public void ShouldSupportRefArguments()
         {
             var factory = container.GetService<IProxyFactory>();
 
@@ -120,7 +120,7 @@ namespace LinFu.UnitTests.DynamicProxy2
         }
 
         [Test]
-        public void GeneratedProxyMustSupportOutArguments()
+        public void ShouldSupportOutArguments()
         {
             var factory = container.GetService<IProxyFactory>();
 
@@ -143,39 +143,66 @@ namespace LinFu.UnitTests.DynamicProxy2
 
         [Test]
         [Ignore("TODO: Implement this")]
-        public void InvocationArgumentsMustMatchMethodCall()
+        public void ShouldMatchInvocationArguments()
         {
             throw new NotImplementedException();
         }
 
         [Test]
-        public void GeneratedProxyTypeMustSupportGenericMethodCalls()
+        [Ignore("TODO: Implement this")]
+        public void ShouldSupportMethodCallsWithGenericReturnValuesFromGenericMethodTypeArguments()
         {
-            var factory = container.GetService<IProxyFactory>();
-            
+            throw new NotImplementedException();
+        }
+
+        [Test]
+        public void ShouldSupportMethodCallsWithGenericReturnValuesFromHostGenericTypeArguments()
+        {
+            var proxy = CreateProxy<ClassWithMethodReturnValueFromTypeArgument<int>>(
+            info =>
+            {
+                // Make sure that the method return type 
+                // matches the given return type
+                Assert.IsTrue(info.ReturnType == typeof(int));
+                return 54321;
+            });
+
+            var result = proxy.DoSomething();
+
+            Assert.AreEqual(54321, result);
+        }
+
+        [Test]
+        [Ignore("TODO: Implement this")]
+        public void ShouldSupportMethodCallsWithGenericParametersFromHostGenericTypeArguments()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Test]
+        [Ignore("TODO: Implement this")]
+        public void ShouldSupportMethodCallsWithGenericParametersFromGenericMethodTypeArguments()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Test]
+        public void ShouldReportTypeArgumentsUsedInGenericMethodCall()
+        {
             var genericParameterType = typeof(int);
-            
-
-            // The type arguments in the IInvocationInfo must match the
-            // type arguments given in the method call
-
-            Func<IInvocationInfo, object> methodBody = info =>
-                                                           {
-                                                               var method = info.TargetMethod;
-                                                               Assert.IsTrue(info.TypeArguments.Contains(genericParameterType));
-                                                               return null;
-                                                           };
-
-            var interceptor = new MockInterceptor(methodBody);
-            var proxy = factory.CreateProxy<ClassWithGenericMethod>(interceptor);
-
+            var proxy = CreateProxy<ClassWithGenericMethod>(info =>
+            {
+                // The generic parameter type must match the given parameter type
+                Assert.IsTrue(info.TypeArguments.Contains(genericParameterType));
+                return null;
+            });
 
             proxy.DoSomething<int>();
         }
 
 
         [Test]
-        public void GeneratedProxyTypeMustSupportSubclassingFromGenericTypes()
+        public void ShouldSupportSubclassingFromGenericTypes()
         {
             var factory = container.GetService<IProxyFactory>();
             var actualList = new List<int>();
@@ -196,18 +223,38 @@ namespace LinFu.UnitTests.DynamicProxy2
             Assert.IsTrue(actualList.Count > 0);
             Assert.IsTrue(actualList[0] == 12345);
         }
-        [Test]
-        [Ignore("TODO: Implement this")]
-        public void GeneratedProxyTypeMustImplementGivenInterfaces()
+        [Test]        
+        public void ShouldImplementGivenInterfaces()
         {
-            throw new NotImplementedException();
+            var interfaces = new Type[] {typeof(ISampleService), typeof(ISampleGenericService<int>)};
+
+            // Note: The interceptor will never be executed
+            var interceptor = new MockInterceptor(info => { throw new NotImplementedException(); });
+            var factory = container.GetService<IProxyFactory>();
+
+            var proxy = factory.CreateProxy(typeof (object), interceptor, interfaces.ToArray());
+            var proxyType = proxy.GetType();
+
+            // Make sure that the generated proxy implements
+            // all of the given interfaces
+            foreach(var currentType in interfaces)
+            {
+                Assert.IsTrue(currentType.IsAssignableFrom(proxyType));
+            }
         }
 
         [Test]
         [Ignore("TODO: Implement this")]
-        public void GeneratedProxyTypeMustSupportSerialization()
+        public void ShouldMustSupportSerialization()
         {
             throw new NotImplementedException();
+        }
+        private T CreateProxy<T>(Func<IInvocationInfo, object> implementation)
+        {
+            var factory = container.GetService<IProxyFactory>();
+
+            var interceptor = new MockInterceptor(implementation);
+            return factory.CreateProxy<T>(interceptor);
         }
     }
 }

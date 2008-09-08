@@ -48,6 +48,7 @@
     <Compile Include="AOP\SampleClassWithByRefMethod.cs" />
     <Compile Include="AOP\SampleClassWithMethodHavingOutParameters.cs" />
     <Compile Include="DynamicProxy2\ClassWithGenericMethod.cs" />
+    <Compile Include="DynamicProxy2\ClassWithMethodReturnValueFromTypeArgument.cs" />
     <Compile Include="DynamicProxy2\ClassWithVirtualMethodWithOutParameter.cs" />
     <Compile Include="DynamicProxy2\DerivedClassWithVirtualByRefMethod.cs" />
     <Compile Include="DynamicProxy2\ClassWithVirtualByRefMethod.cs" />
