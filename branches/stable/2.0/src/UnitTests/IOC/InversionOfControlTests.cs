@@ -266,5 +266,27 @@ namespace LinFu.UnitTests.IOC
 
             Assert.AreSame(mockService.Object, result);
         }
+        [Test]
+        public void ContainerMustCallIInitializeOnServicesCreatedFromCustomFactory()
+        {
+            var mockFactory = new Mock<IFactory>();
+            var mockInitialize = new Mock<IInitialize>();
+            
+            mockFactory.Expect(f => f.CreateInstance(It.IsAny<Type>(), It.IsAny<IServiceContainer>()))
+                .Returns(mockInitialize.Object);
+
+            // The IInitialize instance must be called once it
+            // leaves the custom factory
+            mockInitialize.Expect(i=>i.Initialize(It.IsAny<IServiceContainer>()));
+
+            var container = new ServiceContainer();
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
+            container.AddFactory(typeof(IInitialize), mockFactory.Object);
+
+            var result = container.GetService<IInitialize>();
+            
+            mockFactory.VerifyAll();
+            mockInitialize.VerifyAll();
+        }
     }
 }
