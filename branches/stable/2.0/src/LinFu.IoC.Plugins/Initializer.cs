@@ -8,7 +8,6 @@ namespace LinFu.IoC.Plugins
     /// A class that initializes service instances that use
     /// the <see cref="IInitialize"/> interface.
     /// </summary>
-    [PostProcessor]
     public class Initializer : IPostProcessor
     {
         private static readonly HashSet<IInitialize> _instances = new HashSet<IInitialize>();
