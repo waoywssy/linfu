@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
@@ -9,6 +10,11 @@ namespace LinFu.IoC
     /// </summary>
     public class ServiceContainer : ServiceContainerBase
     {
+        private readonly Dictionary<Type, IFactory> _genericFactories = new Dictionary<Type, IFactory>();
+
+        private readonly Dictionary<string, Dictionary<Type, IFactory>> _namedFactories =
+            new Dictionary<string, Dictionary<Type, IFactory>>();
+
         /// <summary>
         /// Overridden. This method modifies the original
         /// <see cref="BaseContainer.GetService"/> method
@@ -87,6 +93,108 @@ namespace LinFu.IoC
                 throw new ServiceNotFoundException(serviceType);
 
             return instance;
+        }
+
+        public override void AddFactory(string serviceName, Type serviceType, IFactory factory)
+        {
+            // If the service type is not a generic type definition (such as IList<>)
+            // let the base class handle the factory instance
+            if (!serviceType.IsGenericTypeDefinition || !serviceType.ContainsGenericParameters)
+            {
+                base.AddFactory(serviceName, serviceType, factory);
+                return;
+            }
+
+            // Create a new dictionary entry, if necessary
+            if (!_namedFactories.ContainsKey(serviceName))
+                _namedFactories[serviceName] = new Dictionary<Type, IFactory>();
+
+            _namedFactories[serviceName][serviceType] = factory;
+
+            // HACK: Route all service requests for IGeneric<T> to the
+            // single IFactory instance
+            PostProcessors.Add(new GenericTypeSurrogate(serviceName, serviceType, factory));
+        }
+
+        public override bool Contains(string serviceName, Type serviceType)
+        {
+            // Use the default implementation for
+            // non-generic types
+            if (!serviceType.IsGenericType && !serviceType.IsGenericTypeDefinition)
+                return base.Contains(serviceName, serviceType);
+
+            // If the service type is a generic type, determine
+            // if the service type can be created by a 
+            // standard factory that can create an instance
+            // of that generic type (e.g., IFactory<IGeneric<T>>            
+            var result = base.Contains(serviceName, serviceType);
+
+            // Immediately return a positive match, if possible
+            if (result)
+                return true;
+
+            if (serviceType.IsGenericType && !serviceType.IsGenericTypeDefinition)
+            {
+                // Determine the base type definition
+                var baseDefinition = serviceType.GetGenericTypeDefinition();
+
+                // Check if there are any generic factories that can create
+                // the entire family of services whose type definitions
+                // match the base type
+                result = _namedFactories.ContainsKey(serviceName) &&
+                         _namedFactories[serviceName].ContainsKey(baseDefinition);
+            }
+
+            return result;
+        }
+
+        public override void AddFactory(Type serviceType, IFactory factory)
+        {
+            // If the service type is not a generic type definition (such as IList<>)
+            // let the base class handle the factory instance
+            if (!serviceType.IsGenericTypeDefinition || !serviceType.ContainsGenericParameters)
+            {
+                base.AddFactory(serviceType, factory);
+                return;
+            }
+
+            // Otherwise, keep track of the factory instance
+            _genericFactories.Add(serviceType, factory);
+
+            // HACK: Route all service requests for IGeneric<T> to the
+            // single IFactory instance
+            PostProcessors.Add(new GenericTypeSurrogate(serviceType, factory));
+        }
+
+        public override bool Contains(Type serviceType)
+        {
+            // Use the default implementation for
+            // non-generic types
+            if (!serviceType.IsGenericType && !serviceType.IsGenericTypeDefinition)
+                return base.Contains(serviceType);
+
+            // If the service type is a generic type, determine
+            // if the service type can be created by a 
+            // standard factory that can create an instance
+            // of that generic type (e.g., IFactory<IGeneric<T>>            
+            var result = base.Contains(serviceType);
+
+            // Immediately return a positive match, if possible
+            if (result)
+                return true;
+
+            if (serviceType.IsGenericType && !serviceType.IsGenericTypeDefinition)
+            {
+                // Determine the base type definition
+                var baseDefinition = serviceType.GetGenericTypeDefinition();
+
+                // Check if there are any generic factories that can create
+                // the entire family of services whose type definitions
+                // match the base type
+                result = _genericFactories.ContainsKey(baseDefinition);
+            }
+
+            return result;
         }
 
         /// <summary>

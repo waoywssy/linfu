@@ -52,7 +52,6 @@
     <Compile Include="AssemblyContainerLoader.cs" />
     <Compile Include="FactoryAttributeLoader.cs" />
     <Compile Include="FactoryAttributePlugin.cs" />
-    <Compile Include="GenericTypeSurrogate.cs" />
     <Compile Include="ImplementsAttributeLoader.cs" />
     <Compile Include="ImplementsAttributePlugin.cs" />
     <Compile Include="Initializer.cs" />
@@ -77,6 +76,10 @@
     <ProjectReference Include="..\LinFu.IoC.Interfaces\LinFu.IoC.Interfaces.csproj">
       <Project>{C6AC7707-9288-4ADF-9053-34FE71FFE0BE}</Project>
       <Name>LinFu.IoC.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.IoC\LinFu.IoC.csproj">
+      <Project>{FA3D5517-EFF4-4363-AFF2-EF67B981334E}</Project>
+      <Name>LinFu.IoC</Name>
     </ProjectReference>
     <ProjectReference Include="..\LinFu.Reflection.Interfaces\LinFu.Reflection.Interfaces.csproj">
       <Project>{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}</Project>

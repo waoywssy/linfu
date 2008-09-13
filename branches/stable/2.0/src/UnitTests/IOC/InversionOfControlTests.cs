@@ -5,6 +5,7 @@ using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
 using Moq;
 using NUnit.Framework;
+using SampleLibrary;
 
 namespace LinFu.UnitTests.IOC
 {
@@ -266,6 +267,43 @@ namespace LinFu.UnitTests.IOC
 
             Assert.AreSame(mockService.Object, result);
         }
+        [Test]
+        public void ContainerMustAllowInjectingCustomFactoriesForOpenGenericTypeDefinitions()
+        {
+            var container = new ServiceContainer();
+            var factory = new SampleOpenGenericFactory();
+
+            container.AddFactory(typeof(ISampleGenericService<>), factory);
+
+            // The container must report that it *can* create
+            // the generic service type 
+            Assert.IsTrue(container.Contains(typeof(ISampleGenericService<int>)));
+
+            var result = container.GetService<ISampleGenericService<int>>();
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.GetType() == typeof(SampleGenericImplementation<int>));
+        }
+
+        [Test]
+        public void ContainerMustAllowInjectingCustomFactoriesForNamedOpenGenericTypeDefinitions()
+        {
+            var container = new ServiceContainer();
+            var factory = new SampleOpenGenericFactory();
+            var serviceName = "MyService";
+
+            container.AddFactory(serviceName, typeof(ISampleGenericService<>), factory);
+
+            // The container must report that it *can* create
+            // the generic service type 
+            Assert.IsTrue(container.Contains(serviceName, typeof(ISampleGenericService<int>)));
+
+            var result = container.GetService<ISampleGenericService<int>>(serviceName);
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.GetType() == typeof(SampleGenericImplementation<int>));
+        }
+
         [Test]
         public void ContainerMustCallIInitializeOnServicesCreatedFromCustomFactory()
         {
