@@ -84,7 +84,11 @@ namespace LinFu.IoC
             if (!exists && SuppressErrors != true)
                 throw new NamedServiceNotFoundException(serviceName, serviceType);
 
-            IFactory factory = _namedFactories[serviceName][serviceType];
+            // Use the named factory if it exists
+            IFactory factory = null;
+            if (_namedFactories.ContainsKey(serviceName) && 
+                _namedFactories[serviceName].ContainsKey(serviceType))
+                factory = _namedFactories[serviceName][serviceType];
 
             object result = null;
             // Make sure that the factory exists

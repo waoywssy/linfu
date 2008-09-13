@@ -2,5 +2,6 @@
 {
     public interface ISampleGenericService<T>
     {
+        bool Called { get; }
     }
 }

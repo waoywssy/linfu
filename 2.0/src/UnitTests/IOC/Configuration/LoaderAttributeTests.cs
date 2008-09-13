@@ -229,5 +229,27 @@ namespace LinFu.UnitTests.IOC.Configuration
             TestFactoryConverterWith<SingletonFactory<ISampleService>>(string.Empty,
                                                                        typeof (ISampleService), typeof (SingletonSampleService), new ImplementsAttributeLoader());
         }
+
+        [Test]
+        public void ServicesCreatedFromCustomOpenGenericFactoryMustInvokeIInitialize()
+        {
+            var mockFactory = new Mock<IFactory>();
+            var serviceInstance = new SampleGenericImplementation<int>();
+            mockFactory.Expect(f => f.CreateInstance(It.IsAny<Type>(), It.IsAny<IServiceContainer>())).Returns(
+                serviceInstance);
+
+            var container = new ServiceContainer();
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+
+            var result = container.GetService<ISampleGenericService<int>>();
+
+            Assert.AreSame(serviceInstance, result);
+
+            // Make sure that the IInitialize instance was called
+            // on the sample class
+            Assert.IsTrue(serviceInstance.Called);
+
+            mockFactory.VerifyAll();
+        }
     }
 }
