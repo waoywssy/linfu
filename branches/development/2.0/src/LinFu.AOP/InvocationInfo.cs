@@ -21,6 +21,7 @@ namespace LinFu.AOP
         private readonly Type[] _typeArguments;
         private readonly object[] _arguments;
         private readonly Type _returnType;
+
         /// <summary>
         /// Initializes the <see cref="InvocationInfo"/> instance.
         /// </summary>

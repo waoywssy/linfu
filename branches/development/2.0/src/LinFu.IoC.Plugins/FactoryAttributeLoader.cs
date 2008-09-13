@@ -98,7 +98,7 @@ namespace LinFu.IoC.Plugins
 
             // Build the list of services that this factory can implement
             var servicesToImplement = from f in attributeList
-                                      let serviceName = f.ServiceName
+                                      let serviceName = f.ServiceName ?? string.Empty
                                       let serviceType = f.ServiceType
                                       let factory = createFactory(serviceType, factoryInstance)
                                       where factory != null
@@ -119,17 +119,7 @@ namespace LinFu.IoC.Plugins
 
 
                 // Add each service to the container on initialization
-                if (!serviceType.IsGenericTypeDefinition)
-                {
-                    results.Add(container => container.AddFactory(serviceName, serviceType, factory));
-                    continue;
-                }
-
-                // HACK: Use a GenericTypeSurrogate to route
-                // generic service requests to a 
-                // single factory instance
-                var surrogate = new GenericTypeSurrogate(serviceType, factory);
-                results.Add(container => container.PostProcessors.Add(surrogate));
+                results.Add(container => container.AddFactory(serviceName, serviceType, factory));
             }
 
             return results;

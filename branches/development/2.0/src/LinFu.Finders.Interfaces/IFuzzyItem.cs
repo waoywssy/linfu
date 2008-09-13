@@ -22,7 +22,7 @@ namespace LinFu.Finders.Interfaces
         double Confidence { get; }
 
         /// <summary>
-        /// Gets the item to be searched.
+        /// Gets the target item.
         /// </summary>
         T Item { get; }
 

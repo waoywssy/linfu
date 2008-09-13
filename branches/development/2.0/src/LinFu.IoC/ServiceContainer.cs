@@ -40,6 +40,25 @@ namespace LinFu.IoC
                 SuppressErrors = suppressErrors;
             }
 
+            // Attempt to create the service type using
+            // the generic factories, if possible
+            if (instance == null && serviceType.IsGenericType && 
+                !serviceType.IsGenericTypeDefinition)
+            {
+                // Check if any factories can create the service
+                // with the given definition type
+                var definitionType = serviceType.GetGenericTypeDefinition();
+                if (_namedFactories.ContainsKey(serviceName) && 
+                    _namedFactories[serviceName].ContainsKey(definitionType))
+                {
+                    var factory = _namedFactories[serviceName][definitionType];
+
+                    // Generate the service instance
+                    if (factory != null)
+                        instance = factory.CreateInstance(serviceType, this);
+                }
+            }
+
             IServiceRequestResult result = PostProcess(serviceName, serviceType, instance);
 
             // Use the modified result, if possible; otherwise,
@@ -82,6 +101,24 @@ namespace LinFu.IoC
                 SuppressErrors = suppressErrors;
             }
 
+            // Attempt to create the service type using
+            // the generic factories, if possible
+            if (instance == null && serviceType.IsGenericType &&
+                !serviceType.IsGenericTypeDefinition)
+            {
+                // Check if any factories can create the service
+                // with the given definition type
+                var definitionType = serviceType.GetGenericTypeDefinition();
+                if (_genericFactories.ContainsKey(definitionType))
+                {
+                    var factory = _genericFactories[definitionType];
+
+                    // Generate the service instance
+                    if (factory != null)
+                        instance = factory.CreateInstance(serviceType, this);
+                }
+            }
+
             IServiceRequestResult result = PostProcess(string.Empty, serviceType, instance);
 
             // Use the modified result, if possible; otherwise,
@@ -117,10 +154,6 @@ namespace LinFu.IoC
                 _namedFactories[serviceName] = new Dictionary<Type, IFactory>();
 
             _namedFactories[serviceName][serviceType] = factory;
-
-            // HACK: Route all service requests for IGeneric<T> to the
-            // single IFactory instance
-            PostProcessors.Add(new GenericTypeSurrogate(serviceName, serviceType, factory));
         }
         
         /// <summary>
@@ -179,12 +212,7 @@ namespace LinFu.IoC
                 return;
             }
 
-            // Otherwise, keep track of the factory instance
             _genericFactories.Add(serviceType, factory);
-
-            // HACK: Route all service requests for IGeneric<T> to the
-            // single IFactory instance
-            PostProcessors.Add(new GenericTypeSurrogate(serviceType, factory));
         }
 
         /// <summary>

@@ -20,7 +20,7 @@ namespace LinFu.Finders
         /// <param name="criteria">The criteria to test against each item in the list.</param>
         public static void AddCriteria<TItem>(this IList<IFuzzyItem<TItem>> list, ICriteria<TItem> criteria)
         {
-            foreach(var item in list)
+            foreach (var item in list)
             {
                 if (item == null)
                     continue;
@@ -28,6 +28,67 @@ namespace LinFu.Finders
                 item.Test(criteria);
             }
         }
+        /// <summary>
+        /// Applies a criteria to the <paramref name="list"/> of 
+        /// fuzzy items using the given <paramref name="predicate"/>.
+        /// </summary>
+        /// <typeparam name="TItem">The type of item to test.</typeparam>
+        /// <param name="list">The list of <see cref="IFuzzyItem{T}"/> instances that represent a single test case in a fuzzy search.</param>
+        /// <param name="predicate">The condition that will be used to test the target item.</param>        
+        public static void AddCriteria<TItem>(this IList<IFuzzyItem<TItem>> list, Func<TItem, bool> predicate)
+        {
+            const bool isOptional = false;
+            list.AddCriteria(predicate, isOptional);
+        }
+
+        /// <summary>
+        /// Applies a criteria to the <paramref name="list"/> of 
+        /// fuzzy items using the given <paramref name="predicate"/>.
+        /// </summary>
+        /// <typeparam name="TItem">The type of item to test.</typeparam>
+        /// <param name="list">The list of <see cref="IFuzzyItem{T}"/> instances that represent a single test case in a fuzzy search.</param>
+        /// <param name="predicate">The condition that will be used to test the target item.</param>        
+        /// <param name="isOptional">Determines whether or not a failed match will count against the weighted score of the target item.</param>
+        public static void AddCriteria<TItem>(this IList<IFuzzyItem<TItem>> list, Func<TItem, bool> predicate, 
+            bool isOptional)
+        {
+            const int defaultWeight = 1;
+            list.AddCriteria(predicate, isOptional, defaultWeight);
+        }
+
+        /// <summary>
+        /// Applies a criteria to the <paramref name="list"/> of 
+        /// fuzzy items using the given <paramref name="predicate"/>.
+        /// </summary>
+        /// <typeparam name="TItem">The type of item to test.</typeparam>
+        /// <param name="list">The list of <see cref="IFuzzyItem{T}"/> instances that represent a single test case in a fuzzy search.</param>
+        /// <param name="predicate">The condition that will be used to test the target item.</param>        
+        /// <param name="isOptional">Determines whether or not a failed match will count against the weighted score of the target item.</param>
+        /// <param name="weight">The weight of the predicate value expressed in the number of tests that will be counted for/against the target item as a result of the predicate.</param>
+        public static void AddCriteria<TItem>(this IList<IFuzzyItem<TItem>> list, Func<TItem, bool> predicate, 
+            bool isOptional, int weight)
+        {
+            var criteria = new Criteria<TItem>()
+                               {
+                                   Predicate = predicate,
+                                   Weight= weight,
+                                   IsOptional = true
+                               };
+
+            list.AddCriteria(criteria);
+        }
+
+        /// <summary>
+        /// Adds an item to a fuzzy list.
+        /// </summary>
+        /// <typeparam name="T">The type of the item being added.</typeparam>
+        /// <param name="list">The fuzzy list that will contain the new item.</param>
+        /// <param name="item">The item being added.</param>
+        public static void Add<T>(this IList<IFuzzyItem<T>> list, T item)
+        {
+            list.Add(new FuzzyItem<T>(item));
+        }
+
         /// <summary>
         /// Returns the FuzzyItem with the highest confidence score in a given
         /// <see cref="IFuzzyItem{T}"/> list.
@@ -39,7 +100,7 @@ namespace LinFu.Finders
         {
             double bestScore = 0;
             IFuzzyItem<TItem> bestMatch = null;
-            foreach(var item in list)
+            foreach (var item in list)
             {
                 if (item.Confidence <= bestScore)
                     continue;

@@ -12,7 +12,9 @@ namespace SampleLibrary
         public object CreateInstance(Type serviceType, IContainer container)
         {
             Type typeArgument = serviceType.GetGenericArguments()[0];
-            return typeof (SampleGenericImplementation<>).MakeGenericType(typeArgument);
+            var resultType = typeof (SampleGenericImplementation<>).MakeGenericType(typeArgument);
+
+            return Activator.CreateInstance(resultType);
         }
 
         #endregion

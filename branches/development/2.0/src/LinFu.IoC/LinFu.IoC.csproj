@@ -49,7 +49,6 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="GenericTypeSurrogate.cs" />
     <Compile Include="ServiceContainer.cs" />
     <Compile Include="ServiceContainerBase.cs" />
     <Compile Include="NamedServiceNotFoundException.cs" />

@@ -39,7 +39,7 @@ namespace LinFu.AOP
         
         /// <summary>
         /// Emits the IL instructions that will store information about the method <paramref name="targetMethod"/>currently being executed</paramref>
-        /// and stores the results into the <paramref name="invocationInfo"/> variable.
+        /// and stores the results into the <paramref name="invocationInfo"/> variable.</paramref>
         /// </summary>
         /// <param name="method">The method whose implementation will be intercepted.</param>
         /// <param name="targetMethod">The actual method that will contain the resulting instructions.</param>

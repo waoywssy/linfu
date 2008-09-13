@@ -22,10 +22,16 @@ namespace LinFu.UnitTests.IOC
         }
 
         [Test]
-        [Ignore("TODO: Implement this")]
         public void ContainerMustAllowSurrogatesForNonExistentServiceInstances()
         {
-            throw new NotImplementedException();
+            var container = new ServiceContainer();
+            var mockService = new Mock<ISampleService>();
+            var surrogate = mockService.Object;
+            container.Inject<ISampleService>().Using(f => surrogate).OncePerRequest();
+
+            var result = container.GetService<ISampleService>();
+            Assert.IsNotNull(result);
+            Assert.AreSame(surrogate, result);
         }
 
         [Test]        
