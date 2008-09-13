@@ -19,8 +19,25 @@ namespace LinFu.IoC.Plugins
         /// </summary>
         /// <param name="result">The <see cref="IServiceRequestResult"/> instance that contains the service instance to be initialized.</param>
         public void PostProcess(IServiceRequestResult result)
+        {            
+            var originalResult = result.OriginalResult as IInitialize;
+            var actualResult = result.ActualResult as IInitialize;
+            var container = result.Container;
+
+            // Initialize the original result, if possible
+            Initialize(originalResult, container);
+
+            // Initialize the actual result as well
+            Initialize(actualResult, container);
+        }
+
+        /// <summary>
+        /// Initializes the <paramref name="target"/> with the given <paramref name="container"/> instance.
+        /// </summary>
+        /// <param name="target">The target to initialize.</param>
+        /// <param name="container">The container that will be introduced to the <see cref="IInitialize"/> instance.</param>        
+        private void Initialize(IInitialize target, IServiceContainer container)
         {
-            var target = result.OriginalResult as IInitialize;
             if (target == null)
                 return;
 
@@ -29,8 +46,8 @@ namespace LinFu.IoC.Plugins
                 return;
 
             // Initialize the target
-            target.Initialize(result.Container);
-            _instances.Add(target);                                    
+            target.Initialize(container);
+            _instances.Add(target);
         }
 
         #endregion

@@ -235,17 +235,22 @@ namespace LinFu.UnitTests.IOC.Configuration
         {
             var mockFactory = new Mock<IFactory>();
             var serviceInstance = new SampleGenericImplementation<int>();
-            mockFactory.Expect(f => f.CreateInstance(It.IsAny<Type>(), It.IsAny<IServiceContainer>())).Returns(
-                serviceInstance);
+
+            mockFactory.Expect(f => f.CreateInstance(It.IsAny<Type>(), It.IsAny<IServiceContainer>()))
+                .Returns(serviceInstance);
 
             var container = new ServiceContainer();
-            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+            
+            
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
+            container.AddFactory("MyService", typeof(ISampleGenericService<>), mockFactory.Object);
 
-            var result = container.GetService<ISampleGenericService<int>>();
+            var result = container.GetService<ISampleGenericService<int>>("MyService");
+            bool areSame = ReferenceEquals(serviceInstance, result);
 
             Assert.AreSame(serviceInstance, result);
 
-            // Make sure that the IInitialize instance was called
+            // Make sure that the IInitialize instance is called
             // on the sample class
             Assert.IsTrue(serviceInstance.Called);
 
