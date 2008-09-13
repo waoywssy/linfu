@@ -5,6 +5,7 @@ using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
 using Moq;
 using NUnit.Framework;
+using SampleLibrary;
 
 namespace LinFu.UnitTests.IOC
 {
@@ -265,6 +266,65 @@ namespace LinFu.UnitTests.IOC
             object result = container.GetService(string.Empty, serviceType);
 
             Assert.AreSame(mockService.Object, result);
+        }
+        [Test]
+        public void ContainerMustAllowInjectingCustomFactoriesForOpenGenericTypeDefinitions()
+        {
+            var container = new ServiceContainer();
+            var factory = new SampleOpenGenericFactory();
+
+            container.AddFactory(typeof(ISampleGenericService<>), factory);
+
+            // The container must report that it *can* create
+            // the generic service type 
+            Assert.IsTrue(container.Contains(typeof(ISampleGenericService<int>)));
+
+            var result = container.GetService<ISampleGenericService<int>>();
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.GetType() == typeof(SampleGenericImplementation<int>));
+        }
+
+        [Test]
+        public void ContainerMustAllowInjectingCustomFactoriesForNamedOpenGenericTypeDefinitions()
+        {
+            var container = new ServiceContainer();
+            var factory = new SampleOpenGenericFactory();
+            var serviceName = "MyService";
+
+            container.AddFactory(serviceName, typeof(ISampleGenericService<>), factory);
+
+            // The container must report that it *can* create
+            // the generic service type 
+            Assert.IsTrue(container.Contains(serviceName, typeof(ISampleGenericService<int>)));
+
+            var result = container.GetService<ISampleGenericService<int>>(serviceName);
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.GetType() == typeof(SampleGenericImplementation<int>));
+        }
+
+        [Test]
+        public void ContainerMustCallIInitializeOnServicesCreatedFromCustomFactory()
+        {
+            var mockFactory = new Mock<IFactory>();
+            var mockInitialize = new Mock<IInitialize>();
+            
+            mockFactory.Expect(f => f.CreateInstance(It.IsAny<Type>(), It.IsAny<IServiceContainer>()))
+                .Returns(mockInitialize.Object);
+
+            // The IInitialize instance must be called once it
+            // leaves the custom factory
+            mockInitialize.Expect(i=>i.Initialize(It.IsAny<IServiceContainer>()));
+
+            var container = new ServiceContainer();
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
+            container.AddFactory(typeof(IInitialize), mockFactory.Object);
+
+            var result = container.GetService<IInitialize>();
+            
+            mockFactory.VerifyAll();
+            mockInitialize.VerifyAll();
         }
     }
 }

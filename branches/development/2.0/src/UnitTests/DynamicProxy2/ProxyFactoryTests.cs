@@ -200,7 +200,23 @@ namespace LinFu.UnitTests.DynamicProxy2
             proxy.DoSomething<int>();
         }
 
+        [Test]
+        public void ShouldAllowProxyToInheritFromMultipleInstancesOfTheSameGenericInterfaceType()
+        {
+            IInterceptor interceptor = new MockInterceptor(body => null);
 
+            var interfaces = new[] { typeof(IList<int>), typeof(IList<double>), typeof(IList<object>) };
+            var factory = container.GetService<IProxyFactory>();
+            var proxy = factory.CreateProxy<object>(interceptor, interfaces);
+
+            var proxyType = proxy.GetType();
+
+            // The proxy must implement all of the given interfaces
+            foreach(var currentType in interfaces)
+            {
+                Assert.IsTrue(currentType.IsAssignableFrom(proxyType));
+            }
+        }
         [Test]
         public void ShouldSupportSubclassingFromGenericTypes()
         {
@@ -223,21 +239,21 @@ namespace LinFu.UnitTests.DynamicProxy2
             Assert.IsTrue(actualList.Count > 0);
             Assert.IsTrue(actualList[0] == 12345);
         }
-        [Test]        
+        [Test]
         public void ShouldImplementGivenInterfaces()
         {
-            var interfaces = new Type[] {typeof(ISampleService), typeof(ISampleGenericService<int>)};
+            var interfaces = new Type[] { typeof(ISampleService), typeof(ISampleGenericService<int>) };
 
             // Note: The interceptor will never be executed
             var interceptor = new MockInterceptor(info => { throw new NotImplementedException(); });
             var factory = container.GetService<IProxyFactory>();
 
-            var proxy = factory.CreateProxy(typeof (object), interceptor, interfaces.ToArray());
+            var proxy = factory.CreateProxy(typeof(object), interceptor, interfaces.ToArray());
             var proxyType = proxy.GetType();
 
             // Make sure that the generated proxy implements
             // all of the given interfaces
-            foreach(var currentType in interfaces)
+            foreach (var currentType in interfaces)
             {
                 Assert.IsTrue(currentType.IsAssignableFrom(proxyType));
             }

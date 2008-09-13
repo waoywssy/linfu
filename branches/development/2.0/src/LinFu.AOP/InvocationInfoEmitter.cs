@@ -36,8 +36,14 @@ namespace LinFu.AOP
             _getTypeFromHandle = typeof (Type).GetMethod("GetTypeFromHandle",
                                                          BindingFlags.Static | BindingFlags.Public);
         }
-        #region IEmitInvocationInfo Members
-
+        
+        /// <summary>
+        /// Emits the IL instructions that will store information about the method <paramref name="targetMethod"/>currently being executed</paramref>
+        /// and stores the results into the <paramref name="invocationInfo"/> variable.
+        /// </summary>
+        /// <param name="method">The method whose implementation will be intercepted.</param>
+        /// <param name="targetMethod">The actual method that will contain the resulting instructions.</param>
+        /// <param name="invocationInfo">The <see cref="VariableDefinition">local variable</see> that will store the current <see cref="IInvocationInfo"/> instance.</param>
         public void Emit(MethodInfo method, MethodDefinition targetMethod, VariableDefinition invocationInfo)
         {
             var module = targetMethod.DeclaringType.Module;
@@ -114,7 +120,5 @@ namespace LinFu.AOP
             IL.Emit(OpCodes.Newobj, infoConstructor);
             IL.Emit(OpCodes.Stloc, invocationInfo);
         }
-
-        #endregion
     }
 }

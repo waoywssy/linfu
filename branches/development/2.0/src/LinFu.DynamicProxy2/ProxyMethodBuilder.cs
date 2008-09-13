@@ -37,7 +37,21 @@ namespace LinFu.DynamicProxy2
             #region Match the method signature
             var module = targetType.Module;
             var returnType = module.ImportType(method.ReturnType);
+            
             var methodName = method.Name;
+
+            // If the method is a member defined on an interface type,
+            // we need to rename the method to avoid
+            // any naming conflicts in the type itself
+            if (method.DeclaringType.IsInterface)
+            {
+                var parentName = method.DeclaringType.FullName;
+                
+                // Rename the parent type to its fully qualified name
+                // if it is a generic type
+                methodName = string.Format("{0}.{1}", parentName, methodName);
+            }
+
             var baseAttributes = Mono.Cecil.MethodAttributes.Virtual | 
                 Mono.Cecil.MethodAttributes.HideBySig;
 
@@ -76,8 +90,11 @@ namespace LinFu.DynamicProxy2
 
             if (typeArguments != null || typeArguments.Length > 0)
                 MatchGenericArguments(newMethod, typeArguments);
-            
-            #endregion
+
+            var originalMethodRef = module.Import(method);
+            newMethod.Overrides.Add(originalMethodRef);
+
+            #endregion            
 
             // Define the method body
             if (Emitter != null)
