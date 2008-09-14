@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using LinFu.DynamicProxy2.Interfaces;
+using LinFu.Proxy.Interfaces;
 using LinFu.IoC.Configuration;
 
-namespace LinFu.DynamicProxy2
+namespace LinFu.Proxy
 {
     /// <summary>
     /// Provides the default implementation for the 

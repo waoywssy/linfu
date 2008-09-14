@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using LinFu.AOP.Interfaces;
-using LinFu.DynamicProxy2.Interfaces;
+using LinFu.Proxy.Interfaces;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
 using LinFu.Reflection.Emit.Interfaces;
 using Mono.Cecil;
 
-namespace LinFu.DynamicProxy2
+namespace LinFu.Proxy
 {
     /// <summary>
     /// A <see cref="IProxyBuilder"/> type that generates

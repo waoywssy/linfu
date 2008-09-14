@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
@@ -103,6 +104,29 @@ namespace LinFu.IoC
         public IList<IPostProcessor> PostProcessors
         {
             get { return _postProcessors; }
+        }
+
+        /// <summary>
+        /// Lists all the services available in the container,
+        /// including the named services.
+        /// </summary>
+        public override IEnumerable<IServiceInfo> AvailableServices
+        {
+            get
+            {
+                var results = new List<IServiceInfo>(base.AvailableServices);
+
+                // Append the named factory entries
+                var additionalResults = from name in _namedFactories.Keys
+                                        let dictionary = _namedFactories[name]
+                                        from type in dictionary.Keys
+                                        let info = new ServiceInfo(name, type) as IServiceInfo
+                                        select info;
+
+
+                results.AddRange(additionalResults);
+                return results;
+            }
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using LinFu.AOP.Interfaces;
-using LinFu.DynamicProxy2.Interfaces;
+using LinFu.Proxy.Interfaces;
 using LinFu.IoC.Configuration;
 using LinFu.Reflection.Emit.Interfaces;
 using LinFu.Reflection.Emit;
@@ -11,7 +11,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using CallingConventions = Mono.Cecil.MethodCallingConvention;
 
-namespace LinFu.DynamicProxy2
+namespace LinFu.Proxy
 {
     /// <summary>
     /// A class that provides the default implementation

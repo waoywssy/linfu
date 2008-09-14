@@ -47,6 +47,6 @@ namespace LinFu.IoC.Interfaces
         /// <param name="serviceType">The service type to instantiate.</param>        
         /// <returns>If successful, it will return a service instance that is compatible with the given type;
         /// otherwise, it will just return a <c>null</c> value.</returns>
-        object GetService(string serviceName, Type serviceType);
+        object GetService(string serviceName, Type serviceType);        
     }
 }

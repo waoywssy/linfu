@@ -5,17 +5,17 @@ using System.Linq;
 using System.Text;
 using LinFu.AOP;
 using LinFu.AOP.Interfaces;
-using LinFu.DynamicProxy2;
-using LinFu.DynamicProxy2.Interfaces;
+using LinFu.Proxy;
+using LinFu.Proxy.Interfaces;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
 using LinFu.UnitTests.Tools;
 using Moq;
 using NUnit.Framework;
 using SampleLibrary;
-using SampleLibrary.DynamicProxy2;
+using SampleLibrary.Proxy;
 
-namespace LinFu.UnitTests.DynamicProxy2
+namespace LinFu.UnitTests.Proxy
 {
     [TestFixture]
     public class ProxyFactoryTests : BaseTestFixture

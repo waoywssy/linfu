@@ -5,7 +5,7 @@ using System.Text;
 using LinFu.AOP;
 using LinFu.AOP.Interfaces;
 
-namespace LinFu.DynamicProxy2
+namespace LinFu.Proxy
 {
     /// <summary>
     /// Adapts an <see cref="IInvokeWrapper"/> instance to an

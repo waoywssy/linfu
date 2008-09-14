@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using LinFu.AOP.Interfaces;
-using LinFu.DynamicProxy2.Interfaces;
+using LinFu.Proxy.Interfaces;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
@@ -11,7 +11,7 @@ using LinFu.Reflection.Emit;
 using Mono.Cecil;
 using TypeAttributes=Mono.Cecil.TypeAttributes;
 
-namespace LinFu.DynamicProxy2
+namespace LinFu.Proxy
 {
     /// <summary>
     /// Provides the basic implementation for a proxy factory class.
@@ -95,7 +95,7 @@ namespace LinFu.DynamicProxy2
             #region Initialize the proxy type
             var guid = Guid.NewGuid().ToString().Replace("-", "");
             var typeName = string.Format("{0}Proxy-{1}", baseType.Name, guid);
-            var namespaceName = "LinFu.DynamicProxy2";
+            var namespaceName = "LinFu.Proxy";
             var proxyType = mainModule.DefineClass(typeName, namespaceName,
                                                               attributes, importedBaseType);
 

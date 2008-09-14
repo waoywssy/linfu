@@ -6,11 +6,11 @@ using System.Text;
 using LinFu.IoC;
 using LinFu.IoC.Interfaces;
 using LinFu.Reflection.Emit;
-using LinFu.DynamicProxy2.Interfaces;
+using LinFu.Proxy.Interfaces;
 using LinFu.IoC.Configuration;
 using Mono.Cecil;
 
-namespace LinFu.DynamicProxy2
+namespace LinFu.Proxy
 {
     /// <summary>
     /// Represents the default implementation of the

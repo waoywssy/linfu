@@ -38,13 +38,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.IoC.Plugins", "LinFu.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.Reflection.Plugins", "LinFu.Reflection.Plugins\LinFu.Reflection.Plugins.csproj", "{E931E87A-3ED8-4028-8990-F0F4054C0847}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.DynamicProxy2.Interfaces", "LinFu.DynamicProxy2.Interfaces\LinFu.DynamicProxy2.Interfaces.csproj", "{6C29A409-6148-49AC-A192-DC6F33F3304C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.Proxy.Interfaces", "LinFu.DynamicProxy2.Interfaces\LinFu.Proxy.Interfaces.csproj", "{6C29A409-6148-49AC-A192-DC6F33F3304C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IoC", "IoC", "{73AE4D9F-E76A-44A3-B696-0D63BAADFEE9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reflection", "Reflection", "{4FE3DD4A-DFCB-437F-9444-04780C4DDF49}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DynamicProxy2", "DynamicProxy2", "{5D6F6FB9-7156-4B1A-8C3F-B9D905FD1F89}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Proxy", "Proxy", "{5D6F6FB9-7156-4B1A-8C3F-B9D905FD1F89}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IoC", "IoC", "{D956ADDB-9C73-4FEB-9151-7B146063A979}"
 EndProject
@@ -58,9 +58,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.Reflection.Emit", "Li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.Reflection.Emit.Interfaces", "LinFu.Reflection.Emit.Interfaces\LinFu.Reflection.Emit.Interfaces.csproj", "{5DDB50DF-F14A-4D05-9A6B-99AC348617F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.DynamicProxy2", "LinFu.DynamicProxy2\LinFu.DynamicProxy2.csproj", "{54DA7856-9026-439A-8FFE-88BBF99577B8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinFu.Proxy", "LinFu.DynamicProxy2\LinFu.Proxy.csproj", "{54DA7856-9026-439A-8FFE-88BBF99577B8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DynamicProxy2", "DynamicProxy2", "{F637D3B2-8B2F-43BF-AF07-DC517D007B74}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Proxy", "Proxy", "{F637D3B2-8B2F-43BF-AF07-DC517D007B74}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AOP", "AOP", "{F6C59327-B373-4938-988A-30FB3CF63785}"
 EndProject

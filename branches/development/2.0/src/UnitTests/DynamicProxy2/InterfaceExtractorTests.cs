@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using LinFu.DynamicProxy2;
+using LinFu.Proxy;
 using NUnit.Framework;
 using SampleLibrary;
 
-namespace LinFu.UnitTests.DynamicProxy2
+namespace LinFu.UnitTests.Proxy
 {
     [TestFixture]
     public class InterfaceExtractorTests

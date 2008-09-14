@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using LinFu.AOP;
 using LinFu.AOP.Interfaces;
-using LinFu.DynamicProxy2.Interfaces;
+using LinFu.Proxy.Interfaces;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
@@ -14,7 +14,7 @@ using LinFu.Reflection.Emit;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace LinFu.DynamicProxy2
+namespace LinFu.Proxy
 {
     /// <summary>
     /// Provides the default implementation for the

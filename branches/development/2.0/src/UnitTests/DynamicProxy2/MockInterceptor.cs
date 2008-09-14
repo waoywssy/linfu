@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using LinFu.AOP.Interfaces;
 
-namespace LinFu.UnitTests.DynamicProxy2
+namespace LinFu.UnitTests.Proxy
 {
     public class MockInterceptor : IInterceptor
     {

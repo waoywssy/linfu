@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
@@ -11,8 +12,6 @@ namespace LinFu.IoC
     public abstract class BaseContainer : IContainer
     {
         private readonly Dictionary<Type, IFactory> _factories = new Dictionary<Type, IFactory>();
-
-        #region IContainer Members
 
         /// <summary>
         /// Gets or sets a <see cref="bool">System.Boolean</see> value
@@ -71,6 +70,19 @@ namespace LinFu.IoC
             return result;
         }
 
-        #endregion
+        /// <summary>
+        /// The list of services currently available inside the container.
+        /// </summary>
+        public virtual IEnumerable<IServiceInfo> AvailableServices
+        {
+            get
+            {
+                var results = (from type in _factories.Keys
+                              let info = new ServiceInfo(string.Empty, type)
+                              select info as IServiceInfo).AsEnumerable();
+
+                return results;
+            }
+        }
     }
 }

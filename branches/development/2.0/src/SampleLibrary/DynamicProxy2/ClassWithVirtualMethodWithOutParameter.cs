@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SampleLibrary.DynamicProxy2
+namespace SampleLibrary.Proxy
 {
     public class ClassWithVirtualMethodWithOutParameter
     {

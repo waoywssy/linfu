@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace LinFu.DynamicProxy2.Interfaces
+namespace LinFu.Proxy.Interfaces
 {
     /// <summary>
     /// Represents a class that determines which methods should be proxied

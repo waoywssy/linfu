@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LinFu.DynamicProxy2.Interfaces
+namespace LinFu.Proxy.Interfaces
 {
     /// <summary>
     /// A class that is responsible for determining

@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using Mono.Cecil;
 
-namespace LinFu.DynamicProxy2.Interfaces
+namespace LinFu.Proxy.Interfaces
 {
     ///// <summary>
     ///// Represents a class that is responsible for

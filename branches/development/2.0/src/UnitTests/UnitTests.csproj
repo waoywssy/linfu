@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{E3B1686C-DCB3-44E7-BB25-9483592EA942}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -96,13 +96,13 @@
       <Project>{613B6547-DCBB-4505-82B8-B4179BFC95CE}</Project>
       <Name>LinFu.AOP</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LinFu.DynamicProxy2.Interfaces\LinFu.DynamicProxy2.Interfaces.csproj">
+    <ProjectReference Include="..\LinFu.DynamicProxy2.Interfaces\LinFu.Proxy.Interfaces.csproj">
       <Project>{6C29A409-6148-49AC-A192-DC6F33F3304C}</Project>
-      <Name>LinFu.DynamicProxy2.Interfaces</Name>
+      <Name>LinFu.Proxy.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LinFu.DynamicProxy2\LinFu.DynamicProxy2.csproj">
+    <ProjectReference Include="..\LinFu.DynamicProxy2\LinFu.Proxy.csproj">
       <Project>{54DA7856-9026-439A-8FFE-88BBF99577B8}</Project>
-      <Name>LinFu.DynamicProxy2</Name>
+      <Name>LinFu.Proxy</Name>
     </ProjectReference>
     <ProjectReference Include="..\LinFu.Finders.Interfaces\LinFu.Finders.Interfaces.csproj">
       <Project>{8960CC95-08E4-4E06-94F8-F24B8FCA7842}</Project>
