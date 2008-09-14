@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
@@ -223,6 +224,39 @@ namespace LinFu.IoC
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Lists all the services available inside the container. This includes
+        /// unnamed and named service types, as well as open generic service types
+        /// that can be created by the container.
+        /// </summary>
+        public override IEnumerable<IServiceInfo> AvailableServices
+        {
+            get
+            {
+                var result = new List<IServiceInfo>();
+
+                // Append the unnamed services
+                var unnamedServices = from type in _genericFactories.Keys
+                                      let info = new ServiceInfo(string.Empty, type) as IServiceInfo
+                                      select info;
+                
+                result.AddRange(unnamedServices);
+
+                // Append the named services
+                var namedServices = from name in _namedFactories.Keys
+                                    from type in _namedFactories[name].Keys
+                                    let info = new ServiceInfo(name, type) as IServiceInfo
+                                    select info;
+
+                result.AddRange(namedServices);
+
+                // Reuse the results from the base class
+                result.AddRange(base.AvailableServices);                
+
+                return result;
+            }
         }
 
         /// <summary>
