@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
@@ -285,6 +287,40 @@ namespace LinFu.UnitTests.IOC
             Assert.IsTrue(result.GetType() == typeof(SampleGenericImplementation<int>));
         }
 
+        [Test]
+        public void ContainerMustListAvailableUnnamedServices()
+        {
+            var container = new ServiceContainer();
+            container.AddService<ISampleService>(new SampleClass());
+
+            var availableServices = container.AvailableServices;
+            Assert.IsTrue(availableServices.Count() > 0);
+
+            // There should be a matching service type
+            // at this point
+            var matches = from s in availableServices
+                          where s.ServiceType == typeof (ISampleService)
+                          select s;
+
+            Assert.IsTrue(matches.Count() > 0);
+        }
+        [Test]
+        public void ContainerMustListAvailableNamedServices()
+        {
+            var container = new ServiceContainer();
+            container.AddService<ISampleService>("MyService", new SampleClass());
+
+            var availableServices = container.AvailableServices;
+            Assert.IsTrue(availableServices.Count() > 0);
+
+            // There should be a matching service type
+            // at this point
+            var matches = from s in availableServices
+                          where s.ServiceType == typeof(ISampleService) && s.ServiceName == "MyService"
+                          select s;
+
+            Assert.IsTrue(matches.Count() > 0);
+        }
         [Test]
         public void ContainerMustAllowInjectingCustomFactoriesForNamedOpenGenericTypeDefinitions()
         {

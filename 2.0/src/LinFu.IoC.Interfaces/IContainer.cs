@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace LinFu.IoC.Interfaces
 {
@@ -7,6 +8,11 @@ namespace LinFu.IoC.Interfaces
     /// </summary>
     public interface IContainer
     {
+        /// <summary>
+        /// The list of services currently available inside the container.
+        /// </summary>
+        IEnumerable<IServiceInfo> AvailableServices { get; }
+
         /// <summary>
         /// Determines whether or not a container will throw an exception
         /// if the requested service is not found.

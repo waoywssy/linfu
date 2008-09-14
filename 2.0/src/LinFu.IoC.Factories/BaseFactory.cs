@@ -16,6 +16,7 @@ namespace LinFu.IoC.Factories
         /// Creates a service instance using the given container.
         /// </summary>
         /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
+        /// <param name="serviceType">The type of service being created.</param>
         /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
         object IFactory.CreateInstance(Type serviceType, IContainer container)
         {

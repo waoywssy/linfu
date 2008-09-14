@@ -39,8 +39,8 @@ namespace LinFu.IoC.Extensions
         {
             var context = new InjectionContext<TService>
                               {
-                                  ServiceName= _context.ServiceName,
-                                  Container= _context.Container,
+                                  ServiceName = _context.ServiceName,
+                                  Container = _context.Container,
                                   FactoryMethod = (type, container) => new TConcrete()
                               };
 
