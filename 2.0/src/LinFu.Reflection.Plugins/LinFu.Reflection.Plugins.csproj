@@ -51,7 +51,6 @@
     </Compile>
     <Compile Include="BaseLoaderPlugin.cs" />
     <Compile Include="BaseTargetLoaderPlugin.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.Reflection.Interfaces\LinFu.Reflection.Interfaces.csproj">

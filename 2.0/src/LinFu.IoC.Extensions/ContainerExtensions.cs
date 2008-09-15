@@ -44,7 +44,7 @@ namespace LinFu.IoC
 
         /// <summary>
         /// Adds an <see cref="IFactory"/> instance and associates it
-        /// with the given <typeparamref name="T">service type</paramref> and
+        /// with the given <typeparamref name="T"/>service type</typeparamref> and
         /// <paramref name="serviceName">service name</paramref>.
         /// </summary>
         /// <param name="serviceName">The name of the service to associate with the given <see cref="IFactory"/> instance.</param>
@@ -58,7 +58,7 @@ namespace LinFu.IoC
 
         /// <summary>
         /// Adds an <see cref="IFactory"/> instance and associates it
-        /// with the given <typeparamref name="T">service type</paramref>.
+        /// with the given <typeparamref name="T"/>service type</typeparamref>.
         /// </summary>        
         /// <param name="container">The container that will hold the factory instance.</param>
         /// <param name="factory">The <see cref="IFactory{T}"/> instance that will create the object instance.</param>

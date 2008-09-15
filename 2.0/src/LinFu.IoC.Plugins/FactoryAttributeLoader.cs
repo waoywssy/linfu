@@ -29,7 +29,7 @@ namespace LinFu.IoC.Plugins
                 throw new ArgumentNullException("sourceType");
 
             // Extract the factory attributes from the current type
-            object[] attributes = sourceType.GetCustomAttributes(typeof(FactoryAttribute), false);
+            object[] attributes = sourceType.GetCustomAttributes(typeof (FactoryAttribute), false);
             List<FactoryAttribute> attributeList = attributes.Cast<FactoryAttribute>()
                 .Where(f => f != null).ToList();
 
@@ -124,7 +124,12 @@ namespace LinFu.IoC.Plugins
 
             return results;
         }
-
+        /// <summary>
+        /// Determines whether or not the current <paramref name="sourceType"/>
+        /// can be loaded.
+        /// </summary>
+        /// <param name="sourceType">The source type currently being loaded.</param>
+        /// <returns>Returns <c>true</c> if the type is a class type; otherwise, it returns <c>false</c>.</returns>
         public bool CanLoad(Type sourceType)
         {
             return sourceType.IsClass;

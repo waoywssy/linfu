@@ -126,7 +126,7 @@ namespace LinFu.UnitTests.IOC.Configuration
         [Test]
         public void LoaderMustLoadTheCorrectSingletonTypes()
         {
-            var location = typeof(SamplePostProcessor).Assembly.Location ?? string.Empty;
+            var location = typeof (SamplePostProcessor).Assembly.Location ?? string.Empty;
             var loader = new Loader();            
             var directory = Path.GetDirectoryName(location);
 
@@ -148,8 +148,8 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             Assert.IsNotNull(first);
             Assert.IsNotNull(second);
-            Assert.IsTrue(first.GetType() == typeof(FirstSingletonService));
-            Assert.IsTrue(second.GetType() == typeof(SecondSingletonService));
+            Assert.IsTrue(first.GetType() == typeof (FirstSingletonService));
+            Assert.IsTrue(second.GetType() == typeof (SecondSingletonService));
         }
 
         [Test]

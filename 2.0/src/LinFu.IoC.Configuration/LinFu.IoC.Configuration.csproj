@@ -54,7 +54,6 @@
     <Compile Include="LifecycleType.cs" />
     <Compile Include="Loader.cs" />
     <Compile Include="PostProcessorAttribute.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.IoC.Interfaces\LinFu.IoC.Interfaces.csproj">

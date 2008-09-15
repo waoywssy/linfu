@@ -27,7 +27,7 @@ namespace LinFu.IoC
         /// this factory. 
         /// </summary>
         /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
-        /// <param name="serviceType">The type of service being requested.</param>
+        /// <param name="serviceType">The service type to be instantiated.</param>
         /// <returns>A non-null object reference.</returns>
         public object CreateInstance(Type serviceType, IContainer container)
         {

@@ -133,6 +133,14 @@ namespace LinFu.IoC
             return instance;
         }
 
+        /// <summary>
+        /// Lists all the services available inside the container. This includes
+        /// Overrides the <see cref="ServiceContainerBase.AddFactory(string,Type,IFactory)"/> method to support
+        /// factories that create services based on open generic types.
+        /// </summary>
+        /// <param name="serviceName">The name of the service to associate with the given <see cref="IFactory"/> instance.</param>
+        /// <param name="serviceType">The type of service that the factory will be able to create.</param>
+        /// <param name="factory">The <see cref="IFactory"/> instance that will create the object instance.</param>
         public override void AddFactory(string serviceName, Type serviceType, IFactory factory)
         {
             // If the service type is not a generic type definition (such as IList<>)
@@ -149,7 +157,15 @@ namespace LinFu.IoC
 
             _namedFactories[serviceName][serviceType] = factory;
         }
-
+        
+        /// <summary>
+        /// Overrides the <see cref="ServiceContainerBase.Contains(string,Type)"/> method to allow
+        /// users to determine whether or not a specific generic service type can be created
+        /// using the open generic factories that currently reside in the container itself.
+        /// </summary>
+        /// <param name="serviceName">The name of the service to associate with the given <see cref="IFactory"/> instance.</param>
+        /// <param name="serviceType">The type of service that the factory will be able to create.</param>
+        /// <returns>Returns <c>true</c> if the service exists; otherwise, it will return <c>false</c>.</returns>
         public override bool Contains(string serviceName, Type serviceType)
         {
             // Use the default implementation for
@@ -182,6 +198,12 @@ namespace LinFu.IoC
             return result;
         }
 
+        /// <summary>
+        /// Overrides the <see cref="ServiceContainerBase.AddFactory(string,Type,IFactory)"/> method to support
+        /// factories that create services based on open generic types.
+        /// </summary>
+        /// <param name="serviceType">The type of service that the factory will be able to create.</param>
+        /// <param name="factory">The <see cref="IFactory"/> instance that will create the object instance.</param>
         public override void AddFactory(Type serviceType, IFactory factory)
         {
             // If the service type is not a generic type definition (such as IList<>)
@@ -195,6 +217,13 @@ namespace LinFu.IoC
             _genericFactories.Add(serviceType, factory);
         }
 
+        /// <summary>
+        /// Overrides the <see cref="ServiceContainerBase.Contains(string,Type)"/> method to allow
+        /// users to determine whether or not a specific generic service type can be created
+        /// using the open generic factories that currently reside in the container itself.
+        /// </summary>
+        /// <param name="serviceType">The type of service that the factory will be able to create.</param>
+        /// <returns>Returns <c>true</c> if the service exists; otherwise, it will return <c>false</c>.</returns>
         public override bool Contains(Type serviceType)
         {
             // Use the default implementation for

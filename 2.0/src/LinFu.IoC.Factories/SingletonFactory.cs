@@ -49,7 +49,7 @@ namespace LinFu.IoC.Factories
             {
                 lock(_lock)
                 {
-                    _instance = _createInstance(typeof(T), container);
+                    _instance = _createInstance(typeof (T), container);
                 }
             }
 

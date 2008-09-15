@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using LinFu.AOP.Interfaces;
 
-namespace LinFu.DynamicProxy2.Interfaces
+namespace LinFu.Proxy.Interfaces
 {
     /// <summary>
     /// Represents a dynamically generated proxy instance.

@@ -52,7 +52,6 @@
     <Compile Include="ServiceContainer.cs" />
     <Compile Include="ServiceContainerBase.cs" />
     <Compile Include="NamedServiceNotFoundException.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceInfo.cs" />
     <Compile Include="ServiceNotFoundException.cs" />
     <Compile Include="BaseContainer.cs" />

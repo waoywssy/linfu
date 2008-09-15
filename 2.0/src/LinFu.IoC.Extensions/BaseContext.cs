@@ -18,7 +18,7 @@ namespace LinFu.IoC.Extensions
         { 
             get
             {
-                return typeof(TService);
+                return typeof (TService);
             }
         }
 
