@@ -21,7 +21,7 @@ namespace LinFu.Reflection
         /// <returns><c>true</c> if the type can be loaded; otherwise, it returns <c>false</c>.</returns>
         public virtual bool CanLoad(Type inputType)
         {
-            IEnumerable<TAttribute> attributes = inputType.GetCustomAttributes(typeof (TAttribute), true)
+            IEnumerable<TAttribute> attributes = inputType.GetCustomAttributes(typeof(TAttribute), true)
                 .Cast<TAttribute>();
 
             // The type must have a default constructor

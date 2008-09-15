@@ -24,9 +24,9 @@ namespace LinFu.IoC.Plugins
         /// </summary>
         static ImplementsAttributeLoader()
         {
-            _factoryTypes[LifecycleType.OncePerRequest] = typeof (OncePerRequestFactory<>);
-            _factoryTypes[LifecycleType.OncePerThread] = typeof (OncePerThreadFactory<>);
-            _factoryTypes[LifecycleType.Singleton] = typeof (SingletonFactory<>);
+            _factoryTypes[LifecycleType.OncePerRequest] = typeof(OncePerRequestFactory<>);
+            _factoryTypes[LifecycleType.OncePerThread] = typeof(OncePerThreadFactory<>);
+            _factoryTypes[LifecycleType.Singleton] = typeof(SingletonFactory<>);
         }
 
         #region ITypeLoader Members
@@ -44,7 +44,7 @@ namespace LinFu.IoC.Plugins
         {
             // Extract the Implements attribute from the source type
             ICustomAttributeProvider provider = sourceType;
-            object[] attributes = provider.GetCustomAttributes(typeof (ImplementsAttribute), false);
+            object[] attributes = provider.GetCustomAttributes(typeof(ImplementsAttribute), false);
             List<ImplementsAttribute> attributeList = attributes.Cast<ImplementsAttribute>().ToList();
 
             var results = new List<Action<IServiceContainer>>();
@@ -108,7 +108,7 @@ namespace LinFu.IoC.Plugins
 
             // Create the factory itself
             MulticastDelegate factoryMethod = CreateFactoryMethod(serviceType, implementingType);
-            object factoryInstance = Activator.CreateInstance(factoryType, new object[] {factoryMethod});
+            object factoryInstance = Activator.CreateInstance(factoryType, new object[] { factoryMethod });
             var result = factoryInstance as IFactory;
 
             return result;
@@ -128,7 +128,7 @@ namespace LinFu.IoC.Plugins
         {
             BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Static;
 
-            MethodInfo factoryMethodDefinition = typeof (ImplementsAttributeLoader).GetMethod("CreateFactoryMethodInternal", flags);
+            MethodInfo factoryMethodDefinition = typeof(ImplementsAttributeLoader).GetMethod("CreateFactoryMethodInternal", flags);
             MethodInfo factoryMethod = factoryMethodDefinition.MakeGenericMethod(serviceType, implementingType);
 
             // Create the Func<Type, IContainer, TService> factory delegate

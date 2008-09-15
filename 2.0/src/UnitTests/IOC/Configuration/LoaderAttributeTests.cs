@@ -44,11 +44,11 @@ namespace LinFu.UnitTests.IOC.Configuration
         public void FactoryAttributeLoaderMustInjectOpenGenericServiceTypeIntoContainer()
         {
             var mockContainer = new Mock<IServiceContainer>();
-            Type serviceType = typeof (ISampleGenericService<>);
+            Type serviceType = typeof(ISampleGenericService<>);
             var mockPostProcessors = new Mock<IList<IPostProcessor>>();
 
             ITypeLoader loader = new FactoryAttributeLoader();
-            IEnumerable<Action<IServiceContainer>> actions = loader.Load(typeof (SampleOpenGenericFactory));
+            IEnumerable<Action<IServiceContainer>> actions = loader.Load(typeof(SampleOpenGenericFactory));
 
             // The loader should load the mock container
             // using the generic open type as the service type
@@ -101,7 +101,7 @@ namespace LinFu.UnitTests.IOC.Configuration
         public void FactoryAttributeLoaderMustInjectUnnamedCustomFactoryIntoContainer()
         {
             var mockContainer = new Mock<IServiceContainer>();
-            Type serviceType = typeof (ISampleService);
+            Type serviceType = typeof(ISampleService);
             string serviceName = string.Empty;
 
             // The container should add the expected
@@ -110,7 +110,7 @@ namespace LinFu.UnitTests.IOC.Configuration
                                                                    It.IsAny<SampleFactory>()));
 
             ITypeLoader loader = new FactoryAttributeLoader();
-            IEnumerable<Action<IServiceContainer>> actions = loader.Load(typeof (SampleFactory));
+            IEnumerable<Action<IServiceContainer>> actions = loader.Load(typeof(SampleFactory));
 
             // The factory loader should return a set of actions
             // that will inject that custom factory into the container
@@ -126,7 +126,7 @@ namespace LinFu.UnitTests.IOC.Configuration
         [Test]
         public void LoaderMustLoadTheCorrectSingletonTypes()
         {
-            var location = typeof (SamplePostProcessor).Assembly.Location ?? string.Empty;
+            var location = typeof(SamplePostProcessor).Assembly.Location ?? string.Empty;
             var loader = new Loader();            
             var directory = Path.GetDirectoryName(location);
 
@@ -148,8 +148,8 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             Assert.IsNotNull(first);
             Assert.IsNotNull(second);
-            Assert.IsTrue(first.GetType() == typeof (FirstSingletonService));
-            Assert.IsTrue(second.GetType() == typeof (SecondSingletonService));
+            Assert.IsTrue(first.GetType() == typeof(FirstSingletonService));
+            Assert.IsTrue(second.GetType() == typeof(SecondSingletonService));
         }
 
         [Test]
@@ -183,8 +183,8 @@ namespace LinFu.UnitTests.IOC.Configuration
         [Test]
         public void NamedOncePerRequestFactoryMustBeCreatedFromTypeWithImplementsAttribute()
         {
-            Type implementingType = typeof (NamedOncePerRequestSampleService);
-            Type serviceType = typeof (ISampleService);
+            Type implementingType = typeof(NamedOncePerRequestSampleService);
+            Type serviceType = typeof(ISampleService);
             var converter = new ImplementsAttributeLoader();
 
             TestFactoryConverterWith<OncePerRequestFactory<ISampleService>>("MyService",
@@ -195,21 +195,21 @@ namespace LinFu.UnitTests.IOC.Configuration
         public void NamedOncePerThreadFactoryMustBeCreatedFromTypeWithImplementsAttribute()
         {
             TestFactoryConverterWith<OncePerThreadFactory<ISampleService>>("MyService",
-                                                                           typeof (ISampleService), typeof (NamedOncePerThreadSampleService), new ImplementsAttributeLoader());
+                                                                           typeof(ISampleService), typeof(NamedOncePerThreadSampleService), new ImplementsAttributeLoader());
         }
 
         [Test]
         public void NamedSingletonFactoryMustBeCreatedFromTypeWithImplementsAttribute()
         {
             TestFactoryConverterWith<SingletonFactory<ISampleService>>("MyService",
-                                                                       typeof (ISampleService), typeof (NamedSingletonSampleService), new ImplementsAttributeLoader());
+                                                                       typeof(ISampleService), typeof(NamedSingletonSampleService), new ImplementsAttributeLoader());
         }
 
         [Test]
         public void OncePerRequestFactoryMustBeCreatedFromTypeWithImplementsAttribute()
         {
-            Type implementingType = typeof (OncePerRequestSampleService);
-            Type serviceType = typeof (ISampleService);
+            Type implementingType = typeof(OncePerRequestSampleService);
+            Type serviceType = typeof(ISampleService);
             var converter = new ImplementsAttributeLoader();
 
             TestFactoryConverterWith<OncePerRequestFactory<ISampleService>>(string.Empty,
@@ -220,14 +220,14 @@ namespace LinFu.UnitTests.IOC.Configuration
         public void OncePerThreadFactoryMustBeCreatedFromTypeWithImplementsAttribute()
         {
             TestFactoryConverterWith<OncePerThreadFactory<ISampleService>>(string.Empty,
-                                                                           typeof (ISampleService), typeof (OncePerThreadSampleService), new ImplementsAttributeLoader());
+                                                                           typeof(ISampleService), typeof(OncePerThreadSampleService), new ImplementsAttributeLoader());
         }
 
         [Test]
         public void SingletonFactoryMustBeCreatedFromTypeWithImplementsAttribute()
         {
             TestFactoryConverterWith<SingletonFactory<ISampleService>>(string.Empty,
-                                                                       typeof (ISampleService), typeof (SingletonSampleService), new ImplementsAttributeLoader());
+                                                                       typeof(ISampleService), typeof(SingletonSampleService), new ImplementsAttributeLoader());
         }
 
         [Test]

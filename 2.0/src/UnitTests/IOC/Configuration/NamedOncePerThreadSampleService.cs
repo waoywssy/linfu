@@ -3,7 +3,7 @@ using SampleLibrary;
 
 namespace LinFu.UnitTests.IOC.Configuration
 {
-    [Implements(typeof (ISampleService), LifecycleType.OncePerThread, ServiceName = "MyService")]
+    [Implements(typeof(ISampleService), LifecycleType.OncePerThread, ServiceName = "MyService")]
     public class NamedOncePerThreadSampleService : ISampleService
     {
     }

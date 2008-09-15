@@ -8,7 +8,7 @@ namespace LinFu.IoC.Configuration
     /// instance that can be injected into a
     /// <see cref="IServiceContainer"/> instance.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class PostProcessorAttribute : Attribute
     {
     }

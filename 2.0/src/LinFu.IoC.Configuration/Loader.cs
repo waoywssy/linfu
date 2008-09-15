@@ -12,7 +12,7 @@ namespace LinFu.IoC.Configuration
     {
         public Loader()
         {
-            var directory = Path.GetDirectoryName(typeof (Loader).Assembly.Location);
+            var directory = Path.GetDirectoryName(typeof(Loader).Assembly.Location);
             
             // HACK: Load all plugins by default
             LoadDirectory(directory, "LinFu*.dll");
