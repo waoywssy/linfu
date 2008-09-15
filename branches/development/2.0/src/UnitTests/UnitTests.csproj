@@ -64,9 +64,9 @@
     <Compile Include="AOP\ParameterDefinitionExtensionTests.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BaseTestFixture.cs" />
-    <Compile Include="DynamicProxy2\InterfaceExtractorTests.cs" />
-    <Compile Include="DynamicProxy2\MockInterceptor.cs" />
-    <Compile Include="DynamicProxy2\ProxyFactoryTests.cs" />
+    <Compile Include="Proxy\InterfaceExtractorTests.cs" />
+    <Compile Include="Proxy\MockInterceptor.cs" />
+    <Compile Include="Proxy\ProxyFactoryTests.cs" />
     <Compile Include="Finders\FinderTests.cs" />
     <Compile Include="IOC\FluentExtensionTests.Implementation.cs" />
     <Compile Include="IOC\Configuration\AssemblyContainerLoaderTests.cs" />

@@ -59,6 +59,7 @@
     <Compile Include="IMethodBodyEmitter.cs" />
     <Compile Include="IMethodPicker.cs" />
     <Compile Include="IMethodBuilder.cs" />
+    <Compile Include="IProxyCache.cs" />
     <Compile Include="IProxyMethodBuilder.cs" />
     <Compile Include="IProxy.cs" />
     <Compile Include="IProxyBuilder.cs" />

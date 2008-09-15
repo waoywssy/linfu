@@ -27,6 +27,7 @@ namespace LinFu.Proxy
             // Use the forwarding proxy type by default
             ProxyBuilder = new ProxyBuilder();            
             InterfaceExtractor = new InterfaceExtractor();
+            Cache = new ProxyCache();
         }
         #region IProxyFactory Members
 
@@ -41,6 +42,11 @@ namespace LinFu.Proxy
         /// <returns>A forwarding proxy.</returns>
         public Type CreateProxyType(Type baseType, IEnumerable<Type> baseInterfaces)
         {
+
+            // Reuse the cached results, if possible
+            var originalInterfaces = baseInterfaces.ToArray();
+            if (Cache != null && Cache.Contains(baseType, originalInterfaces))
+                return Cache.Get(baseType, originalInterfaces);
 
             if (!baseType.IsPublic)
                 throw new ArgumentException("The proxy factory can only generate proxies from public base classes.",
@@ -118,7 +124,6 @@ namespace LinFu.Proxy
             // Hand it off to the builder for construction
             ProxyBuilder.Construct(actualBaseType, interfaces, mainModule, proxyType);
 
-
             // Verify the assembly, if possible
             if (Verifier != null)
                 Verifier.Verify(assembly);
@@ -130,6 +135,10 @@ namespace LinFu.Proxy
                            where t != null && t.IsClass
                            select t).FirstOrDefault();
             #endregion
+
+            // Cache the result
+            if (Cache != null)
+                Cache.Store(result, baseType, originalInterfaces);
 
             return result;
         }
@@ -156,6 +165,12 @@ namespace LinFu.Proxy
         public IVerifier Verifier { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating the <see cref="IProxyCache"/>
+        /// instance that will be used to cache previous proxy generation runs.
+        /// </summary>
+        public IProxyCache Cache { get; set; }
+
+        /// <summary>
         /// Initializes the <see cref="ProxyFactory"/> instance
         /// with the <paramref name="source"/> container.
         /// </summary>
@@ -167,6 +182,9 @@ namespace LinFu.Proxy
 
             if (source.Contains(typeof(IVerifier)))
                 Verifier = source.GetService<IVerifier>();
+
+            if (source.Contains(typeof(IProxyCache)))
+                Cache = source.GetService<IProxyCache>();
         }
     }
 }

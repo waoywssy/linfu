@@ -58,6 +58,8 @@
     <Compile Include="ProxyBuilder.cs" />
     <Compile Include="InterfaceExtractor.cs" />
     <Compile Include="MethodPicker.cs" />
+    <Compile Include="ProxyCache.cs" />
+    <Compile Include="ProxyCacheEntry.cs" />
     <Compile Include="ProxyFactory.cs" />
     <Compile Include="ProxyFactoryExtensions.cs" />
     <Compile Include="ProxyImplementor.cs" />
