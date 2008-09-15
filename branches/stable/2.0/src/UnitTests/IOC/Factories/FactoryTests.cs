@@ -44,9 +44,9 @@ namespace LinFu.UnitTests.IOC.Factories
             // The adapter itself should call the container on creation
             mockFactory.Expect(f => f.CreateInstance(container)).Returns(mockService.Object);
 
-            Assert.IsInstanceOfType(typeof (IFactory), adapter);
+            Assert.IsInstanceOfType(typeof(IFactory), adapter);
 
-            adapter.CreateInstance(typeof (ISerializable), container);
+            adapter.CreateInstance(typeof(ISerializable), container);
 
             mockFactory.VerifyAll();
         }

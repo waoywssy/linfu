@@ -29,13 +29,13 @@ namespace LinFu.IoC.Plugins
                 return false;
 
             // It must have the PostProcessorAttribute defined
-            object[] attributes = inputType.GetCustomAttributes(typeof (PostProcessorAttribute), true);
+            object[] attributes = inputType.GetCustomAttributes(typeof(PostProcessorAttribute), true);
             IEnumerable<PostProcessorAttribute> attributeList = attributes.Cast<PostProcessorAttribute>();
 
             if (attributeList.Count() == 0)
                 return false;
 
-            return typeof (IPostProcessor).IsAssignableFrom(inputType);
+            return typeof(IPostProcessor).IsAssignableFrom(inputType);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace LinFu.IoC.Plugins
             Action<IServiceContainer> assignPostProcessor =
                 container => container.PostProcessors.Add(instance);
 
-            return new[] {assignPostProcessor};
+            return new[] { assignPostProcessor };
         }
     }
 }

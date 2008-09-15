@@ -3,7 +3,7 @@ using LinFu.IoC.Interfaces;
 
 namespace SampleLibrary
 {
-    [Factory(typeof (ISampleService))]
+    [Factory(typeof(ISampleService))]
     public class SampleStronglyTypedFactory : IFactory<ISampleService>
     {
         #region IFactory<ISampleService> Members

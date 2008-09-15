@@ -64,7 +64,7 @@ namespace LinFu.IoC.Extensions
             {
                 Container = _context.Container,
                 FactoryMethod = adapter,
-                ServiceName=_context.ServiceName
+                ServiceName = _context.ServiceName
             };
 
             return new GenerateFactory<TService>(context);

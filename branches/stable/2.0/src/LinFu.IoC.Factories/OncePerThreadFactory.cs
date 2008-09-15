@@ -57,7 +57,7 @@ namespace LinFu.IoC.Factories
             {
                 // Create the service instance only once
                 if (!_storage.ContainsKey(threadId))
-                    _storage[threadId] = _createInstance(typeof (T), container);
+                    _storage[threadId] = _createInstance(typeof(T), container);
 
                 result = _storage[threadId];
             }

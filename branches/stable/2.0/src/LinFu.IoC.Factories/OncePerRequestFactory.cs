@@ -46,7 +46,7 @@ namespace LinFu.IoC.Factories
         /// <returns>A non-null object reference.</returns>
         public override T CreateInstance(IContainer container)
         {
-            return _createInstance(typeof (T), container);
+            return _createInstance(typeof(T), container);
         }
     }
 }
