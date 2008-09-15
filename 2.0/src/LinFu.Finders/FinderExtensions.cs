@@ -37,8 +37,7 @@ namespace LinFu.Finders
         /// <param name="predicate">The condition that will be used to test the target item.</param>        
         public static void AddCriteria<TItem>(this IList<IFuzzyItem<TItem>> list, Func<TItem, bool> predicate)
         {
-            const bool isOptional = false;
-            list.AddCriteria(predicate, isOptional);
+            list.AddCriteria(predicate, CriteriaType.Standard);
         }
 
         /// <summary>
@@ -48,12 +47,12 @@ namespace LinFu.Finders
         /// <typeparam name="TItem">The type of item to test.</typeparam>
         /// <param name="list">The list of <see cref="IFuzzyItem{T}"/> instances that represent a single test case in a fuzzy search.</param>
         /// <param name="predicate">The condition that will be used to test the target item.</param>        
-        /// <param name="isOptional">Determines whether or not a failed match will count against the weighted score of the target item.</param>
-        public static void AddCriteria<TItem>(this IList<IFuzzyItem<TItem>> list, Func<TItem, bool> predicate, 
-            bool isOptional)
+        /// <param name="criteriaType">The <see cref="CriteriaType"/> to associate with the predicate.</param>        
+        public static void AddCriteria<TItem>(this IList<IFuzzyItem<TItem>> list, Func<TItem, bool> predicate,
+            CriteriaType criteriaType)
         {
             const int defaultWeight = 1;
-            list.AddCriteria(predicate, isOptional, defaultWeight);
+            list.AddCriteria(predicate, criteriaType, defaultWeight);
         }
 
         /// <summary>
@@ -63,16 +62,15 @@ namespace LinFu.Finders
         /// <typeparam name="TItem">The type of item to test.</typeparam>
         /// <param name="list">The list of <see cref="IFuzzyItem{T}"/> instances that represent a single test case in a fuzzy search.</param>
         /// <param name="predicate">The condition that will be used to test the target item.</param>        
-        /// <param name="isOptional">Determines whether or not a failed match will count against the weighted score of the target item.</param>
+        /// <param name="criteriaType">The <see cref="CriteriaType"/> to associate with the predicate.</param>        
         /// <param name="weight">The weight of the predicate value expressed in the number of tests that will be counted for/against the target item as a result of the predicate.</param>
-        public static void AddCriteria<TItem>(this IList<IFuzzyItem<TItem>> list, Func<TItem, bool> predicate, 
-            bool isOptional, int weight)
+        public static void AddCriteria<TItem>(this IList<IFuzzyItem<TItem>> list, Func<TItem, bool> predicate, CriteriaType criteriaType, int weight)
         {
             var criteria = new Criteria<TItem>()
                                {
                                    Predicate = predicate,
-                                   Weight= weight,
-                                   IsOptional = true
+                                   Weight = weight,
+                                   Type = criteriaType
                                };
 
             list.AddCriteria(criteria);
