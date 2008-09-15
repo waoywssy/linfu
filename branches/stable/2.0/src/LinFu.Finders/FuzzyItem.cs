@@ -16,6 +16,7 @@ namespace LinFu.Finders
         private readonly T _item;
         private int _testCount;
         private int _matches;
+        private bool _failed;
 
         /// <summary>
         /// Initializes the <see cref="FuzzyItem{T}"/> class with the given <paramref name="item"/>.
@@ -24,6 +25,7 @@ namespace LinFu.Finders
         public FuzzyItem(T item)
         {
             _item = item;
+            _failed = false;
         }
 
         /// <summary>
@@ -38,6 +40,9 @@ namespace LinFu.Finders
         {
             get
             {
+                if (_failed)
+                    return -1;
+
                 double result = 0;
                 if (_testCount == 0)
                     return 0;
@@ -63,20 +68,34 @@ namespace LinFu.Finders
         /// <param name="criteria">The <see cref="ICriteria{T}"/> that determines whether or not the <see cref="Item"/> meets a particular description.</param>
         public void Test(ICriteria<T> criteria)
         {
+            // Determine the weight multiplier of this test
+            var weight = criteria.Weight;
+
+            // Ignore any further criteria tests
+            // if this item fails
+            if (_failed)
+                return;
+
             var predicate = criteria.Predicate;
             if (predicate == null)
                 return;
 
-            // Determine the weight multiplier of this test
-            var weight = criteria.Weight;
             var result = predicate(_item);
-            
+
+            // If the critical test fails, all matches will be reset
+            // to zero and no further matches will be counted
+            if (result == false && criteria.Type == CriteriaType.Critical)
+            {
+                _failed = true;
+                return;
+            }
+
             if (result)
                 _matches += weight;
 
             // Don't count the result if the criteria
             // is optional
-            if (result != true && criteria.IsOptional)
+            if (result != true && criteria.Type == CriteriaType.Optional)
                 return;
 
             _testCount += weight;
@@ -89,6 +108,7 @@ namespace LinFu.Finders
         {
             _testCount = 0;
             _matches = 0;
+            _failed = false;
         }
     }
 }

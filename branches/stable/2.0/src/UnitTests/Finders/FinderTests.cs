@@ -50,23 +50,62 @@ namespace LinFu.UnitTests.Finders
         }
 
         [Test]
-        public void ShouldBeAbleToIgnoreFailedOptionalCriteria()
+        public void ShouldNotBeAbleToIgnoreFailedCriticalCriteria()
         {
-            // The criteria will be set up to fail by default
-            var falseCriteria = new Mock<ICriteria<object>>();            
-            falseCriteria.Expect(c => c.Predicate).Returns(predicate => false);
-            falseCriteria.Expect(c => c.IsOptional).Returns(true);
-            falseCriteria.Expect(c => c.Weight).Returns(1);
-
-            // Use the true criteria as the control result
-            var trueCriteria = new Mock<ICriteria<object>>();
-            trueCriteria.Expect(c => c.Predicate).Returns(predicate => true);
-            trueCriteria.Expect(c => c.IsOptional).Returns(false);
-            trueCriteria.Expect(c => c.Weight).Returns(1);
-
+            var fuzzyList = new List<IFuzzyItem<object>>();
             var fuzzyItem = new FuzzyItem<object>(new object());
 
+            fuzzyList.Add(fuzzyItem);
+
+            var trueCriteria = GetMockCriteria(true, CriteriaType.Standard, 2);            
+            var failedCriteria = GetMockCriteria(false, CriteriaType.Critical, 1);
+
+            // Boost the first item results so that the best match
+            // should be biased towards the first item
+            fuzzyItem.Test(trueCriteria.Object);
+
+            // Make both items pass the first test
+            var secondItem = new FuzzyItem<object>(new object());
+            fuzzyList.Add(secondItem);
+
+            fuzzyList.AddCriteria(trueCriteria.Object);
+
+            // The first item should be the best match at this point
+            var bestMatch = fuzzyList.BestMatch();
+            Assert.AreSame(bestMatch, fuzzyItem);
+
+            // Remove the second item from the list to avoid the
+            // failed critical match
+            fuzzyList.Remove(secondItem);
+
+            // The failed critical criteria should eliminate
+            // the first match as the best possible match
+            fuzzyList.AddCriteria(failedCriteria.Object);
+
+            // Reinsert the second value into the list
+            // so that it can be chosen as the best match
+            fuzzyList.Add(secondItem);
+
+            // Run the test again
+            bestMatch = fuzzyList.BestMatch();
+
+            // The second item should be the best possible match,
+            // and the first item should be ignored
+            // because of the failed criteria            
+            Assert.AreSame(bestMatch, secondItem);
+        }
+        [Test]
+        public void ShouldBeAbleToIgnoreFailedOptionalCriteria()
+        {
+            // The criteria will be set up to fail by default            
+            var falseCriteria = GetMockCriteria(false, CriteriaType.Optional, 1);
+
+            // Use the true criteria as the control result
+            var trueCriteria = GetMockCriteria(true, CriteriaType.Optional, 1);
+
             var fuzzyList = new List<IFuzzyItem<object>>();
+            var fuzzyItem = new FuzzyItem<object>(new object());
+
             fuzzyList.Add(fuzzyItem);
 
             // Apply the criteria
@@ -78,6 +117,15 @@ namespace LinFu.UnitTests.Finders
             // the failed predicate does not count
             // against the current fuzzy item.
             Assert.AreEqual(fuzzyItem.Confidence, 1);
+        }
+
+        private Mock<ICriteria<object>> GetMockCriteria(bool predicateResult, CriteriaType criteriaType, int weight)
+        {
+            var criteria = new Mock<ICriteria<object>>();
+            criteria.Expect(c => c.Predicate).Returns(predicate => predicateResult);
+            criteria.Expect(c => c.Type).Returns(criteriaType);
+            criteria.Expect(c => c.Weight).Returns(weight);
+            return criteria;
         }
 
         [Test]

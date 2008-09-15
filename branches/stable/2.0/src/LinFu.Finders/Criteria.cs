@@ -13,13 +13,10 @@ namespace LinFu.Finders
     public class Criteria<T> : ICriteria<T>
     {
         /// <summary>
-        /// Determines whether or not a failed <see cref="Predicate"/>
-        /// match should be counted against the the given <typeparamref name="T">target type</typeparamref>.
+        /// Gets or sets a value indicating the <see cref="CriteriaType"/>
+        /// of the current <see cref="Criteria{T}"/>.
         /// </summary>
-        public bool IsOptional
-        {
-            get; set;
-        }
+        public CriteriaType Type { get; set; }
 
         /// <summary>
         /// The condition that will determine whether or not
