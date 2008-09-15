@@ -58,7 +58,6 @@
     <Compile Include="InitializerPlugin.cs" />
     <Compile Include="PostProcessorLoader.cs" />
     <Compile Include="PostProcessorPlugin.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.IoC.Configuration.Interfaces\LinFu.IoC.Configuration.Interfaces.csproj">

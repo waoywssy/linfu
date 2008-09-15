@@ -12,12 +12,23 @@ namespace LinFu.IoC
         private readonly string _serviceName;
         private readonly Type _serviceType;
 
+        /// <summary>
+        /// Initializes the service exception using the
+        /// given <paramref name="serviceType"/> as
+        /// the service that was not found.
+        /// </summary>
+        /// <param name="serviceType">The service type being requested.</param>
+        /// <param name="serviceName">The name of the service being requested.</param>
         public NamedServiceNotFoundException(string serviceName, Type serviceType) : base(serviceType)
         {
             _serviceName = serviceName;
             _serviceType = serviceType;
         }
 
+        /// <summary>
+        /// The error message that this particular exception
+        /// will display.
+        /// </summary>
         public override string Message
         {
             get

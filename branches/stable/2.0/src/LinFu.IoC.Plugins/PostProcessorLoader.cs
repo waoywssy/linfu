@@ -19,7 +19,7 @@ namespace LinFu.IoC.Plugins
         /// Determines if the plugin loader can load the <paramref name="inputType"/>.
         /// </summary>
         /// <remarks>The target type must implement the <see cref="IPostProcessor"/> interface before it can be loaded into memory.</remarks>
-        /// <param name="inputType">The target type that might contain the target <typeparamref name="TAttribute"/> instance.</param>
+        /// <param name="inputType">The target type that might contain the target instance.</param>
         /// <returns><c>true</c> if the type can be loaded; otherwise, it returns <c>false</c>.</returns>
         public bool CanLoad(Type inputType)
         {

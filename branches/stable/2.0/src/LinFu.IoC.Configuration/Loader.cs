@@ -10,9 +10,12 @@ namespace LinFu.IoC.Configuration
     /// </summary>
     public class Loader : Loader<IServiceContainer>
     {
+        /// <summary>
+        /// Initializes the loader using the default values.
+        /// </summary>
         public Loader()
         {
-            var directory = Path.GetDirectoryName(typeof(Loader).Assembly.Location);
+            var directory = Path.GetDirectoryName(typeof (Loader).Assembly.Location);
             
             // HACK: Load all plugins by default
             LoadDirectory(directory, "LinFu*.dll");

@@ -7,7 +7,7 @@ namespace LinFu.IoC
     /// An adapter that converts strongly-typed IFactory&lt;T&gt; 
     /// instances into an equivalent IFactory instance.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The service type to create.</typeparam>
     public class FactoryAdapter<T> : IFactory
     {
         private readonly IFactory<T> _factory;

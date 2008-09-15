@@ -16,7 +16,7 @@ namespace LinFu.IoC.Extensions
     {
         /// <summary>
         /// The factory method that will be used to
-        /// instantiate the actual <typeparam name="TService"/>
+        /// instantiate the actual <typeparamref name="TService"/>
         /// instance.
         /// </summary>
         public Func<Type, IServiceContainer, TService> FactoryMethod

@@ -60,7 +60,6 @@
     <Compile Include="InjectionContext.cs" />
     <Compile Include="Interfaces\IPropertyInjectionLambda.cs" />
     <Compile Include="Interfaces\IUsingLambda.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyInjectionLambda.cs" />
     <Compile Include="UsingLambda.cs" />
   </ItemGroup>
