@@ -31,6 +31,12 @@ namespace LinFu.IoC.Extensions
                 return null;
 
             var fuzzyList = constructors.AsFuzzyList();
+
+            // Return the default constructor
+            // if there are no other alternatives
+            if (fuzzyList.Count == 1)
+                return fuzzyList[0].Item;
+
             foreach (var fuzzyItem in fuzzyList)
             {
                 // Check the constructor for any 

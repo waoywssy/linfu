@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LinFu.IoC.Extensions.Interfaces;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC.Extensions
@@ -35,13 +36,17 @@ namespace LinFu.IoC.Extensions
         /// </summary>
         /// <typeparam name="TConcrete">The concrete implementation that implements <typeparamref name="TService"/>. This class must have a default constructor.</typeparam>
         /// <returns>A non-null <see cref="IGenerateFactory{T}"/> instance that will be used to create a factory and add it to a specific container.</returns>
-        public IGenerateFactory<TService> Using<TConcrete>() where TConcrete : TService, new()
+        public IGenerateFactory<TService> Using<TConcrete>() where TConcrete : TService
         {
+            // Let the container decide which constructor should be used at runtime
+            Func<Type, IServiceContainer, TService> factoryMethod = (type, container)=> 
+                (TService)container.AutoCreate(typeof(TConcrete));
+                                                                        
             var context = new InjectionContext<TService>
                               {
                                   ServiceName = _context.ServiceName,
                                   Container = _context.Container,
-                                  FactoryMethod = (type, container) => new TConcrete()
+                                  FactoryMethod = factoryMethod 
                               };
 
 

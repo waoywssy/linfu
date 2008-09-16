@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using LinFu.IoC;
 using LinFu.IoC.Extensions;
+using LinFu.IoC.Extensions.Interfaces;
 using LinFu.IoC.Interfaces;
 using NUnit.Framework;
 using SampleLibrary;
@@ -101,6 +102,12 @@ namespace LinFu.UnitTests.IOC
         private static void Test(string serviceName, Action<IGenerateFactory<ISampleService>> usingFactory, Func<IUsingLambda<ISampleService>, IGenerateFactory<ISampleService>> doInject, Func<string, IServiceContainer, bool> verifyResult)
         {
             var container = new ServiceContainer();
+            
+            // HACK: Manually inject the required services into the container
+            container.AddService<IConstructorInvoke>(new ConstructorInvoke());
+            container.AddService<IConstructorResolver>(new ConstructorResolver());
+            container.AddService<IArgumentResolver>(new ArgumentResolver());
+
             Inject(serviceName, usingFactory, doInject, container);
             verifyResult(serviceName, container);
         }

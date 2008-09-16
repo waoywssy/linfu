@@ -22,7 +22,7 @@ namespace LinFu.IoC.Extensions
         /// </summary>
         /// <typeparam name="TConcrete">The concrete implementation that implements <typeparamref name="TService"/>. This class must have a default constructor.</typeparam>
         /// <returns>A non-null <see cref="IGenerateFactory{T}"/> instance that will be used to create a factory and add it to a specific container.</returns>
-        IGenerateFactory<TService> Using<TConcrete>() where TConcrete : TService, new();
+        IGenerateFactory<TService> Using<TConcrete>() where TConcrete : TService;
 
         /// <summary>
         /// Creates a service instance using the

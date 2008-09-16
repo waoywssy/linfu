@@ -68,6 +68,10 @@
       <Project>{EFBACCF3-C834-4114-9FC1-1F190DD6CE98}</Project>
       <Name>LinFu.IoC.Configuration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LinFu.IoC.Extensions\LinFu.IoC.Extensions.csproj">
+      <Project>{9FFE90E0-49C0-4C37-91AE-ADB9B2F3D832}</Project>
+      <Name>LinFu.IoC.Extensions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LinFu.IoC.Factories\LinFu.IoC.Factories.csproj">
       <Project>{14DB06BE-3178-4A01-98AB-DFC65485E567}</Project>
       <Name>LinFu.IoC.Factories</Name>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC.Factories
@@ -9,9 +10,11 @@ namespace LinFu.IoC.Factories
     /// <typeparam name="T">The type of service to instantiate.</typeparam>
     public class SingletonFactory<T> : BaseFactory<T>
     {
+        private static readonly Dictionary<Type, T> _instances = new Dictionary<Type, T>();
         private readonly Func<Type, IContainer, T> _createInstance;
         private T _instance;
-        private object _lock = new object();
+        private Type _concreteType;
+        private readonly object _lock = new object();
         /// <summary>
         /// Initializes the factory class using the <paramref name="createInstance"/>
         /// parameter as a factory delegate.
@@ -45,11 +48,19 @@ namespace LinFu.IoC.Factories
         /// <returns>A service instance as a singleton.</returns>
         public override T CreateInstance(IContainer container)
         {
+
             if (ReferenceEquals(_instance, null))
             {
-                lock(_lock)
+                lock (_lock)
                 {
-                    _instance = _createInstance(typeof (T), container);
+                    T result = _createInstance(typeof(T), container);
+
+                    if (result != null)
+                    {
+                        _concreteType = result.GetType();
+                        _instances[_concreteType] = result;
+                        _instance = _instances[_concreteType];
+                    }
                 }
             }
 
