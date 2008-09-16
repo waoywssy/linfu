@@ -28,7 +28,7 @@ namespace LinFu.UnitTests.IOC
             container.AddService(mockSampleService.Object);
 
             var constructor = typeof(SampleClassWithSingleArgumentConstructor)
-                .GetConstructor(new Type[] { typeof(ISampleService) });
+                .GetConstructor(new [] { typeof(ISampleService) });
 
             var parameters = constructor.GetParameters();
             var firstParameter = parameters.First();
@@ -60,7 +60,7 @@ namespace LinFu.UnitTests.IOC
                 Assert.AreSame(mockSampleService.Object, service);
             }
 
-            Func<IServiceContainer, bool> predicate = typeof (IEnumerable<ISampleService>)
+            var predicate = typeof (IEnumerable<ISampleService>)
                 .ExistsAsServiceList();
 
             Assert.IsTrue(predicate(container));
@@ -84,6 +84,45 @@ namespace LinFu.UnitTests.IOC
 
             ConstructorInfo result = resolver.ResolveFrom(typeof(SampleClassWithMultipleConstructors), container);
             Assert.AreSame(expectedConstructor, result);
+        }
+
+        [Test]
+        public void ShouldConstructParametersFromContainer()
+        {
+            var targetConstructor = typeof(SampleClassWithMultipleConstructors).GetConstructor(new[] { typeof(ISampleService), 
+                typeof(ISampleService) });
+
+            // Initialize the container
+            var mockSampleService = new Mock<ISampleService>();
+            IServiceContainer container = new ServiceContainer();
+            container.AddService(mockSampleService.Object);
+            container.AddService<IArgumentResolver>(new ArgumentResolver());
+
+            // Generate the arguments using the target constructor
+            object[] arguments = targetConstructor.ResolveArgumentsFrom(container);
+            Assert.AreSame(arguments[0], mockSampleService.Object);
+            Assert.AreSame(arguments[1], mockSampleService.Object);
+        }
+
+        [Test]
+        public void ShouldInstantiateObjectWithConstructorAndArguments()
+        {
+            ConstructorInfo targetConstructor = typeof(SampleClassWithMultipleConstructors).GetConstructor(new[] { typeof(ISampleService), 
+                typeof(ISampleService) });
+
+            // Create the method arguments
+            var mockSampleService = new Mock<ISampleService>();
+            var arguments = new object[] {mockSampleService.Object, mockSampleService.Object};
+
+            // Initialize the container
+            IServiceContainer container = new ServiceContainer();
+            container.AddService<IConstructorInvoke>(new ConstructorInvoke());
+
+            var constructorInvoke = container.GetService<IConstructorInvoke>();
+            object result = constructorInvoke.CreateWith(targetConstructor, arguments);
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(typeof(SampleClassWithMultipleConstructors), result);
         }
     }
 }

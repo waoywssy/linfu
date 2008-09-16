@@ -52,11 +52,15 @@
     <Compile Include="ActionContext.cs" />
     <Compile Include="ActionDelegates.cs" />
     <Compile Include="ActionPostProcessor.cs" />
+    <Compile Include="ArgumentResolver.cs" />
     <Compile Include="BaseContext.cs" />
+    <Compile Include="ConstructorInvoke.cs" />
     <Compile Include="ConstructorResolver.cs" />
     <Compile Include="ContainerExtensions.cs" />
     <Compile Include="FluentExtensions.cs" />
     <Compile Include="GenerateFactory.cs" />
+    <Compile Include="Interfaces\IArgumentResolver.cs" />
+    <Compile Include="Interfaces\IConstructorInvoke.cs" />
     <Compile Include="Interfaces\IConstructorResolver.cs" />
     <Compile Include="Interfaces\IGenerateFactory.cs" />
     <Compile Include="InjectionContext.cs" />

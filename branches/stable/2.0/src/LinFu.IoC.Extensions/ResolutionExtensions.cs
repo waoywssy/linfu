@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using LinFu.Finders;
+using LinFu.IoC.Extensions.Interfaces;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC.Extensions
@@ -65,6 +66,20 @@ namespace LinFu.IoC.Extensions
                                                                 };
             
             return hasService.Or(hasNamedService);
+        }
+
+        /// <summary>
+        /// Builds an argument list for the <paramref name="constructor"/>
+        /// using the given <paramref name="container"/> instance.
+        /// </summary>
+        /// <param name="constructor">The constructor that will be used to instantiate an object instance.</param>
+        /// <param name="container">The container that will provide the constructor arguments.</param>
+        /// <returns>An array of objects to be used with the target constructor.</returns>
+        public static object[] ResolveArgumentsFrom(this ConstructorInfo constructor, 
+            IServiceContainer container)
+        {
+            var resolver = container.GetService<IArgumentResolver>();
+            return resolver.ResolveFrom(constructor, container);
         }
     }
 }
