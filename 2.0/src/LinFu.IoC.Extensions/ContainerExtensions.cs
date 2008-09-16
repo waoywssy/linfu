@@ -138,8 +138,10 @@ namespace LinFu.IoC
         /// <param name="container">the target <see cref="IServiceContainer"/> instance.</param>
         public static IEnumerable<IServiceInstance> GetServices(this IServiceContainer container, Func<IServiceInfo, bool> condition)
         {
+            // Create the services that match
+            // the given description
             var results = from info in container.AvailableServices
-                          where condition(info)
+                          where condition(info) && !info.ServiceType.IsGenericTypeDefinition
                           select
                               new ServiceInstance()
                                   {
@@ -148,6 +150,22 @@ namespace LinFu.IoC
                                   } as IServiceInstance;
 
             return results;
+        }
+        /// <summary>
+        /// Determines whether or not a container contains services that match
+        /// the given <paramref name="condition"/>.
+        /// </summary>
+        /// <param name="container">The target container.</param>
+        /// <param name="condition">The predicate that will be used to determine whether or not the requested services exist.</param>
+        /// <returns>Returns <c>true</c> if the requested services exist; otherwise, it will return <c>false</c>.</returns>
+        public static bool Contains(this IServiceContainer container, 
+            Func<IServiceInfo, bool> condition)
+        {
+            var matches = (from info in container.AvailableServices
+                          where condition(info)
+                          select info).Count();
+
+            return matches > 0;
         }
     }
 }
