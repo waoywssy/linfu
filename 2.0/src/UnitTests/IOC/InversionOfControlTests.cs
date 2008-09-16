@@ -94,6 +94,29 @@ namespace LinFu.UnitTests.IOC
         }
 
         [Test]
+        public void ContainerMustBeAbleToReturnAListOfServices()
+        {
+            var mockSampleService = new Mock<ISampleService>();
+            var container = new ServiceContainer();
+
+            // Add a bunch of dummy services
+            for (var i = 0; i < 10; i++)
+            {
+                var serviceName = string.Format("Service{0}", i + 1);
+                container.AddService(serviceName, mockSampleService.Object);
+            }
+
+            var services = container.GetServices<ISampleService>();
+            Assert.IsTrue(services.Count() == 10);
+
+            // The resulting set of services
+            // must match the given service instance
+            foreach (var service in services)
+            {
+                Assert.AreSame(mockSampleService.Object, service);
+            }
+        }
+        [Test]
         public void ContainerMustCallPostProcessorDuringARequest()
         {
             var mockPostProcessor = new Mock<IPostProcessor>();

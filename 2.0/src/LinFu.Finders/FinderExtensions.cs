@@ -109,5 +109,22 @@ namespace LinFu.Finders
 
             return bestMatch;
         }
+        
+        /// <summary>
+        /// Converts a list into a list of <see cref="IFuzzyItem{T}"/> objects.
+        /// </summary>
+        /// <typeparam name="TItem">The item type will be used in the fuzzy search.</typeparam>
+        /// <param name="list">The target list to be converted.</param>
+        /// <returns>A fuzzy list containing the elements from the given list.</returns>
+        public static IList<IFuzzyItem<TItem>> AsFuzzyList<TItem>(this IEnumerable<TItem> items)
+        {
+            var result = new List<IFuzzyItem<TItem>>();
+            foreach(var item in items)
+            {
+                result.Add(item);
+            }
+
+            return result;
+        }
     }
 }
