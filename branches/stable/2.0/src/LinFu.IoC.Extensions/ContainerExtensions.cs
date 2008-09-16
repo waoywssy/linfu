@@ -104,7 +104,7 @@ namespace LinFu.IoC
         {
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var loader = new Loader();
-
+            
             // Load the LinFu assembly by default
             loader.LoadDirectory(baseDirectory, "LinFu*.dll");
 

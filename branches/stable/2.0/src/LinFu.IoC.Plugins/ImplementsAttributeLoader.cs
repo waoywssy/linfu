@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using LinFu.IoC.Configuration;
+using LinFu.IoC.Extensions;
 using LinFu.IoC.Factories;
 using LinFu.IoC.Interfaces;
 
@@ -111,6 +112,7 @@ namespace LinFu.IoC.Plugins
             // Create the factory itself
             MulticastDelegate factoryMethod = CreateFactoryMethod(serviceType, implementingType);
             object factoryInstance = Activator.CreateInstance(factoryType, new object[] { factoryMethod });
+
             var result = factoryInstance as IFactory;
 
             return result;
@@ -147,9 +149,19 @@ namespace LinFu.IoC.Plugins
         /// <typeparam name="TImplementation">The type that will provide the implementation for the actual service.</typeparam>
         /// <returns>A strongly-typed factory method delegate that can create the given service.</returns>
         internal static Func<Type, IContainer, TService> CreateFactoryMethodInternal<TService, TImplementation>()
-            where TImplementation : TService, new()
+            where TImplementation : TService
         {
-            return (type, container) => new TImplementation();
+            return (type, container) =>
+                       {
+                           var serviceContainer = container as IServiceContainer;
+
+                           // Attempt to autoresolve the constructor
+                           if (serviceContainer != null)
+                               return (TService)serviceContainer.AutoCreate(typeof(TImplementation));
+
+                           // Otherwise, use the default constructor
+                           return (TService)Activator.CreateInstance(typeof(TImplementation));
+                       };
         }
     }
 }
