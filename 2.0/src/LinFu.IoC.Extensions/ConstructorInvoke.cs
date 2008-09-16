@@ -15,7 +15,7 @@ namespace LinFu.IoC.Extensions
     [Implements(typeof(IConstructorInvoke), LifecycleType.Singleton)]
     public class ConstructorInvoke : IConstructorInvoke
     {
-        private readonly Dictionary<ConstructorInfo, MethodInfo> _cache = new Dictionary<ConstructorInfo, MethodInfo>();
+        private static readonly Dictionary<ConstructorInfo, MethodInfo> _cache = new Dictionary<ConstructorInfo, MethodInfo>();
 
         /// <summary>
         /// Instantiates an object instance with the <paramref name="targetConstructor"/>
@@ -47,7 +47,7 @@ namespace LinFu.IoC.Extensions
         /// factory method for creating a new type.
         /// </summary>
         /// <param name="targetConstructor">The constructor that will be used to instantiate the target type.</param>
-        private void GenerateFactoryMethod(ConstructorInfo targetConstructor)
+        private static void GenerateFactoryMethod(ConstructorInfo targetConstructor)
         {
             var returnType = targetConstructor.DeclaringType;
             var parameterTypes = (from p in targetConstructor.GetParameters()
@@ -66,6 +66,7 @@ namespace LinFu.IoC.Extensions
             IL.Emit(OpCodes.Newobj, targetConstructor);
             IL.Emit(OpCodes.Ret);
 
+            // Save the results
             lock (_cache)
             {
                 _cache[targetConstructor] = dynamicMethod;
