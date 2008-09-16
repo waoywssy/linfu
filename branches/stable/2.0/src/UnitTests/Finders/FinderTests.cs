@@ -149,5 +149,16 @@ namespace LinFu.UnitTests.Finders
             var bestMatch = fuzzyList.BestMatch();
             Assert.AreSame(bestMatch, fuzzyItem);
         }
+
+        [Test]
+        public void ShouldReturnNullIfAllMatchScoresAreZero()
+        {
+            var fuzzyItem = new FuzzyItem<object>(new object());
+            var fuzzyList = new List<IFuzzyItem<object>> { fuzzyItem };
+
+            var bestMatch = fuzzyList.BestMatch();
+
+            Assert.IsNull(bestMatch);
+        }
     }
 }

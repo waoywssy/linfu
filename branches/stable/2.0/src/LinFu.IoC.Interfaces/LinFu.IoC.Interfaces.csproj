@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C6AC7707-9288-4ADF-9053-34FE71FFE0BE}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -55,6 +55,7 @@
     <Compile Include="IServiceContainer.cs" />
     <Compile Include="IPostProcessor.cs" />
     <Compile Include="IServiceInfo.cs" />
+    <Compile Include="IServiceInstance.cs" />
     <Compile Include="IServiceRequestResult.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

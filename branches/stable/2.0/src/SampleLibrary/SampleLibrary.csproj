@@ -58,6 +58,9 @@
     <Compile Include="IOC\ISampleGenericService.cs" />
     <Compile Include="IOC\ISampleService.cs" />
     <Compile Include="IOC\SampleClass.cs" />
+    <Compile Include="IOC\SampleClassWithMultipleConstructors.cs" />
+    <Compile Include="IOC\SampleClassWithServiceListAsConstructorArgument.cs" />
+    <Compile Include="IOC\SampleClassWithSingleArgumentConstructor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IOC\SampleFactory.cs" />
     <Compile Include="IOC\SampleGenericImplementation.cs" />

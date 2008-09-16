@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Extensions;
 using LinFu.IoC.Interfaces;
@@ -111,6 +113,41 @@ namespace LinFu.IoC
 
             // Configure the container
             loader.LoadInto(container);
+        }
+
+        /// <summary>
+        /// Returns all the services in the container that match the given
+        /// <typeparamref name="T">service type</typeparamref>.
+        /// </summary>
+        /// <typeparam name="T">The type of service to return.</typeparam>
+        /// <param name="container">The target container.</param>
+        /// <returns>The list of services that implement the given service type.</returns>
+        public static IEnumerable<T> GetServices<T>(this IServiceContainer container)
+        {
+            foreach(var info in container.AvailableServices)
+            {
+                yield return (T)container.GetService(info.ServiceName, info.ServiceType);
+            }
+        }
+
+        /// <summary>
+        /// Returns a list of services that match the given <paramref name="condition"/>.
+        /// </summary>
+        /// <param name="condition">The predicate that determines which services should be returned.</param>
+        /// <returns>A list of <see cref="IServiceInstance"/> objects that describe the services returned as well as provide a reference to the resulting services themselves.</returns>
+        /// <param name="container">the target <see cref="IServiceContainer"/> instance.</param>
+        public static IEnumerable<IServiceInstance> GetServices(this IServiceContainer container, Func<IServiceInfo, bool> condition)
+        {
+            var results = from info in container.AvailableServices
+                          where condition(info)
+                          select
+                              new ServiceInstance()
+                                  {
+                                      ServiceInfo = info,
+                                      Object = container.GetService(info.ServiceName, info.ServiceType)
+                                  } as IServiceInstance;
+
+            return results;
         }
     }
 }

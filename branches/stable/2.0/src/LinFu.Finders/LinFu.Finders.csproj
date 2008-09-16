@@ -52,6 +52,7 @@
     <Compile Include="Criteria.cs" />
     <Compile Include="FinderExtensions.cs" />
     <Compile Include="FuzzyItem.cs" />
+    <Compile Include="PredicateExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.Finders.Interfaces\LinFu.Finders.Interfaces.csproj">
