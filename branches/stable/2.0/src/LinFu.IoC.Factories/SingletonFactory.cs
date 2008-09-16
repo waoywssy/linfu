@@ -5,12 +5,12 @@ using LinFu.IoC.Interfaces;
 namespace LinFu.IoC.Factories
 {
     /// <summary>
-    /// A factory that creates Singletons. Each service that this factory creates will only be created once.
+    /// A factory that creates Singletons. Each service that this factory creates will only be created once per concrete type.
     /// </summary>
     /// <typeparam name="T">The type of service to instantiate.</typeparam>
     public class SingletonFactory<T> : BaseFactory<T>
     {
-        private static readonly Dictionary<Type, T> _instances = new Dictionary<Type, T>();
+        private static readonly Dictionary<Type, T> _concreteInstances = new Dictionary<Type, T>();
         private readonly Func<Type, IContainer, T> _createInstance;
         private T _instance;
         private Type _concreteType;
@@ -48,19 +48,17 @@ namespace LinFu.IoC.Factories
         /// <returns>A service instance as a singleton.</returns>
         public override T CreateInstance(IContainer container)
         {
-
-            if (ReferenceEquals(_instance, null))
+            if (!ReferenceEquals(_instance, null))
+                return _instance;
+            
+            lock (_lock)
             {
-                lock (_lock)
+                T result = _createInstance(typeof(T), container);
+                if (result != null)
                 {
-                    T result = _createInstance(typeof(T), container);
-
-                    if (result != null)
-                    {
-                        _concreteType = result.GetType();
-                        _instances[_concreteType] = result;
-                        _instance = _instances[_concreteType];
-                    }
+                    _concreteType = result.GetType();
+                    _concreteInstances[_concreteType] = result;
+                    _instance = _concreteInstances[_concreteType];
                 }
             }
 

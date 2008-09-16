@@ -93,13 +93,13 @@ namespace LinFu.IoC.Extensions
         public static object AutoCreate(this IServiceContainer container, Type concreteType)
         {
             #region Add the required services if necessary
-            if (container.Contains(typeof(IConstructorResolver)))
+            if (!container.Contains(typeof(IConstructorResolver)))
                 container.AddService<IConstructorResolver>(new ConstructorResolver());
 
-            if (container.Contains(typeof(IArgumentResolver)))
+            if (!container.Contains(typeof(IArgumentResolver)))
                 container.AddService<IArgumentResolver>(new ArgumentResolver());
 
-            if (container.Contains(typeof(IConstructorInvoke)))
+            if (!container.Contains(typeof(IConstructorInvoke)))
                 container.AddService<IConstructorInvoke>(new ConstructorInvoke());
             #endregion
 
