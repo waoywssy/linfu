@@ -43,7 +43,74 @@ namespace LinFu.Reflection.Emit
 
             return result;
         }
-        
+
+        /// <summary>
+        /// Adds a set of parameter types to the target <paramref name="method"/>.
+        /// </summary>
+        /// <param name="method">The target method.</param>
+        /// <param name="parameterTypes">The list of types that describe the method signature.</param>
+        public static void AddParameters(this MethodDefinition method, Type[] parameterTypes)
+        {
+            var declaringType = method.DeclaringType;
+            var module = declaringType.Module;
+
+            // Build the parameter list
+            foreach (var type in parameterTypes)
+            {
+                var parameterType = type.IsGenericParameter ? method.AddGenericParameter(type) :
+                    module.Import(type);
+
+                var param = new ParameterDefinition(parameterType);
+                method.Parameters.Add(param);
+            }
+        }
+
+        /// <summary>
+        /// Assigns the <paramref name="returnType"/> for the target method.
+        /// </summary>
+        /// <param name="method">The target method.</param>
+        /// <param name="returnType">The <see cref="System.Type"/> instance that describes the return type.</param>
+        public static void SetReturnType(this MethodDefinition method, Type returnType)
+        {
+            var declaringType = method.DeclaringType;
+            ModuleDefinition module = declaringType.Module;
+
+            TypeReference actualReturnType;
+            if (returnType.IsGenericParameter)
+            {
+                actualReturnType = method.AddGenericParameter(returnType);
+            }
+            else
+            {
+                actualReturnType = module.Import(returnType);
+            }
+
+            method.ReturnType.ReturnType = actualReturnType;
+        }
+        /// <summary>
+        /// Adds a generic parameter type to the <paramref name="method"/>.
+        /// </summary>
+        /// <param name="method">The target method.</param>
+        /// <param name="parameterType">The parameter type.</param>
+        /// <returns>A <see cref="TypeReference"/> that represents the generic parameter type.</returns>
+        public static TypeReference AddGenericParameter(this MethodDefinition method, Type parameterType)
+        {
+
+            // Check if the parameter type already exists
+            var matches = (from GenericParameter p in method.GenericParameters
+                          where p.Name == parameterType.Name
+                          select p).ToList();
+
+            // Reuse the existing parameter
+            if (matches.Count > 0)
+                return matches[0];
+
+            var parameter = new GenericParameter(parameterType.Name, method);
+            method.GenericParameters.Add(parameter);
+
+            return parameter;
+        }
+
         /// <summary>
         /// Adds a <see cref="VariableDefinition">local variable</see>
         /// instance to the target <paramref name="methodDef">method definition</paramref>.

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LinFu.UnitTests.Tools
 {
-    public interface IMoqTrigger
+    public interface ITest
     {
         object Execute();
     }

@@ -9,6 +9,7 @@ using LinFu.Reflection.Emit;
 using LinFu.Proxy.Interfaces;
 using LinFu.IoC.Configuration;
 using Mono.Cecil;
+using GenericParameterAttributes=Mono.Cecil.GenericParameterAttributes;
 
 namespace LinFu.Proxy
 {
@@ -35,9 +36,7 @@ namespace LinFu.Proxy
         public MethodDefinition CreateMethod(TypeDefinition targetType, MethodInfo method)
         {
             #region Match the method signature
-            var module = targetType.Module;
-            var returnType = module.ImportType(method.ReturnType);
-            
+            var module = targetType.Module;            
             var methodName = method.Name;
 
             // If the method is a member defined on an interface type,
@@ -73,18 +72,17 @@ namespace LinFu.Proxy
             // Build the list of parameter types
             var parameterTypes = (from param in method.GetParameters()
                                   let type = param.ParameterType
-                                  let importedType = type != null ? module.ImportType(type) : null
-                                  where importedType != null
+                                  let importedType = type                                  
                                   select importedType).ToArray();
             
             
             var newMethod = targetType.DefineMethod(methodName, attributes,
-                                                    returnType, parameterTypes);
+                                                    method.ReturnType, parameterTypes);
 
             newMethod.Body.InitLocals = true;
             newMethod.ImplAttributes = Mono.Cecil.MethodImplAttributes.IL | Mono.Cecil.MethodImplAttributes.Managed;
-            newMethod.HasThis = true;
-            
+            newMethod.HasThis = true;                       
+
             // Match the generic type arguments
             var typeArguments = method.GetGenericArguments();
 
@@ -117,18 +115,11 @@ namespace LinFu.Proxy
         /// </summary>
         /// <param name="newMethod">The generic method that contains the generic type arguments.</param>
         /// <param name="typeArguments">The array of <see cref="Type"/> objects that describe the generic parameters for the current method.</param>
-        private static void MatchGenericArguments(IGenericParameterProvider newMethod, ICollection<Type> typeArguments)
+        private static void MatchGenericArguments(MethodDefinition newMethod, ICollection<Type> typeArguments)
         {
-            var typeNames = new List<string>();
-            for (var index = 0; index < typeArguments.Count; index++)
+            foreach (var argument in typeArguments)
             {
-                typeNames.Add(string.Format("T{0}", index));
-            }
-
-            foreach (var name in typeNames)
-            {
-                var parameter = new GenericParameter(name, newMethod);
-                newMethod.GenericParameters.Add(parameter);
+                newMethod.AddGenericParameter(argument);
             }
         }
 

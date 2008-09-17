@@ -5,10 +5,10 @@ using System.Reflection;
 using System.Text;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using FieldAttributes=Mono.Cecil.FieldAttributes;
-using MethodAttributes=Mono.Cecil.MethodAttributes;
-using MethodImplAttributes=Mono.Cecil.MethodImplAttributes;
-using PropertyAttributes=Mono.Cecil.PropertyAttributes;
+using FieldAttributes = Mono.Cecil.FieldAttributes;
+using MethodAttributes = Mono.Cecil.MethodAttributes;
+using MethodImplAttributes = Mono.Cecil.MethodImplAttributes;
+using PropertyAttributes = Mono.Cecil.PropertyAttributes;
 
 namespace LinFu.Reflection.Emit
 {
@@ -29,23 +29,21 @@ namespace LinFu.Reflection.Emit
         /// <param name="callingConvention">The calling convention of the method being created.</param>
         /// <param name="parameterTypes">The list of argument types that will be used to define the method signature.</param>
         /// <returns>A <see cref="MethodDefinition"/> instance that represents the newly-created method.</returns>
-        public static MethodDefinition DefineMethod(this TypeDefinition typeDef, string methodName, 
-            MethodAttributes attributes, MethodCallingConvention callingConvention, TypeReference returnType, params TypeReference[] parameterTypes)
+        public static MethodDefinition DefineMethod(this TypeDefinition typeDef, string methodName,
+            MethodAttributes attributes, MethodCallingConvention callingConvention, Type returnType, params Type[] parameterTypes)
         {
-            var method = new MethodDefinition(methodName, attributes, returnType)
+            var method = new MethodDefinition(methodName, attributes, null)
             {
                 CallingConvention = callingConvention
             };
-
-            // Build the parameter list
-            foreach (var type in parameterTypes)
-            {
-                var param = new ParameterDefinition(type);
-                method.Parameters.Add(param);
-            }
-            
             
             typeDef.Methods.Add(method);
+
+            // Match the parameter types
+            method.AddParameters(parameterTypes);
+
+            // Match the return type
+            method.SetReturnType(returnType);
 
             return method;
         }
@@ -60,21 +58,22 @@ namespace LinFu.Reflection.Emit
         /// <param name="parameterTypes">The list of argument types that will be used to define the method signature.</param>
         /// <returns>A <see cref="MethodDefinition"/> instance that represents the newly-created method.</returns>
         public static MethodDefinition DefineMethod(this TypeDefinition typeDef, string methodName,
-            MethodAttributes attributes, TypeReference returnType, params TypeReference[] parameterTypes)
+            MethodAttributes attributes, Type returnType, params Type[] parameterTypes)
         {
-            var method = new MethodDefinition(methodName, attributes, returnType);
+            var method = new MethodDefinition(methodName, attributes, null);
+            var module = typeDef.Module;
 
-            // Build the parameter list
-            foreach (var type in parameterTypes)
-            {
-                var param = new ParameterDefinition(type);
-                method.Parameters.Add(param);
-            }
 
             typeDef.Methods.Add(method);
 
+            // Match the parameter types
+            method.AddParameters(parameterTypes);
+
+            // Match the return type
+            method.SetReturnType(returnType);
+
             return method;
-        }
+        }        
 
         /// <summary>
         /// Adds a default constructor to the target type.
@@ -82,7 +81,7 @@ namespace LinFu.Reflection.Emit
         /// <param name="targetType">The type that will contain the default constructor.</param>
         public static void AddDefaultConstructor(this TypeDefinition targetType)
         {
-            var parentType = typeof (object);
+            var parentType = typeof(object);
 
             AddDefaultConstructor(targetType, parentType);
         }
@@ -106,7 +105,7 @@ namespace LinFu.Reflection.Emit
             // Revert to the System.Object constructor
             // if the parent type does not have a default constructor
             if (objectConstructor == null)
-                objectConstructor = typeof (object).GetConstructor(new Type[0]);
+                objectConstructor = typeof(object).GetConstructor(new Type[0]);
 
             var baseConstructor = module.Import(objectConstructor);
 
@@ -195,7 +194,7 @@ namespace LinFu.Reflection.Emit
             var newProperty = new PropertyDefinition(propertyName,
                 propertyType, PropertyAttributes.Unused)
                                   {
-                                      GetMethod = getter, 
+                                      GetMethod = getter,
                                       SetMethod = setter
                                   };
 
@@ -249,7 +248,7 @@ namespace LinFu.Reflection.Emit
         /// <param name="attributes">The method attributes associated with the getter method.</param>
         /// <param name="backingField">The field that will store the instance that the getter method will retrieve.</param>
         /// <returns>A <see cref="MethodDefinition"/> representing the getter method itself.</returns>
-        private static MethodDefinition AddPropertyGetter(TypeReference propertyType, 
+        private static MethodDefinition AddPropertyGetter(TypeReference propertyType,
             string getterName, MethodAttributes attributes, FieldReference backingField)
         {
             var getter = new MethodDefinition(getterName, attributes, propertyType)
@@ -262,7 +261,7 @@ namespace LinFu.Reflection.Emit
             IL.Emit(OpCodes.Ldarg_0);
             IL.Emit(OpCodes.Ldfld, backingField);
             IL.Emit(OpCodes.Ret);
-            
+
             return getter;
         }
 
@@ -291,7 +290,7 @@ namespace LinFu.Reflection.Emit
             IL.Emit(OpCodes.Ldarg_1);
             IL.Emit(OpCodes.Stfld, backingField);
             IL.Emit(OpCodes.Ret);
-            
+
             return setter;
         }
     }
