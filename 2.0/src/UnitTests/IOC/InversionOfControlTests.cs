@@ -15,6 +15,29 @@ namespace LinFu.UnitTests.IOC
     public class InversionOfControlTests
     {
         [Test]
+        public void ContainerMustAllowUntypedServiceRegistration()
+        {
+            var container = new ServiceContainer();
+            container.AddService(typeof(ISampleService), typeof(SampleClass));
+
+            var service = container.GetService<ISampleService>();
+            Assert.IsNotNull(service);
+        }
+
+        [Test]
+        public void ContainerMustAllowUntypedOpenGenericTypeRegistration()
+        {
+            var serviceType = typeof(ISampleGenericService<>);
+            var implementingType = typeof(SampleGenericImplementation<>);
+
+            var container = new ServiceContainer();
+            container.AddService(serviceType, implementingType);
+
+            var result = container.GetService<ISampleGenericService<long>>();
+            Assert.IsNotNull(result);
+        }
+
+        [Test]
         [Ignore("TODO: Implement this")]
         public void ContainerMustAllowServicesToBeIntercepted()
         {
@@ -390,6 +413,6 @@ namespace LinFu.UnitTests.IOC
             
             mockFactory.VerifyAll();
             mockInitialize.VerifyAll();
-        }
+        }       
     }
 }

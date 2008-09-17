@@ -11,8 +11,6 @@ namespace LinFu.IoC
     /// </summary>
     public class ServiceContainer : ServiceContainerBase
     {
-        private readonly Dictionary<Type, IFactory> _genericFactories = new Dictionary<Type, IFactory>();
-
         private readonly Dictionary<string, Dictionary<Type, IFactory>> _namedFactories =
             new Dictionary<string, Dictionary<Type, IFactory>>();
 
@@ -43,13 +41,13 @@ namespace LinFu.IoC
 
             // Attempt to create the service type using
             // the generic factories, if possible
-            if (instance == null && serviceType.IsGenericType && 
+            if (instance == null && serviceType.IsGenericType &&
                 !serviceType.IsGenericTypeDefinition)
             {
                 // Check if any factories can create the service
                 // with the given definition type
                 var definitionType = serviceType.GetGenericTypeDefinition();
-                if (_namedFactories.ContainsKey(serviceName) && 
+                if (_namedFactories.ContainsKey(serviceName) &&
                     _namedFactories[serviceName].ContainsKey(definitionType))
                 {
                     var factory = _namedFactories[serviceName][definitionType];
@@ -102,17 +100,24 @@ namespace LinFu.IoC
                 SuppressErrors = suppressErrors;
             }
 
+
             // Attempt to create the service type using
             // the generic factories, if possible
             if (instance == null && serviceType.IsGenericType &&
                 !serviceType.IsGenericTypeDefinition)
             {
+                Dictionary<Type, IFactory> genericFactories = null;
+
+
                 // Check if any factories can create the service
                 // with the given definition type
                 var definitionType = serviceType.GetGenericTypeDefinition();
-                if (_genericFactories.ContainsKey(definitionType))
+                if (_namedFactories.ContainsKey(string.Empty))
+                    genericFactories = _namedFactories[string.Empty];
+
+                if (genericFactories != null && genericFactories.ContainsKey(definitionType))
                 {
-                    var factory = _genericFactories[definitionType];
+                    var factory = genericFactories[definitionType];
 
                     // Generate the service instance
                     if (factory != null)
@@ -157,7 +162,7 @@ namespace LinFu.IoC
 
             _namedFactories[serviceName][serviceType] = factory;
         }
-        
+
         /// <summary>
         /// Overrides the <see cref="ServiceContainerBase.Contains(string,Type)"/> method to allow
         /// users to determine whether or not a specific generic service type can be created
@@ -214,7 +219,11 @@ namespace LinFu.IoC
                 return;
             }
 
-            _genericFactories.Add(serviceType, factory);
+
+            if (!_namedFactories.ContainsKey(string.Empty))
+                _namedFactories[string.Empty] = new Dictionary<Type, IFactory>();
+
+            _namedFactories[string.Empty].Add(serviceType, factory);
         }
 
         /// <summary>
@@ -241,6 +250,12 @@ namespace LinFu.IoC
             if (result)
                 return true;
 
+            Dictionary<Type, IFactory> genericFactories = null;
+
+            if (!_namedFactories.ContainsKey(string.Empty))
+                return false;
+
+            genericFactories = _namedFactories[string.Empty];
             if (serviceType.IsGenericType && !serviceType.IsGenericTypeDefinition)
             {
                 // Determine the base type definition
@@ -249,7 +264,7 @@ namespace LinFu.IoC
                 // Check if there are any generic factories that can create
                 // the entire family of services whose type definitions
                 // match the base type
-                result = _genericFactories.ContainsKey(baseDefinition);
+                result = genericFactories.ContainsKey(baseDefinition);
             }
 
             return result;
@@ -266,13 +281,6 @@ namespace LinFu.IoC
             {
                 var result = new List<IServiceInfo>();
 
-                // Append the unnamed services
-                var unnamedServices = from type in _genericFactories.Keys
-                                      let info = new ServiceInfo(string.Empty, type) as IServiceInfo
-                                      select info;
-                
-                result.AddRange(unnamedServices);
-
                 // Append the named services
                 var namedServices = from name in _namedFactories.Keys
                                     from type in _namedFactories[name].Keys
@@ -282,7 +290,7 @@ namespace LinFu.IoC
                 result.AddRange(namedServices);
 
                 // Reuse the results from the base class
-                result.AddRange(base.AvailableServices);                
+                result.AddRange(base.AvailableServices);
 
                 return result;
             }
