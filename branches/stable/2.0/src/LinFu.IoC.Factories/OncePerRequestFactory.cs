@@ -11,7 +11,7 @@ namespace LinFu.IoC.Factories
     public class OncePerRequestFactory<T> : BaseFactory<T>
     {
         private readonly Func<Type, IContainer, T> _createInstance;
-
+        private readonly Type _serviceType;
         /// <summary>
         /// Initializes the factory class using the <paramref name="createInstance"/>
         /// parameter as a factory delegate.
@@ -36,6 +36,7 @@ namespace LinFu.IoC.Factories
         public OncePerRequestFactory(Func<Type, IContainer, T> createInstance)
         {
             _createInstance = createInstance;
+            _serviceType = typeof(T);
         }
 
         /// <summary>
@@ -46,7 +47,7 @@ namespace LinFu.IoC.Factories
         /// <returns>A non-null object reference.</returns>
         public override T CreateInstance(IContainer container)
         {
-            return _createInstance(typeof(T), container);
+            return _createInstance(_serviceType, container);
         }
     }
 }
