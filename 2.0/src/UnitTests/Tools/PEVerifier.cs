@@ -15,6 +15,7 @@ namespace LinFu.UnitTests.Tools
     {
         private static readonly string filename = "output.dll";
         private string location = string.Empty;
+        private bool _failed;
         internal PEVerifier()
         {
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -23,8 +24,8 @@ namespace LinFu.UnitTests.Tools
 
         ~PEVerifier()
         {
-            //if (File.Exists(location))
-            //    File.Delete(location);
+            if (File.Exists(location) && !_failed)
+                File.Delete(location);
         }
 
         #region IVerifier Members
@@ -76,6 +77,7 @@ namespace LinFu.UnitTests.Tools
                 return;
 
             Console.WriteLine(processOutput);
+            _failed = true;
             Assert.Fail("PEVerify output: " + Environment.NewLine + processOutput, result);
         }
 

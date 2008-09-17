@@ -80,7 +80,7 @@ namespace LinFu.UnitTests.Proxy
             var mockInterceptor = new MockInterceptor(i => null);
 
             // Create the proxy instance and then make the call
-            var proxyInstance = (IMoqTrigger)factory.CreateProxy(typeof(object), mockInterceptor, typeof(IMoqTrigger));
+            var proxyInstance = (ITest)factory.CreateProxy(typeof(object), mockInterceptor, typeof(ITest));
             proxyInstance.Execute();
 
             // The interceptor must be called
@@ -140,19 +140,27 @@ namespace LinFu.UnitTests.Proxy
             // The two given arguments should match
             Assert.AreEqual(54321, value);
         }
-
+       
         [Test]
-        [Ignore("TODO: Implement this")]
-        public void ShouldMatchInvocationArguments()
-        {
-            throw new NotImplementedException();
-        }
-
-        [Test]
-        [Ignore("TODO: Implement this")]
         public void ShouldSupportMethodCallsWithGenericReturnValuesFromGenericMethodTypeArguments()
         {
-            throw new NotImplementedException();
+            var dummyList = new List<int>();
+
+            // The dummy list will be altered if the method body is called
+            Func<IInvocationInfo, object> methodBody = info =>
+                                                           {
+                                                               var typeArguments = info.TypeArguments;
+
+                                                               // Match the type arguments
+                                                               Assert.AreEqual(typeArguments[0], typeof(int));
+                                                               dummyList.Add(12345);
+                                                               return 12345;
+                                                           };
+
+            var proxy = CreateProxy<ClassWithMethodReturnTypeFromGenericTypeArguments>(methodBody);
+            proxy.DoSomething<int>();
+
+            Assert.IsTrue(dummyList.Count > 0);
         }
 
         [Test]
@@ -173,17 +181,37 @@ namespace LinFu.UnitTests.Proxy
         }
 
         [Test]
-        [Ignore("TODO: Implement this")]
         public void ShouldSupportMethodCallsWithGenericParametersFromHostGenericTypeArguments()
         {
-            throw new NotImplementedException();
+            var proxy = CreateProxy<ClassWithParametersFromHostGenericTypeArguments<double, string>>(info =>
+            {
+                // Match the type arguments
+                Assert.AreEqual(info.ParameterTypes[0], typeof(double));
+                Assert.AreEqual(info.ParameterTypes[1], typeof(string));
+
+                // Match the argument values
+                Assert.AreEqual(1.0, info.Arguments[0]);
+                Assert.AreEqual("Test", info.Arguments[1]);
+                return null;
+            });
+
+            proxy.DoSomething(1.0, "Test");
         }
 
         [Test]
-        [Ignore("TODO: Implement this")]
         public void ShouldSupportMethodCallsWithGenericParametersFromGenericMethodTypeArguments()
-        {
-            throw new NotImplementedException();
+        {            
+            var genericParameterType = typeof(int);
+            var proxy = CreateProxy<ClassWithParametersFromGenericMethodTypeArguments>(info =>
+            {
+                // Match the type argument
+                Assert.IsTrue(info.TypeArguments.Contains(genericParameterType));
+                Assert.AreEqual(1, info.Arguments[0]);
+                Assert.AreEqual(1, info.Arguments[1]);
+                return null;
+            });
+
+            proxy.DoSomething<int>(1, 1);
         }
 
         [Test]

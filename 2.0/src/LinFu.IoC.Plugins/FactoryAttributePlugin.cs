@@ -18,7 +18,6 @@ namespace LinFu.IoC.Plugins
         /// </summary>       
         /// <param name="loader">The loader that will be used to configure the service containers.</param>
         /// <param name="assemblyLoader">The assembly loader that will configure the service container instance.</param>
-        /// <param name="loader">The loader responsible for loading the target <see cref="IServiceContainer"/> type.</param>
         protected override void Initialize(ILoader<IServiceContainer> loader, IAssemblyTargetLoader<IServiceContainer> assemblyLoader)
         {
             assemblyLoader.TypeLoaders.Add(new FactoryAttributeLoader());
