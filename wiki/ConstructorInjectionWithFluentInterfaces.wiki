@@ -90,11 +90,15 @@ If you need to create either a singleton service or a service that exists only o
 
 === Alternative Syntax ===
 
-LinFu's IoC v2.0 container also supports injection for concrete service types that have default constructors without any parameters. For example, assuming that the _Car_ class has the following constructor:
+LinFu's IoC v2.0 container also supports injection for concrete service types ~~~that have default constructors without any parameters~~~. For example, assuming that the _Car_ class has the following constructors:
 {{{
     public class Car : IVehicle, IInitialize
     {
         public Car() 
+        {
+        }
+
+        public Car(IEngine engine, IPerson driver)
         {
         }
         // ...
@@ -108,6 +112,6 @@ LinFu's IoC v2.0 container also supports injection for concrete service types th
             container.Inject<IVehicle>().Using<Car>().OncePerRequest();
 }}}
 
-As you can see, the syntax is very straightforward, and that's the style of programming that LinFu offers.
+As you can see, the syntax is very straightforward. LinFu.IoC will automatically choose the constructor with the most resolvable parameters from the container and inject the parameter values for you.
 
 *NOTE:* You can also find out how to download the example project by clicking [DownloadingTheIoCExamples here]
