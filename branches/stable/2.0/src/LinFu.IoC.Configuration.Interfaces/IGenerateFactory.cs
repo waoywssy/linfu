@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using LinFu.IoC.Factories;
 
-namespace LinFu.IoC.Extensions
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// Represents a fluent class that allows

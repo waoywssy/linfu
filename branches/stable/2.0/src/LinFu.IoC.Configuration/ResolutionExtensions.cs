@@ -4,11 +4,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using LinFu.Finders;
-using LinFu.IoC.Extensions.Interfaces;
+using LinFu.IoC.Configuration;
+using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Interfaces;
 using System.Collections;
 
-namespace LinFu.IoC.Extensions
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// Adds methods that extend LinFu.IoC to support automatic constructor resolution.
@@ -113,49 +114,7 @@ namespace LinFu.IoC.Extensions
             var resolver = container.GetService<IArgumentResolver>();
             return resolver.ResolveFrom(constructor, container);
         }
-
-        /// <summary>
-        /// Automatically instantiates a <paramref name="concreteType"/>
-        /// with the constructor with the most resolvable parameters from
-        /// the given <paramref name="container"/> instance.
-        /// </summary>
-        /// <param name="container">The service container that contains the arguments that will automatically be injected into the constructor.</param>
-        /// <param name="concreteType">The type to instantiate.</param>
-        /// <returns>A valid, non-null object reference.</returns>
-        public static object AutoCreate(this IServiceContainer container, Type concreteType)
-        {
-            #region Add the required services if necessary
-            if (!container.Contains(typeof(IConstructorResolver)))
-                container.AddService<IConstructorResolver>(new ConstructorResolver());
-
-            if (!container.Contains(typeof(IArgumentResolver)))
-                container.AddService<IArgumentResolver>(new ArgumentResolver());
-
-            if (!container.Contains(typeof(IConstructorInvoke)))
-                container.AddService<IConstructorInvoke>(new ConstructorInvoke());
-            #endregion
-
-            var resolver = container.GetService<IConstructorResolver>();
-
-            // Determine which constructor
-            // contains the most resolvable
-            // parameters
-            var constructor = resolver.ResolveFrom(concreteType, container);
-
-            // Generate the arguments for the target constructor
-            var argumentResolver = container.GetService<IArgumentResolver>();
-            var arguments = argumentResolver.ResolveFrom(constructor,
-                                         container);
-
-            // Instantiate the object
-            var constructorInvoke =
-                container.GetService<IConstructorInvoke>();
-
-            var result = constructorInvoke.CreateWith(constructor, arguments);
-
-            return result;
-        }
-
+        
         /// <summary>
         /// Casts an <see cref="IEnumerable"/> set of items into an array of
         /// <paramref name="targetElementType"/> items.

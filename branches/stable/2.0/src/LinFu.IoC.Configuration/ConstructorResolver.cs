@@ -1,20 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using LinFu.Finders;
 using LinFu.Finders.Interfaces;
-using LinFu.IoC.Configuration;
-using LinFu.IoC.Extensions.Interfaces;
+using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Interfaces;
 
-namespace LinFu.IoC.Extensions
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// Represents the default implementation of the <see cref="IConstructorResolver"/> class.
     /// </summary>
-    [Implements(typeof(IConstructorResolver), LifecycleType.OncePerRequest)]
     public class ConstructorResolver : IConstructorResolver
     {
         /// <summary>
@@ -78,10 +74,10 @@ namespace LinFu.IoC.Extensions
         /// and determines if it can be instantiated with the services embedded in
         /// the target <paramref name="container"/>.
         /// </summary>
-        /// <param name="fuzzyItem">The <see cref="FuzzyItem{ConstructorInfo}"/> that represents the constructor to be examined.</param>
+        /// <param name="fuzzyItem">The <see cref="FuzzyItem{T}"/> that represents the constructor to be examined.</param>
         /// <param name="container">The container that contains the services that will be used to instantiate the target type.</param>
         private static void CheckParameters(IFuzzyItem<ConstructorInfo> fuzzyItem,
-            IServiceContainer container)
+                                            IServiceContainer container)
         {
             var constructor = fuzzyItem.Item;
             foreach (var param in constructor.GetParameters())

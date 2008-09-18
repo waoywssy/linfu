@@ -1,7 +1,7 @@
 ﻿using LinFu.IoC.Interfaces;
 using LinFu.Reflection;
 
-namespace LinFu.IoC.Plugins
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// Represents a class that loads configuration information

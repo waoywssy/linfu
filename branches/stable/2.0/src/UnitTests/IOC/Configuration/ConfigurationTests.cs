@@ -72,7 +72,7 @@ namespace LinFu.UnitTests.IOC.Configuration
             var mockContainer = new Mock<IServiceContainer>();
             var mockListing = new Mock<IDirectoryListing>();
 
-            var loader = new Loader();
+            var loader = new Loader<IServiceContainer>();
             loader.DirectoryLister = mockListing.Object;
 
             // Return an empty file listing
@@ -113,7 +113,7 @@ namespace LinFu.UnitTests.IOC.Configuration
             var mockLoader = new Mock<IContainerLoader>(MockBehavior.Loose);
             var mockListing = new Mock<IDirectoryListing>();
 
-            var loader = new Loader
+            var loader = new Loader<IServiceContainer>()
                              {
                                  DirectoryLister = mockListing.Object
                              };
@@ -166,7 +166,7 @@ namespace LinFu.UnitTests.IOC.Configuration
             var mockPlugin = new Mock<ILoaderPlugin<IServiceContainer>>();
             var container = new Mock<IServiceContainer>();
             var mockListing = new Mock<IDirectoryListing>();
-            var loader = new Loader();
+            var loader = new Loader<IServiceContainer>();
 
             // Setup the directory listing and            
             // return an empty listing since

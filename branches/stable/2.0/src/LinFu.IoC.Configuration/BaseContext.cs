@@ -1,7 +1,7 @@
 using System;
 using LinFu.IoC.Interfaces;
 
-namespace LinFu.IoC.Extensions
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// Represents a class that provides the most basic information

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace LinFu.IoC.Extensions.Interfaces
+namespace LinFu.IoC.Configuration.Interfaces
 {
     /// <summary>
     /// Represents a type that can instantiate an object instance

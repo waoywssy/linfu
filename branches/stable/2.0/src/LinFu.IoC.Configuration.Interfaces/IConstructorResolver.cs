@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using LinFu.IoC.Interfaces;
 
-namespace LinFu.IoC.Extensions.Interfaces
+namespace LinFu.IoC.Configuration.Interfaces
 {
     /// <summary>
     /// A type that is responsible for determining which

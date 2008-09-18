@@ -6,7 +6,7 @@ using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
 using LinFu.IoC.Plugins;
 
-namespace LinFu.IoC.Plugins
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// A class that injects custom <see cref="IFactory"/> and <see cref="IFactory{T}"/>
@@ -74,26 +74,26 @@ namespace LinFu.IoC.Plugins
 
             Func<Type, object, IFactory> createFactory =
                 (currentServiceType, factory) =>
-                {
-                    // Determine if the factory implements
-                    // the generic IFactory<T> instance
-                    // and use that instance if possible
-                    IFactory result = null;
-                    Type genericType = typeof(IFactory<>).MakeGenericType(currentServiceType);
-
-                    if (implementedInterfaces.Contains(genericType))
                     {
-                        // Convert the IFactory<T> instance down to an IFactory
-                        // instance so that it can be used by the target container
-                        Type adapterType = typeof(FactoryAdapter<>).MakeGenericType(currentServiceType);
-                        result = (IFactory)Activator.CreateInstance(adapterType, new[] { factory });
-                        return result;
-                    }
+                        // Determine if the factory implements
+                        // the generic IFactory<T> instance
+                        // and use that instance if possible
+                        IFactory result = null;
+                        Type genericType = typeof(IFactory<>).MakeGenericType(currentServiceType);
 
-                    // Otherwise, use the untyped IFactory instance instead
-                    result = factory as IFactory;
-                    return result;
-                };
+                        if (implementedInterfaces.Contains(genericType))
+                        {
+                            // Convert the IFactory<T> instance down to an IFactory
+                            // instance so that it can be used by the target container
+                            Type adapterType = typeof(FactoryAdapter<>).MakeGenericType(currentServiceType);
+                            result = (IFactory)Activator.CreateInstance(adapterType, new[] { factory });
+                            return result;
+                        }
+
+                        // Otherwise, use the untyped IFactory instance instead
+                        result = factory as IFactory;
+                        return result;
+                    };
 
 
             // Build the list of services that this factory can implement

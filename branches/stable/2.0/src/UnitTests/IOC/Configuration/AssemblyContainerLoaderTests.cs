@@ -2,7 +2,6 @@
 using System.Reflection;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
-using LinFu.IoC.Plugins;
 using LinFu.Reflection;
 using Moq;
 using NUnit.Framework;
