@@ -74,7 +74,7 @@
       <Project>{613B6547-DCBB-4505-82B8-B4179BFC95CE}</Project>
       <Name>LinFu.AOP</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LinFu.DynamicProxy2.Interfaces\LinFu.Proxy.Interfaces.csproj">
+    <ProjectReference Include="..\LinFu.Proxy.Interfaces\LinFu.Proxy.Interfaces.csproj">
       <Project>{6C29A409-6148-49AC-A192-DC6F33F3304C}</Project>
       <Name>LinFu.Proxy.Interfaces</Name>
     </ProjectReference>
