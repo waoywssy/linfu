@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -36,7 +37,16 @@ namespace LinFu.IoC.Extensions
                 if (parameterType.IsGenericType &&
                     parameterType.GetGenericTypeDefinition() == enumerableDefinition)
                 {
-                    AddListArgument(parameterType, container, argumentList);
+                    AddEnumerableArgument(parameterType, container, argumentList);
+                    continue;
+                }
+
+                if (parameterType.IsArray)
+                {
+                    // Determine if the parameter type is an array
+                    // of existing services and inject the current
+                    // set of services as a parameter value
+                    AddArrayArgument(parameterType, container, argumentList);
                     continue;
                 }
 
@@ -50,6 +60,32 @@ namespace LinFu.IoC.Extensions
         }
 
         /// <summary>
+        /// Constructs an array of services using the services currently available
+        /// in the <paramref name="container"/>.
+        /// </summary>
+        /// <param name="parameterType">The current parameter type.</param>
+        /// <param name="container">The container that will be used to build the array of services.</param>
+        /// <param name="argumentList">The list that will store new service array.</param>
+        private static void AddArrayArgument(Type parameterType, IServiceContainer container, 
+            ICollection<object> argumentList)
+        {
+            var isArrayOfServices = parameterType.ExistsAsServiceArray();
+            if (isArrayOfServices(container))
+            {
+                var elementType = parameterType.GetElementType();
+
+                // Instantiate all services that match
+                // the element type
+                var services = (from info in container.AvailableServices
+                                where info.ServiceType == elementType
+                                select container.GetService(info));
+
+                var serviceArray = services.Cast(elementType);
+                argumentList.Add(serviceArray);
+            }
+        }
+
+        /// <summary>
         /// Determines whether or not a parameter type is an existing
         /// list of available services and automatically constructs the
         /// service list and adds it to the <paramref name="argumentList"/>.
@@ -57,7 +93,7 @@ namespace LinFu.IoC.Extensions
         /// <param name="parameterType">The current constructor parameter type.</param>
         /// <param name="container">The container that will provide the argument values.</param>
         /// <param name="argumentList">The list that will hold the arguments to be passed to the constructor.</param>
-        private static void AddListArgument(Type parameterType, IServiceContainer container, ICollection<object> argumentList)
+        private static void AddEnumerableArgument(Type parameterType, IServiceContainer container, ICollection<object> argumentList)
         {
             var elementType = parameterType.GetGenericArguments()[0];
             var baseElementDefinition = elementType.IsGenericType
@@ -84,11 +120,13 @@ namespace LinFu.IoC.Extensions
             var services = container.GetServices(condition);
             foreach (var service in services)
             {
-                serviceList.Add(service);
+                serviceList.Add(service.Object);
             }
 
-            object currentArgument = serviceList.AsEnumerable();
-            argumentList.Add(currentArgument);
+            IEnumerable enumerable = serviceList.AsEnumerable();
+
+            var result = enumerable.Cast(elementType);
+            argumentList.Add(result);
         }
     }
 }

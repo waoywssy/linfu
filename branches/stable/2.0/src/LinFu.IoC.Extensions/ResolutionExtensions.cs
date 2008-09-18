@@ -6,6 +6,7 @@ using System.Text;
 using LinFu.Finders;
 using LinFu.IoC.Extensions.Interfaces;
 using LinFu.IoC.Interfaces;
+using System.Collections;
 
 namespace LinFu.IoC.Extensions
 {
@@ -25,7 +26,6 @@ namespace LinFu.IoC.Extensions
         {
             return container => container.Contains(parameterType);
         }
-
         /// <summary>
         /// Generates a predicate that determines whether or not a specific type is actually
         /// a list of services that can be created from a given container.
@@ -33,7 +33,7 @@ namespace LinFu.IoC.Extensions
         /// <param name="parameterType">The target <see cref="Type"/>. </param>
         /// <returns>A a predicate that determines whether or not a specific type
         /// exists as a list of services in a container</returns>
-        public static Func<IServiceContainer, bool> ExistsAsServiceList(this Type parameterType)
+        public static Func<IServiceContainer, bool> ExistsAsEnumerableSetOfServices(this Type parameterType)
         {
             // The type must be derived from IEnumerable<T>            
             var enumerableDefinition = typeof(IEnumerable<>);
@@ -50,6 +50,38 @@ namespace LinFu.IoC.Extensions
             if (!enumerableType.IsAssignableFrom(parameterType))
                 return container => false;
 
+            // A single service instance implies that a list of services can be created
+            // from the current container
+            Func<IServiceContainer, bool> hasService = container => container.Contains(elementType);
+
+            // Check for any named services that can be included in the service list
+            Func<IServiceContainer, bool> hasNamedService = container =>
+            {
+                var matches =
+                    (from info in container.AvailableServices
+                     where info.ServiceType == elementType
+                     select info).Count();
+
+                return matches > 0;
+            };
+
+            return hasService.Or(hasNamedService);
+        }
+
+        /// <summary>
+        /// Generates a predicate that determines whether or not a specific type is actually
+        /// a list of services that can be created from a given container.
+        /// </summary>
+        /// <param name="parameterType">The target <see cref="Type"/>. </param>
+        /// <returns>A a predicate that determines whether or not a specific type
+        /// exists as a list of services in a container</returns>
+        public static Func<IServiceContainer, bool> ExistsAsServiceArray(this Type parameterType)
+        {
+            // The type must be an array
+            if (!parameterType.IsArray)
+                return container => false;
+
+            var elementType = parameterType.GetElementType();
             // A single service instance implies that a list of services can be created
             // from the current container
             Func<IServiceContainer, bool> hasService = container => container.Contains(elementType);
@@ -123,5 +155,41 @@ namespace LinFu.IoC.Extensions
 
             return result;
         }
+
+        /// <summary>
+        /// Casts an <see cref="IEnumerable"/> set of items into an array of
+        /// <paramref name="targetElementType"/> items.
+        /// </summary>
+        /// <param name="items">The items being converted.</param>
+        /// <param name="targetElementType">The element type of the resulting array.</param>
+        /// <returns>An array of items that match the <paramref name="targetElementType"/>.</returns>
+        public static object Cast(this IEnumerable items, Type targetElementType)
+        {
+            var castMethodDefinition = typeof(ResolutionExtensions).GetMethod("Cast", BindingFlags.NonPublic | BindingFlags.Static);
+            var castMethod = castMethodDefinition.MakeGenericMethod(targetElementType);
+
+            IEnumerable enumerable = items;
+            var arguments = new object[] { enumerable };
+            return castMethod.Invoke(null, arguments);
+        }
+
+        /// <summary>
+        /// Performs a strongly typed cast against an <see cref="IEnumerable"/> instance.
+        /// </summary>
+        /// <typeparam name="T">The target element type.</typeparam>
+        /// <param name="items">The list of items being converted.</param>
+        /// <returns>An array of items that match the <typeparamref name="T"/> element type.</returns>
+        private static T[] Cast<T>(IEnumerable items)
+        {
+            var results = new List<T>();
+            foreach(var item in items)
+            {
+                var currentItem = (T) item;
+                results.Add(currentItem);
+            }
+
+            return results.ToArray();
+        }
+
     }
 }

@@ -94,7 +94,8 @@ namespace LinFu.IoC.Extensions
                 // The type must either be an existing service
                 // or a list of services that can be created from the container
                 var predicate = parameterType.MustExistInContainer()
-                    .Or(parameterType.ExistsAsServiceList());
+                    .Or(parameterType.ExistsAsServiceArray())
+                    .Or(parameterType.ExistsAsEnumerableSetOfServices());
 
                 criteria.Predicate = currentConstructor => predicate(container);
                 fuzzyItem.Test(criteria);
