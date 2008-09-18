@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Interfaces;
-using LinFu.IoC.Plugins;
 using LinFu.Reflection;
 
 namespace LinFu.IoC.Configuration
@@ -26,7 +25,6 @@ namespace LinFu.IoC.Configuration
             QueuedActions.Add(container => container.AddService<IArgumentResolver>(new ArgumentResolver()));
             QueuedActions.Add(container => container.AddService<IConstructorInvoke>(new ConstructorInvoke()));
             QueuedActions.Add(container => container.AddService<IConstructorResolver>(new ConstructorResolver()));
-            QueuedActions.Add(container => container.PostProcessors.Add(new Initializer()));
 
             Plugins.Add(new InitializerPlugin());
 

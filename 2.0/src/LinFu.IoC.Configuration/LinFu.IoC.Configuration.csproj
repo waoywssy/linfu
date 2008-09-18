@@ -65,6 +65,7 @@
     <Compile Include="ImplementsAttribute.cs" />
     <Compile Include="ImplementsAttributeLoader.cs" />
     <Compile Include="Initializer.cs" />
+    <Compile Include="InitializerPlugin.cs" />
     <Compile Include="InjectionContext.cs" />
     <Compile Include="LifecycleType.cs" />
     <Compile Include="Loader.cs" />
