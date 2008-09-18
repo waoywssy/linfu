@@ -102,19 +102,34 @@ namespace LinFu.IoC.Configuration
         }
 
         /// <summary>
-        /// Builds an argument list for the <paramref name="constructor"/>
+        /// Builds an argument list for the <paramref name="method"/>
         /// using the given <paramref name="container"/> instance.
         /// </summary>
-        /// <param name="constructor">The constructor that will be used to instantiate an object instance.</param>
-        /// <param name="container">The container that will provide the constructor arguments.</param>
-        /// <returns>An array of objects to be used with the target constructor.</returns>
-        public static object[] ResolveArgumentsFrom(this ConstructorInfo constructor,
+        /// <param name="method">The method that will be used to instantiate an object instance.</param>
+        /// <param name="container">The container that will provide the method arguments.</param>
+        /// <returns>An array of objects to be used with the target method.</returns>
+        public static object[] ResolveArgumentsFrom(this MethodBase method,
             IServiceContainer container)
         {
             var resolver = container.GetService<IArgumentResolver>();
-            return resolver.ResolveFrom(constructor, container);
+            return resolver.ResolveFrom(method, container);
         }
         
+        /// <summary>
+        /// Builds an argument list for the target <paramref name="method"/> from
+        /// services embedded inside the <paramref name="container"/> instance.
+        /// </summary>
+        /// <param name="resolver">The <see cref="IArgumentResolver"/> instance that will determine the method arguments.</param>
+        /// <param name="method">The target method.</param>
+        /// <param name="container">The container that will provide the method arguments.</param>
+        /// <returns>An array of objects to be used with the target method.</returns>
+        public static object[] ResolveFrom(this IArgumentResolver resolver, MethodBase method, IServiceContainer container)
+        {
+            var parameterTypes = from p in method.GetParameters()
+                                 select p.ParameterType;
+
+            return resolver.ResolveFrom(parameterTypes, container);
+        }
         /// <summary>
         /// Casts an <see cref="IEnumerable"/> set of items into an array of
         /// <paramref name="targetElementType"/> items.
