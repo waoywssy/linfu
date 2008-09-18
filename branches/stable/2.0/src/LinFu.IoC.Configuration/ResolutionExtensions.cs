@@ -164,6 +164,5 @@ namespace LinFu.IoC.Configuration
 
             return results.ToArray();
         }
-
     }
 }

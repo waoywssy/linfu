@@ -5,13 +5,12 @@ using System.Text;
 using LinFu.IoC.Interfaces;
 using LinFu.Reflection;
 
-namespace LinFu.IoC.Plugins
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// A class that injects the <see cref="Initializer"/> postprocessor
     /// into every container that is created or loaded.
     /// </summary>
-    [LoaderPlugin]
     public class InitializerPlugin : ILoaderPlugin<IServiceContainer>
     {
         /// <summary>

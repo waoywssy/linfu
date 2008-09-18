@@ -6,7 +6,7 @@ using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
 using LinFu.Reflection;
 
-namespace LinFu.IoC.Plugins
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// A class that automatically loads <see cref="IPostProcessor"/>

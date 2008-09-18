@@ -2,7 +2,7 @@
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
 
-namespace LinFu.IoC.Plugins
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// A class that initializes service instances that use
