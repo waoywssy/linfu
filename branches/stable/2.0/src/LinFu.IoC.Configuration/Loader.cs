@@ -28,6 +28,8 @@ namespace LinFu.IoC.Configuration
             QueuedActions.Add(container => container.AddService<IConstructorResolver>(new ConstructorResolver()));
             QueuedActions.Add(container => container.PostProcessors.Add(new Initializer()));
 
+            Plugins.Add(new InitializerPlugin());
+
             FileLoaders.Add(containerLoader);
         }
     }

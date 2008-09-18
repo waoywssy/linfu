@@ -15,20 +15,19 @@ namespace LinFu.IoC.Configuration
     public class ArgumentResolver : IArgumentResolver
     {
         /// <summary>
-        /// Generates constructor arguments from the given <paramref name="constructor"/>
+        /// Generates method arguments from the given <paramref name="parameterTypes"/>
         /// and <paramref name="container"/>.
         /// </summary>
-        /// <param name="constructor">The constructor that will be used to instantiate an object instance.</param>
-        /// <param name="container">The container that will provide the constructor arguments.</param>
-        /// <returns>An array of objects that represent the arguments to be passed to the target constructor.</returns>
-        public object[] ResolveFrom(ConstructorInfo constructor, IServiceContainer container)
+        /// <param name="parameterTypes">The parameter types for the target method.</param>
+        /// <param name="container">The container that will provide the method arguments.</param>
+        /// <returns>An array of objects that represent the arguments to be passed to the target method.</returns>
+        public object[] ResolveFrom(IEnumerable<Type> parameterTypes, IServiceContainer container)
         {
             var enumerableDefinition = typeof(IEnumerable<>);
 
             var argumentList = new List<object>();
-            foreach (var parameter in constructor.GetParameters())
+            foreach (var parameterType in parameterTypes)
             {
-                var parameterType = parameter.ParameterType;
                 object currentArgument = null;
 
                 // Determine if the parameter type is an IEnumerable<T> type
