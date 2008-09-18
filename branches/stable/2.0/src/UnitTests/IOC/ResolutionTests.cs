@@ -72,6 +72,40 @@ namespace LinFu.UnitTests.IOC
             Assert.IsNotNull(result.Services);
             Assert.IsTrue(result.Services.Count() > 0);
         }
+
+        [Test]
+        public void ShouldInstantiateClassWithServiceArrayAsConstructorArgument()
+        {
+            var container = GetContainerWithMockSampleServices();
+            container.AddService(typeof(SampleClassWithServiceArrayAsConstructorArgument),
+                                 typeof(SampleClassWithServiceArrayAsConstructorArgument));
+
+            var result = container.GetService(typeof(SampleClassWithServiceArrayAsConstructorArgument)) as
+                SampleClassWithServiceArrayAsConstructorArgument;
+
+            Assert.IsNotNull(result);
+
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.Services);
+            Assert.IsTrue(result.Services.Count() > 0);
+        }
+
+        [Test]
+        public void ShouldInstantiateClassWithServiceEnumerableAsConstructorArgument()
+        {
+            var container = GetContainerWithMockSampleServices();
+            container.AddService(typeof(SampleClassWithServiceEnumerableAsConstructorArgument),
+                                 typeof(SampleClassWithServiceEnumerableAsConstructorArgument));
+
+            var result = container.GetService(typeof(SampleClassWithServiceEnumerableAsConstructorArgument)) as SampleClassWithServiceEnumerableAsConstructorArgument;
+
+            Assert.IsNotNull(result);
+
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.Services);
+            Assert.IsTrue(result.Services.Count() > 0);
+        }
+
         [Test]
         public void ShouldConvertTypeIntoPredicateThatChecksIfTypeExistsInContainerAsEnumerableSetOfServices()
         {
