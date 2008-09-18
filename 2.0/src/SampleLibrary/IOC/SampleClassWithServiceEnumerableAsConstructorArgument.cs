@@ -5,9 +5,9 @@ using System.Text;
 
 namespace SampleLibrary.IOC
 {
-    public class SampleClassWithServiceListAsConstructorArgument
+    public class SampleClassWithServiceEnumerableAsConstructorArgument
     {
-        public SampleClassWithServiceListAsConstructorArgument(IEnumerable<ISampleService> services)
+        public SampleClassWithServiceEnumerableAsConstructorArgument(IEnumerable<ISampleService> services)
         {
             Services = services;
         }

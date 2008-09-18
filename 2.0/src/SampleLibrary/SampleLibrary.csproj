@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="AOP\SampleClassWithByRefMethod.cs" />
     <Compile Include="AOP\SampleClassWithMethodHavingOutParameters.cs" />
+    <Compile Include="IOC\SampleClassWithServiceArrayAsConstructorArgument.cs" />
     <Compile Include="Proxy\ClassWithGenericMethod.cs" />
     <Compile Include="Proxy\ClassWithMethodReturnTypeFromGenericTypeArguments.cs" />
     <Compile Include="Proxy\ClassWithMethodReturnValueFromTypeArgument.cs" />
@@ -62,7 +63,7 @@
     <Compile Include="IOC\ISampleService.cs" />
     <Compile Include="IOC\SampleClass.cs" />
     <Compile Include="IOC\SampleClassWithMultipleConstructors.cs" />
-    <Compile Include="IOC\SampleClassWithServiceListAsConstructorArgument.cs" />
+    <Compile Include="IOC\SampleClassWithServiceEnumerableAsConstructorArgument.cs" />
     <Compile Include="IOC\SampleClassWithSingleArgumentConstructor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IOC\SampleFactory.cs" />

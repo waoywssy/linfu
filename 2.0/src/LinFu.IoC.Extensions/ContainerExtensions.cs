@@ -31,6 +31,18 @@ namespace LinFu.IoC
         }
 
         /// <summary>
+        /// Instantiates a service that matches the <paramref name="info">service description</paramref>.
+        /// </summary>
+        /// <param name="container">The container that will instantiate the service.</param>
+        /// <param name="info">The description of the requested service.</param>
+        /// <returns>If successful, it will return a service instance that is compatible with the given type;
+        /// otherwise, it will just return a <c>null</c> value.</returns>
+        public static object GetService(this IServiceContainer container, IServiceInfo info)
+        {
+            return container.GetService(info.ServiceName, info.ServiceType);
+        }
+
+        /// <summary>
         /// Creates an instance of <typeparamref name="T"/>
         /// using the given <paramref name="container"/>.
         /// </summary>
