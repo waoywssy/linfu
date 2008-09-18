@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using LinFu.IoC;
-using LinFu.IoC.Extensions;
 using LinFu.IoC.Interfaces;
 using NUnit.Framework;
 using SampleLibrary;

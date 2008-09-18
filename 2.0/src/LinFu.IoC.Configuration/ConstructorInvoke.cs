@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using LinFu.IoC.Configuration;
-using LinFu.IoC.Extensions.Interfaces;
+using LinFu.IoC.Configuration.Interfaces;
 using System.Reflection.Emit;
 
-namespace LinFu.IoC.Extensions
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// Represents the default implementation of the <see cref="IConstructorInvoke"/> interface.
     /// </summary>
-    [Implements(typeof(IConstructorInvoke), LifecycleType.Singleton)]
     public class ConstructorInvoke : IConstructorInvoke
     {
         private static readonly Dictionary<ConstructorInfo, MethodInfo> _cache = new Dictionary<ConstructorInfo, MethodInfo>();
@@ -25,7 +23,7 @@ namespace LinFu.IoC.Extensions
         /// <param name="arguments">The arguments to be used with the constructor.</param>
         /// <returns>An object reference that represents the newly-instantiated object.</returns>
         public object CreateWith(ConstructorInfo targetConstructor, 
-            object[] arguments)
+                                 object[] arguments)
         {
             object result = null;
 

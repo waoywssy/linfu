@@ -3,12 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using LinFu.Finders;
-using LinFu.IoC.Extensions.Interfaces;
+using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Interfaces;
 
-namespace LinFu.IoC.Extensions
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// Represents the default implementation of the <see cref="IArgumentResolver"/> class.
@@ -67,7 +66,7 @@ namespace LinFu.IoC.Extensions
         /// <param name="container">The container that will be used to build the array of services.</param>
         /// <param name="argumentList">The list that will store new service array.</param>
         private static void AddArrayArgument(Type parameterType, IServiceContainer container, 
-            ICollection<object> argumentList)
+                                             ICollection<object> argumentList)
         {
             var isArrayOfServices = parameterType.ExistsAsServiceArray();
             if (isArrayOfServices(container))

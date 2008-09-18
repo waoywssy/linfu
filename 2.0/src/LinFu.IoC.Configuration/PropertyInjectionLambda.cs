@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LinFu.IoC.Extensions.Interfaces;
+using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Interfaces;
 
-namespace LinFu.IoC.Extensions
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// Represents a fluent class that creates
@@ -64,6 +61,6 @@ namespace LinFu.IoC.Extensions
             var targetContainer = context.Container;
             var postProcessor = new ActionPostProcessor<TService>(context);
             targetContainer.PostProcessors.Add(postProcessor);
-        }
+        }        
     }
 }

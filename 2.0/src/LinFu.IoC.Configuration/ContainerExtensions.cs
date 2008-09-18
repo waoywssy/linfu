@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LinFu.IoC.Configuration;
-using LinFu.IoC.Extensions;
+using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Factories;
 using LinFu.IoC.Interfaces;
 
@@ -15,6 +15,70 @@ namespace LinFu.IoC
     /// </summary>
     public static class ContainerExtensions
     {
+        /// <summary>
+        /// Loads a set of <paramref name="searchPattern">files</paramref> from the <paramref name="directory">target directory</paramref>.
+        /// </summary>
+        /// <param name="container">The container to be loaded.</param>
+        /// <param name="directory">The target directory.</param>
+        /// <param name="searchPattern">The search pattern that describes the list of files to be loaded.</param>
+        public static void LoadFrom(this IServiceContainer container, string directory,
+            string searchPattern)
+        {
+            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var loader = new Loader();
+
+            //// Load the LinFu assembly by default
+            //loader.LoadDirectory(baseDirectory, "LinFu*.dll");
+
+            // Load the target directory
+            loader.LoadDirectory(directory, searchPattern);
+
+            // Configure the container
+            loader.LoadInto(container);
+        }
+
+        /// <summary>
+        /// Automatically instantiates a <paramref name="concreteType"/>
+        /// with the constructor with the most resolvable parameters from
+        /// the given <paramref name="container"/> instance.
+        /// </summary>
+        /// <param name="container">The service container that contains the arguments that will automatically be injected into the constructor.</param>
+        /// <param name="concreteType">The type to instantiate.</param>
+        /// <returns>A valid, non-null object reference.</returns>
+        public static object AutoCreate(this IServiceContainer container, Type concreteType)
+        {
+            #region Add the required services if necessary
+            if (!container.Contains(typeof(IConstructorResolver)))
+                container.AddService<IConstructorResolver>(new ConstructorResolver());
+
+            if (!container.Contains(typeof(IArgumentResolver)))
+                container.AddService<IArgumentResolver>(new ArgumentResolver());
+
+            if (!container.Contains(typeof(IConstructorInvoke)))
+                container.AddService<IConstructorInvoke>(new ConstructorInvoke());
+            #endregion
+
+            var resolver = container.GetService<IConstructorResolver>();
+
+            // Determine which constructor
+            // contains the most resolvable
+            // parameters
+            var constructor = resolver.ResolveFrom(concreteType, container);
+
+            // Generate the arguments for the target constructor
+            var argumentResolver = container.GetService<IArgumentResolver>();
+            var arguments = argumentResolver.ResolveFrom(constructor,
+                                         container);
+
+            // Instantiate the object
+            var constructorInvoke =
+                container.GetService<IConstructorInvoke>();
+
+            var result = constructorInvoke.CreateWith(constructor, arguments);
+
+            return result;
+        }
+
         /// <summary>
         /// Creates an instance of <typeparamref name="T"/>
         /// using the given <paramref name="container"/>.
@@ -166,29 +230,7 @@ namespace LinFu.IoC
         public static void AddService<T>(this IServiceContainer container, string serviceName, T instance)
         {
             container.AddFactory(serviceName, typeof(T), new InstanceFactory(instance));
-        }
-
-        /// <summary>
-        /// Loads a set of <paramref name="searchPattern">files</paramref> from the <paramref name="directory">target directory</paramref>.
-        /// </summary>
-        /// <param name="container">The container to be loaded.</param>
-        /// <param name="directory">The target directory.</param>
-        /// <param name="searchPattern">The search pattern that describes the list of files to be loaded.</param>
-        public static void LoadFrom(this IServiceContainer container, string directory,
-            string searchPattern)
-        {
-            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            var loader = new Loader();
-
-            // Load the LinFu assembly by default
-            loader.LoadDirectory(baseDirectory, "LinFu*.dll");
-
-            // Load the target directory
-            loader.LoadDirectory(directory, searchPattern);
-
-            // Configure the container
-            loader.LoadInto(container);
-        }
+        }        
 
         /// <summary>
         /// Returns all the services in the container that match the given

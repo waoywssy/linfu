@@ -49,12 +49,22 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="IArgumentResolver.cs" />
+    <Compile Include="IConstructorInvoke.cs" />
+    <Compile Include="IConstructorResolver.cs" />
     <Compile Include="IContainerLoader.cs" />
     <Compile Include="IContainerPlugin.cs" />
+    <Compile Include="IGenerateFactory.cs" />
     <Compile Include="IInitialize.cs" />
+    <Compile Include="IPropertyInjectionLambda.cs" />
     <Compile Include="ITypeLoader.cs" />
+    <Compile Include="IUsingLambda.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LinFu.IoC.Factories\LinFu.IoC.Factories.csproj">
+      <Project>{14DB06BE-3178-4A01-98AB-DFC65485E567}</Project>
+      <Name>LinFu.IoC.Factories</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LinFu.IoC.Interfaces\LinFu.IoC.Interfaces.csproj">
       <Project>{C6AC7707-9288-4ADF-9053-34FE71FFE0BE}</Project>
       <Name>LinFu.IoC.Interfaces</Name>

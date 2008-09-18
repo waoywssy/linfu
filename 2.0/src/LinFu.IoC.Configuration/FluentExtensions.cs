@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using LinFu.IoC.Extensions;
-using LinFu.IoC.Extensions.Interfaces;
+using LinFu.IoC.Configuration;
+using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC
