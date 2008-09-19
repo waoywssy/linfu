@@ -18,12 +18,6 @@ namespace LinFu.Reflection
         IAssemblyLoader AssemblyLoader { get; set; }
 
         /// <summary>
-        /// The <see cref="ITypeExtractor"/> instance that will
-        /// determine which types will be extracted from an assembly.
-        /// </summary>
-        ITypeExtractor TypeExtractor { get; set; }
-
-        /// <summary>
         /// The list of ActionLoaders that will be used to
         /// configure the target.
         /// </summary>

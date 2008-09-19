@@ -56,6 +56,7 @@
     <Compile Include="IContainerPlugin.cs" />
     <Compile Include="IGenerateFactory.cs" />
     <Compile Include="IInitialize.cs" />
+    <Compile Include="IPropertyInjectionFilter.cs" />
     <Compile Include="IPropertyInjectionLambda.cs" />
     <Compile Include="ITypeLoader.cs" />
     <Compile Include="IUsingLambda.cs" />

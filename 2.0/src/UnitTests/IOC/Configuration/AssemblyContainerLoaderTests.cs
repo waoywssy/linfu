@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
@@ -68,10 +69,14 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             // It must call the Type Extractor
             _mockTypeExtractor.Expect(extractor => extractor.GetTypes(targetAssembly))
-                .Returns(new[] {typeof(SampleClass)});
+                .Returns(new[] { typeof(SampleClass) });
+
+           
+            var assemblyActionLoader = new AssemblyActionLoader<IServiceContainer>(() => containerLoader.TypeLoaders);
+            assemblyActionLoader.TypeExtractor = _mockTypeExtractor.Object;
 
             containerLoader.AssemblyLoader = _mockAssemblyLoader.Object;
-            containerLoader.TypeExtractor = _mockTypeExtractor.Object;
+            containerLoader.AssemblyActionLoader = assemblyActionLoader;
             containerLoader.Load(filename);
         }
 
@@ -89,15 +94,18 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             // It must call the Type Extractor
             _mockTypeExtractor.Expect(extractor => extractor.GetTypes(targetAssembly))
-                .Returns(new[] {typeof(SampleClass)});
+                .Returns(new[] { typeof(SampleClass) });
 
             // Make sure that it calls the type loaders
             _mockTypeLoader.Expect(loader => loader.CanLoad(typeof(SampleClass))).Returns(true);
             _mockTypeLoader.Expect(loader => loader.Load(typeof(SampleClass)))
                 .Returns(new Action<IServiceContainer>[0]);
+           
+            var assemblyActionLoader = new AssemblyActionLoader<IServiceContainer>(() => containerLoader.TypeLoaders);
+            assemblyActionLoader.TypeExtractor = _mockTypeExtractor.Object;
 
             containerLoader.AssemblyLoader = _mockAssemblyLoader.Object;
-            containerLoader.TypeExtractor = _mockTypeExtractor.Object;
+            containerLoader.AssemblyActionLoader = assemblyActionLoader;
 
             // The container loader should call the type loader
             // once the load method is called

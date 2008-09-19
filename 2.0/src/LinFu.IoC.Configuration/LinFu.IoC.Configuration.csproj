@@ -49,32 +49,34 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ActionContext.cs" />
+    <Compile Include="FluentInterfaces\ActionContext.cs" />
     <Compile Include="ActionDelegates.cs" />
-    <Compile Include="ActionPostProcessor.cs" />
+    <Compile Include="FluentInterfaces\ActionPostProcessor.cs" />
     <Compile Include="ArgumentResolver.cs" />
-    <Compile Include="AssemblyContainerLoader.cs" />
-    <Compile Include="BaseContext.cs" />
+    <Compile Include="Attributes\InjectAttribute.cs" />
+    <Compile Include="Loaders\AssemblyContainerLoader.cs" />
+    <Compile Include="FluentInterfaces\BaseContext.cs" />
     <Compile Include="ConstructorInvoke.cs" />
     <Compile Include="ConstructorResolver.cs" />
-    <Compile Include="ContainerExtensions.cs" />
-    <Compile Include="FactoryAttribute.cs" />
-    <Compile Include="FactoryAttributeLoader.cs" />
-    <Compile Include="FluentExtensions.cs" />
-    <Compile Include="GenerateFactory.cs" />
-    <Compile Include="ImplementsAttribute.cs" />
-    <Compile Include="ImplementsAttributeLoader.cs" />
+    <Compile Include="Extensions\ContainerExtensions.cs" />
+    <Compile Include="Attributes\FactoryAttribute.cs" />
+    <Compile Include="Loaders\FactoryAttributeLoader.cs" />
+    <Compile Include="Extensions\FluentExtensions.cs" />
+    <Compile Include="FluentInterfaces\GenerateFactory.cs" />
+    <Compile Include="Attributes\ImplementsAttribute.cs" />
+    <Compile Include="Loaders\ImplementsAttributeLoader.cs" />
     <Compile Include="Initializer.cs" />
     <Compile Include="InitializerPlugin.cs" />
-    <Compile Include="InjectionContext.cs" />
+    <Compile Include="FluentInterfaces\InjectionContext.cs" />
     <Compile Include="LifecycleType.cs" />
-    <Compile Include="Loader.cs" />
-    <Compile Include="PostProcessorAttribute.cs" />
-    <Compile Include="PostProcessorLoader.cs" />
-    <Compile Include="PropertyInjectionLambda.cs" />
-    <Compile Include="ResolutionExtensions.cs" />
+    <Compile Include="Loaders\Loader.cs" />
+    <Compile Include="Attributes\PostProcessorAttribute.cs" />
+    <Compile Include="Loaders\PostProcessorLoader.cs" />
+    <Compile Include="FluentInterfaces\PropertyInjectionLambda.cs" />
+    <Compile Include="Extensions\ResolutionExtensions.cs" />
+    <Compile Include="PropertyInjectionFilter.cs" />
     <Compile Include="ServiceInstance.cs" />
-    <Compile Include="UsingLambda.cs" />
+    <Compile Include="FluentInterfaces\UsingLambda.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.Finders.Interfaces\LinFu.Finders.Interfaces.csproj">
