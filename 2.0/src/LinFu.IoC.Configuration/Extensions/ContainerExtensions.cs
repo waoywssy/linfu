@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Factories;
 using LinFu.IoC.Interfaces;
+using LinFu.Reflection;
 
 namespace LinFu.IoC
 {
@@ -24,11 +26,7 @@ namespace LinFu.IoC
         public static void LoadFrom(this IServiceContainer container, string directory,
             string searchPattern)
         {
-            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var loader = new Loader();
-
-            //// Load the LinFu assembly by default
-            //loader.LoadDirectory(baseDirectory, "LinFu*.dll");
 
             // Load the target directory
             loader.LoadDirectory(directory, searchPattern);
@@ -37,6 +35,29 @@ namespace LinFu.IoC
             loader.LoadInto(container);
         }
 
+        /// <summary>
+        /// Loads an existing <paramref name="assembly"/> into the container.
+        /// </summary>
+        /// <param name="container">The target container to be configured.</param>
+        /// <param name="assembly">The assembly to be loaded.</param>
+        public static void LoadFrom(this IServiceContainer container, Assembly assembly)
+        {
+            // Use the AssemblyTargetLoader<> class to pull
+            // the types out of an assembly
+            var assemblyTargetLoader = new AssemblyTargetLoader<IServiceContainer>();
+            assemblyTargetLoader.AssemblyActionLoader =
+                new AssemblyActionLoader<IServiceContainer>(() => assemblyTargetLoader.TypeLoaders);
+
+            // HACK: Return an existing assembly instead of reading
+            // the assembly from disk
+            assemblyTargetLoader.AssemblyLoader = new InMemoryAssemblyLoader(assembly);
+
+            // Convert the assembly into a set of configuration actions
+            var actions = assemblyTargetLoader.Load(string.Empty).ToList();
+
+            // Apply the actions to the container
+            actions.ForEach(action => action(container));
+        }
         /// <summary>
         /// Automatically instantiates a <paramref name="concreteType"/>
         /// with the constructor with the most resolvable parameters from

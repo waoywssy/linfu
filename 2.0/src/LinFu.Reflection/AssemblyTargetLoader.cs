@@ -88,8 +88,6 @@ namespace LinFu.Reflection
             assembly = AssemblyLoader.Load(filename);
 
             var results = new List<Action<TTarget>>();
-
-            //CreateActionsFrom(assembly, results);
             var listActions = AssemblyActionLoader.Load(assembly);
             foreach (var action in listActions)
             {
