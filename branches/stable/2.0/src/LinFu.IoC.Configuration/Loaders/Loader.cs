@@ -26,6 +26,10 @@ namespace LinFu.IoC.Configuration
             QueuedActions.Add(container => container.AddService<IConstructorInvoke>(new ConstructorInvoke()));
             QueuedActions.Add(container => container.AddService<IConstructorResolver>(new ConstructorResolver()));
 
+            // Load everything else into the container
+            var hostAssembly = typeof(Loader).Assembly;
+            QueuedActions.Add(container => container.LoadFrom(hostAssembly));
+
             Plugins.Add(new InitializerPlugin());
 
             FileLoaders.Add(containerLoader);

@@ -54,6 +54,7 @@
     <Compile Include="FluentInterfaces\ActionPostProcessor.cs" />
     <Compile Include="ArgumentResolver.cs" />
     <Compile Include="Attributes\InjectAttribute.cs" />
+    <Compile Include="InMemoryAssemblyLoader.cs" />
     <Compile Include="Loaders\AssemblyContainerLoader.cs" />
     <Compile Include="FluentInterfaces\BaseContext.cs" />
     <Compile Include="ConstructorInvoke.cs" />
