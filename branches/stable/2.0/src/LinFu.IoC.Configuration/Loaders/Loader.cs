@@ -20,7 +20,7 @@ namespace LinFu.IoC.Configuration
             containerLoader.TypeLoaders.Add(new FactoryAttributeLoader());
             containerLoader.TypeLoaders.Add(new ImplementsAttributeLoader());
             containerLoader.TypeLoaders.Add(new PostProcessorLoader());
-
+            
             // Add the default services
             QueuedActions.Add(container => container.AddService<IArgumentResolver>(new ArgumentResolver()));
             QueuedActions.Add(container => container.AddService<IConstructorInvoke>(new ConstructorInvoke()));
@@ -31,6 +31,7 @@ namespace LinFu.IoC.Configuration
             QueuedActions.Add(container => container.LoadFrom(hostAssembly));
 
             Plugins.Add(new InitializerPlugin());
+            Plugins.Add(new AutoPropertyInjector());
 
             FileLoaders.Add(containerLoader);
         }

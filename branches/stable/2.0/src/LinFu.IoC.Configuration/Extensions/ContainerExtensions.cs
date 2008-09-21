@@ -58,6 +58,7 @@ namespace LinFu.IoC
             // Apply the actions to the container
             actions.ForEach(action => action(container));
         }
+
         /// <summary>
         /// Automatically instantiates a <paramref name="concreteType"/>
         /// with the constructor with the most resolvable parameters from
