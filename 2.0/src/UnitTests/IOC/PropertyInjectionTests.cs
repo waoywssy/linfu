@@ -83,5 +83,26 @@ namespace LinFu.UnitTests.IOC
             Assert.IsNotNull(instance.SomeProperty);
             Assert.IsInstanceOfType(typeof(SampleClass), instance.SomeProperty);
         }
+
+        [Test]
+        public void ShouldAutoInjectServiceListIntoArrayDependency()
+        {
+            var container = new ServiceContainer();
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
+
+            var instance = new SampleClassWithArrayPropertyDependency();
+
+            // Initialize the container
+            container.Inject<ISampleService>().Using<SampleClass>().OncePerRequest();
+            container.Inject<SampleClassWithArrayPropertyDependency>().Using(c => instance).OncePerRequest();
+
+            var result = container.GetService<SampleClassWithArrayPropertyDependency>();
+
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.Property);
+
+            var serviceCount = result.Property.Count();
+            Assert.IsTrue(serviceCount > 0);
+        }
     }
 }

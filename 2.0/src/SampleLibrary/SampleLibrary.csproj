@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="AOP\SampleClassWithByRefMethod.cs" />
     <Compile Include="AOP\SampleClassWithMethodHavingOutParameters.cs" />
+    <Compile Include="IOC\SampleClassWithArrayPropertyDependency.cs" />
     <Compile Include="IOC\SampleClassWithInjectionProperties.cs" />
     <Compile Include="IOC\SampleClassWithServiceArrayAsConstructorArgument.cs" />
     <Compile Include="Proxy\ClassWithGenericMethod.cs" />
