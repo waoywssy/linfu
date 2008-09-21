@@ -50,6 +50,8 @@
     <Compile Include="IOC\SampleClassWithArrayPropertyDependency.cs" />
     <Compile Include="IOC\SampleClassWithInjectionProperties.cs" />
     <Compile Include="IOC\SampleClassWithServiceArrayAsConstructorArgument.cs" />
+    <Compile Include="IOC\SampleRecursiveTestComponent1.cs" />
+    <Compile Include="IOC\SampleRecursiveTestComponent2.cs" />
     <Compile Include="Proxy\ClassWithGenericMethod.cs" />
     <Compile Include="Proxy\ClassWithMethodReturnTypeFromGenericTypeArguments.cs" />
     <Compile Include="Proxy\ClassWithMethodReturnValueFromTypeArgument.cs" />

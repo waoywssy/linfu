@@ -8,6 +8,7 @@ using LinFu.IoC.Interfaces;
 using Moq;
 using NUnit.Framework;
 using SampleLibrary;
+using SampleLibrary.IOC;
 
 namespace LinFu.UnitTests.IOC
 {
@@ -59,7 +60,7 @@ namespace LinFu.UnitTests.IOC
             Assert.AreSame(surrogate, result);
         }
 
-        [Test]        
+        [Test]
         public void InitializerShouldOnlyBeCalledOncePerLifetime()
         {
             var container = new ServiceContainer();
@@ -71,7 +72,7 @@ namespace LinFu.UnitTests.IOC
 
         private static void VerifyInitializeCall(ServiceContainer container, Mock<IInitialize> mockService)
         {
-            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "*.dll");                        
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
             container.AddService(mockService.Object);
 
 
@@ -351,7 +352,7 @@ namespace LinFu.UnitTests.IOC
             // There should be a matching service type
             // at this point
             var matches = from s in availableServices
-                          where s.ServiceType == typeof (ISampleService)
+                          where s.ServiceType == typeof(ISampleService)
                           select s;
 
             Assert.IsTrue(matches.Count() > 0);
@@ -397,22 +398,41 @@ namespace LinFu.UnitTests.IOC
         {
             var mockFactory = new Mock<IFactory>();
             var mockInitialize = new Mock<IInitialize>();
-            
+
             mockFactory.Expect(f => f.CreateInstance(It.IsAny<Type>(), It.IsAny<IServiceContainer>()))
                 .Returns(mockInitialize.Object);
 
             // The IInitialize instance must be called once it
             // leaves the custom factory
-            mockInitialize.Expect(i=>i.Initialize(It.IsAny<IServiceContainer>()));
+            mockInitialize.Expect(i => i.Initialize(It.IsAny<IServiceContainer>()));
 
             var container = new ServiceContainer();
             container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
             container.AddFactory(typeof(IInitialize), mockFactory.Object);
 
             var result = container.GetService<IInitialize>();
-            
+
             mockFactory.VerifyAll();
             mockInitialize.VerifyAll();
-        }       
+        }
+
+        [Test]
+        public void ContainerMustGracefullyHandleRecursiveServiceDependencies()
+        {
+            var container = new ServiceContainer();
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
+
+            container.AddService(typeof(SampleRecursiveTestComponent1), typeof(SampleRecursiveTestComponent1));
+            container.AddService(typeof(SampleRecursiveTestComponent2), typeof(SampleRecursiveTestComponent2));
+
+            try
+            {
+                var result = container.GetService<SampleRecursiveTestComponent1>();
+            }
+            catch(Exception ex)
+            {
+                Assert.IsNotInstanceOfType(typeof(StackOverflowException), ex);
+            }
+        }
     }
 }

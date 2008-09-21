@@ -17,6 +17,8 @@ namespace LinFu.IoC
     /// </summary>
     public static class ContainerExtensions
     {
+        private static readonly TypeCounter _counter = new TypeCounter();
+        private static readonly Stack<Type> _requests = new Stack<Type>();
         /// <summary>
         /// Loads a set of <paramref name="searchPattern">files</paramref> from the <paramref name="directory">target directory</paramref>.
         /// </summary>
@@ -69,6 +71,35 @@ namespace LinFu.IoC
         /// <returns>A valid, non-null object reference.</returns>
         public static object AutoCreate(this IServiceContainer container, Type concreteType)
         {
+            // Keep track of the number of pending type requests
+            _counter.Increment(concreteType);
+
+            // Keep track of the sequence
+            // of requests on the stack
+            lock(_requests)
+            {
+                _requests.Push(concreteType);
+            }
+
+            // This is the maximum number of requests per thread per item
+            const int maxRequests = 20;
+
+            if (_counter.CountOf(concreteType) > maxRequests)
+            {
+                // Build the sequence of types that caused the overflow
+                var list = new LinkedList<Type>();
+                lock(_requests)
+                {
+                    while (_requests.Count > 0)
+                    {
+                        var currentType = _requests.Pop();
+                        list.AddLast(currentType);
+                    }
+                }
+
+                throw new RecursiveDependencyException(list);
+            }
+
             #region Add the required services if necessary
             if (!container.Contains(typeof(IConstructorResolver)))
                 container.AddService<IConstructorResolver>(new ConstructorResolver());
@@ -97,6 +128,13 @@ namespace LinFu.IoC
                 container.GetService<IConstructorInvoke>();
 
             var result = constructorInvoke.CreateWith(constructor, arguments);
+
+            lock (_requests)
+            {
+                _requests.Pop();
+            }
+
+            _counter.Decrement(concreteType);
 
             return result;
         }
