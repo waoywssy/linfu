@@ -85,7 +85,7 @@ namespace LinFu.IoC.Configuration
         }
 
         /// <summary>
-        /// Injects the <see cref="AutoPropertyInjector"/> class at the end
+        /// Inserts the <see cref="AutoPropertyInjector"/> class at the end
         /// of the PostProcessor chain.
         /// </summary>
         /// <param name="target">The target container.</param>
