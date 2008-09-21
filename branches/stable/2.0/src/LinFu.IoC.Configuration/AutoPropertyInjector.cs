@@ -7,7 +7,11 @@ using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC.Configuration
 {
-    internal class AutoPropertyInjector : IPostProcessor, IContainerPlugin
+    /// <summary>
+    /// A class that automatically injects property dependencies into
+    /// service instances.
+    /// </summary>
+    public class AutoPropertyInjector : IPostProcessor, IContainerPlugin
     {
         private static readonly HashSet<Type> _excludedServices = new HashSet<Type>(new
             Type[] { typeof(IPropertyInjectionFilter), typeof(IArgumentResolver), typeof(IPropertySetter) });
@@ -37,7 +41,11 @@ namespace LinFu.IoC.Configuration
             }
         }
 
-        private void AutoInject(IServiceRequestResult result)
+        /// <summary>
+        /// Injects a property dependency into a target service instance.
+        /// </summary>
+        /// <param name="result">The <see cref="IServiceRequestResult"/> that will be processed for injection.</param>
+        private static void AutoInject(IServiceRequestResult result)
         {
             // Ignore the excluded services
             if (_excludedServices.Contains(result.ServiceType))
