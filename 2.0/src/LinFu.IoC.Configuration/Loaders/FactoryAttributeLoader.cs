@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
-using LinFu.IoC.Configuration;
 
 namespace LinFu.IoC.Configuration
 {
