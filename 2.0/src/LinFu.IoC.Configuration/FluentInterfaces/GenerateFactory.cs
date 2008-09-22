@@ -60,7 +60,7 @@ namespace LinFu.IoC.Configuration
         /// instance.
         /// </summary>
         /// <param name="createFactory">The delegate that will create the actual factory instance.</param>
-        private void AddFactory(Func<Func<Type, IContainer, TService>,
+        private void AddFactory(Func<Func<Type, IContainer, object[], TService>,
             IFactory<TService>> createFactory)
         {
             var container = _context.Container;

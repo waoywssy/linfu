@@ -13,7 +13,8 @@ namespace LinFu.IoC.Interfaces
         /// </summary>
         /// <param name="container">The container that will ultimately hold the given service instance</param>
         /// <param name="serviceType">The type of service to create.</param>
+        /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
         /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
-        object CreateInstance(Type serviceType, IContainer container);
+        object CreateInstance(Type serviceType, IContainer container, params object[] additionalArguments);
     }
 }

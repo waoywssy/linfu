@@ -13,7 +13,7 @@ namespace LinFu.IoC.Factories
     public class OncePerThreadFactory<T> : BaseFactory<T>
     {
         private static readonly Dictionary<int, T> _storage = new Dictionary<int, T>();
-        private readonly Func<Type, IContainer, T> _createInstance;
+        private readonly Func<Type, IContainer, object[], T> _createInstance;
 
         /// <summary>
         /// Initializes the factory class using the <paramref name="createInstance"/>
@@ -36,7 +36,7 @@ namespace LinFu.IoC.Factories
         /// </code>
         /// </example>
         /// <param name="createInstance">The delegate that will be used to create each new service instance.</param>
-        public OncePerThreadFactory(Func<Type, IContainer, T> createInstance)
+        public OncePerThreadFactory(Func<Type, IContainer, object[], T> createInstance)
         {
             _createInstance = createInstance;
         }
@@ -47,8 +47,9 @@ namespace LinFu.IoC.Factories
         /// only be created once per thread.
         /// </summary>
         /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
+        /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
         /// <returns>A a service instance as thread-wide singleton.</returns>
-        public override T CreateInstance(IContainer container)
+        public override T CreateInstance(IContainer container, params object[] additionalArguments)
         {
             int threadId = Thread.CurrentThread.ManagedThreadId;
 
@@ -57,7 +58,7 @@ namespace LinFu.IoC.Factories
             {
                 // Create the service instance only once
                 if (!_storage.ContainsKey(threadId))
-                    _storage[threadId] = _createInstance(typeof(T), container);
+                    _storage[threadId] = _createInstance(typeof(T), container, additionalArguments);
 
                 result = _storage[threadId];
             }

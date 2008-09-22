@@ -25,5 +25,12 @@ namespace LinFu.IoC.Interfaces
         /// The container that will handle the service request.
         /// </summary>
         IServiceContainer Container { get; }
+
+
+        /// <summary>
+        /// Gets or sets the value indicating the additional arguments that
+        /// were used during the service request.
+        /// </summary>
+        object[] AdditionalArguments { get; }
     }
 }

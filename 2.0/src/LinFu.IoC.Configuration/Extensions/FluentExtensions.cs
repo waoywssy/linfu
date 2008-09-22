@@ -81,20 +81,20 @@ namespace LinFu.IoC
             return new PropertyInjectionLambda<TService>(context);
         }
         /// <summary>
-        /// Converts a <see cref="Func{Type, IServiceContainer, TService}"/>
-        /// lambda into an equivalent <see cref="Func{Type, IContainer, TService}"/>
+        /// Converts a <see cref="Func{Type, IServiceContainer, TArgs, TService}"/>
+        /// lambda into an equivalent <see cref="Func{Type, IContainer, TArgs, TService}"/>
         /// instance.
         /// </summary>
         /// <typeparam name="TService">The type of service to create.</typeparam>
         /// <param name="func">The lambda function to be converted.</param>
-        /// <returns>The equivalent <see cref="Func{Type, IContainer, TService}"/>
+        /// <returns>The equivalent <see cref="Func{Type, IContainer, TArgs, TService}"/>
         /// that delegates its calls back to the <paramref name="func"/> lambda function.</returns>
-        internal static Func<Type, IContainer, TService> CreateAdapter<TService>(this Func<Type, IServiceContainer, TService> func)
+        internal static Func<Type, IContainer, object[], TService> CreateAdapter<TService>(this Func<Type, IServiceContainer, object[], TService> func)
         {
-            Func<Type, IContainer, TService> adapter = (type, container) =>
+            Func<Type, IContainer, object[], TService> adapter = (type, container, arguments) =>
             {
                 var serviceContainer = container as IServiceContainer;
-                return func(type, serviceContainer);
+                return func(type, serviceContainer, arguments);
             };
 
             return adapter;

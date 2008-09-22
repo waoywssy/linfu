@@ -22,9 +22,10 @@ namespace LinFu.IoC
         /// </summary>
         /// <param name="serviceName">The name of the service to instantiate.</param>
         /// <param name="serviceType">The service type to instantiate.</param>        
+        /// <param name="additionalArguments">The additional arguments that will be used to instantiate the service type.</param>
         /// <returns>If successful, it will return a service instance that is compatible with the given type;
         /// otherwise, it will just return a <c>null</c> value.</returns>
-        public override object GetService(string serviceName, Type serviceType)
+        public override object GetService(string serviceName, Type serviceType, params object[] additionalArguments)
         {
             // Attempt to create the service
             // without throwing an exception
@@ -35,7 +36,7 @@ namespace LinFu.IoC
             lock (this)
             {
                 SuppressErrors = true;
-                instance = base.GetService(serviceName, serviceType);
+                instance = base.GetService(serviceName, serviceType, additionalArguments);
                 SuppressErrors = suppressErrors;
             }
 
@@ -54,11 +55,11 @@ namespace LinFu.IoC
 
                     // Generate the service instance
                     if (factory != null)
-                        instance = factory.CreateInstance(serviceType, this);
+                        instance = factory.CreateInstance(serviceType, this, additionalArguments);
                 }
             }
 
-            IServiceRequestResult result = PostProcess(serviceName, serviceType, instance);
+            IServiceRequestResult result = PostProcess(serviceName, serviceType, instance, additionalArguments);
 
             // Use the modified result, if possible; otherwise,
             // use the original result.
@@ -82,9 +83,10 @@ namespace LinFu.IoC
         /// </remarks>
         /// <seealso cref="IPostProcessor"/>
         /// <param name="serviceType">The service type to instantiate.</param>
+        /// <param name="additionalArguments">The additional arguments that will be used to instantiate the service type.</param>
         /// <returns>If successful, it will return a service instance that is compatible with the given type;
         /// otherwise, it will just return a null value.</returns>
-        public override object GetService(Type serviceType)
+        public override object GetService(Type serviceType, params object[] additionalArguments)
         {
             object instance = null;
 
@@ -121,11 +123,11 @@ namespace LinFu.IoC
 
                     // Generate the service instance
                     if (factory != null)
-                        instance = factory.CreateInstance(serviceType, this);
+                        instance = factory.CreateInstance(serviceType, this, additionalArguments);
                 }
             }
 
-            IServiceRequestResult result = PostProcess(string.Empty, serviceType, instance);
+            IServiceRequestResult result = PostProcess(string.Empty, serviceType, instance, additionalArguments);
 
             // Use the modified result, if possible; otherwise,
             // use the original result.
@@ -305,7 +307,7 @@ namespace LinFu.IoC
         /// <param name="serviceType">The type of service being requested.</param>
         /// <param name="instance">The original instance returned by container's service instantiation attempt.</param>
         /// <returns>A <see cref="IServiceRequestResult"/> representing the results returned as a result of the postprocessors.</returns>
-        private IServiceRequestResult PostProcess(string serviceName, Type serviceType, object instance)
+        private IServiceRequestResult PostProcess(string serviceName, Type serviceType, object instance, object[] additionalArguments)
         {
             // Initialize the results
             var result = new ServiceRequestResult
@@ -314,7 +316,8 @@ namespace LinFu.IoC
                                  ActualResult = instance,
                                  Container = this,
                                  OriginalResult = instance,
-                                 ServiceType = serviceType
+                                 ServiceType = serviceType,
+                                 AdditionalArguments = additionalArguments
                              };
 
             // Let each postprocessor inspect 

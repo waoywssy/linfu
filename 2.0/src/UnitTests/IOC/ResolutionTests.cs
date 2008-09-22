@@ -138,6 +138,45 @@ namespace LinFu.UnitTests.IOC
         }
 
         [Test]
+        public void ShouldResolveConstructorWithAdditionalArgument()
+        {
+            var mockSampleService = new Mock<ISampleService>();
+            IServiceContainer container = new ServiceContainer();
+
+            // Add an ISampleService instance
+            container.AddService(mockSampleService.Object);
+            container.AddService<IConstructorResolver>(new ConstructorResolver());
+
+            var resolver = container.GetService<IConstructorResolver>();
+            Assert.IsNotNull(resolver);
+
+            // The resolver should return the constructor
+            // with the following signature: Constructor(ISampleService, int)
+            var expectedConstructor = typeof(SampleClassWithAdditionalArgument).GetConstructor(new Type[] {typeof(ISampleService), typeof(int)});
+            Assert.IsNotNull(expectedConstructor);
+
+            var result = resolver.ResolveFrom(typeof(SampleClassWithAdditionalArgument), container, 42);
+            Assert.AreSame(expectedConstructor, result);
+        }
+
+        [Test]
+        public void ShouldCreateTypeWithAdditionalParameters()
+        {
+            var mockSampleService = new Mock<ISampleService>();
+            IServiceContainer container = new ServiceContainer();
+
+            // Add an ISampleService instance
+            container.AddService(mockSampleService.Object);
+            container.AddService<IConstructorResolver>(new ConstructorResolver());
+
+            var resolver = container.GetService<IConstructorResolver>();
+            Assert.IsNotNull(resolver);
+
+            var instance = container.AutoCreate(typeof(SampleClassWithAdditionalArgument), 42) as SampleClassWithAdditionalArgument;
+            Assert.IsNotNull(instance);
+            Assert.IsTrue(instance.Argument == 42);
+        }
+        [Test]
         public void ShouldConstructParametersFromContainer()
         {
             var targetConstructor = typeof(SampleClassWithMultipleConstructors).GetConstructor(new[] { typeof(ISampleService), 
