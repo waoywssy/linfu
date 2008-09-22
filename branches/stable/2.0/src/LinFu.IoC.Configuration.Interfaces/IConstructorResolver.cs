@@ -20,7 +20,8 @@ namespace LinFu.IoC.Configuration.Interfaces
         /// </summary>
         /// <param name="concreteType">The target type.</param>
         /// <param name="container">The container that contains the constructor parameters that will be used to invoke the constructor.</param>
+        /// <param name="additionalArguments">The additional arguments that will be used to evaluate the best constructor to use to instantiate the target type.</param>
         /// <returns>A <see cref="ConstructorInfo"/> instance if a match is found; otherwise, it will return <c>null</c>.</returns>
-        ConstructorInfo ResolveFrom(Type concreteType, IServiceContainer container);
+        ConstructorInfo ResolveFrom(Type concreteType, IServiceContainer container, params object[] additionalArguments);
     }
 }

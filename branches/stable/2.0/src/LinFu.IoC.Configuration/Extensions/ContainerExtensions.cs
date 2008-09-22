@@ -68,27 +68,28 @@ namespace LinFu.IoC
         /// </summary>
         /// <param name="container">The service container that contains the arguments that will automatically be injected into the constructor.</param>
         /// <param name="concreteType">The type to instantiate.</param>
+        /// <param name="additionalArguments">The list of arguments to pass to the target type.</param>
         /// <returns>A valid, non-null object reference.</returns>
-        public static object AutoCreate(this IServiceContainer container, Type concreteType)
+        public static object AutoCreate(this IServiceContainer container, Type concreteType, params object[] additionalArguments)
         {
             // Keep track of the number of pending type requests
             _counter.Increment(concreteType);
 
             // Keep track of the sequence
             // of requests on the stack
-            lock(_requests)
+            lock (_requests)
             {
                 _requests.Push(concreteType);
             }
 
             // This is the maximum number of requests per thread per item
-            const int maxRequests = 20;
+            const int maxRequests = 10;
 
             if (_counter.CountOf(concreteType) > maxRequests)
             {
                 // Build the sequence of types that caused the overflow
                 var list = new LinkedList<Type>();
-                lock(_requests)
+                lock (_requests)
                 {
                     while (_requests.Count > 0)
                     {
@@ -116,12 +117,14 @@ namespace LinFu.IoC
             // Determine which constructor
             // contains the most resolvable
             // parameters
-            var constructor = resolver.ResolveFrom(concreteType, container);
+            var constructor = resolver.ResolveFrom(concreteType, container, additionalArguments);
+
+            List<Type> parameterTypes = GetMissingParameterTypes(constructor, additionalArguments);
 
             // Generate the arguments for the target constructor
             var argumentResolver = container.GetService<IArgumentResolver>();
-            var arguments = argumentResolver.ResolveFrom(constructor,
-                                         container);
+            var arguments = argumentResolver.ResolveFrom(parameterTypes, container,
+                additionalArguments);
 
             // Instantiate the object
             var constructorInvoke =
@@ -140,18 +143,57 @@ namespace LinFu.IoC
         }
 
         /// <summary>
+        /// Determines which parameter types need to be supplied to invoke a particular
+        /// <paramref name="constructor"/>  instance.
+        /// </summary>
+        /// <param name="constructor">The target constructor.</param>
+        /// <param name="additionalArguments">The additional arguments that will be used to invoke the constructor.</param>
+        /// <returns>The list of parameter types that are still missing parameter values.</returns>
+        private static List<Type> GetMissingParameterTypes(ConstructorInfo constructor,
+            ICollection<object> additionalArguments)
+        {
+            var parameters = from p in constructor.GetParameters()
+                             select new { p.Position, Type = p.ParameterType };
+
+            // Determine which parameters need to 
+            // be supplied by the container
+            var parameterTypes = new List<Type>();
+            if (additionalArguments != null && additionalArguments.Count > 0)
+            {
+                // Supply parameter values for the
+                // parameters that weren't supplied by the
+                // additionalArguments
+                var parameterCount = parameters.Count();
+                var maxIndex = parameterCount - additionalArguments.Count;
+                var targetParameters = from param in parameters.Where(p => p.Position < maxIndex)
+                                       select param.Type;
+
+                parameterTypes.AddRange(targetParameters);
+                return parameterTypes;
+            }
+
+            var results = from param in parameters
+                          select param.Type;
+
+            parameterTypes.AddRange(results);
+
+            return parameterTypes;
+        }
+
+        /// <summary>
         /// Creates an instance of <typeparamref name="T"/>
         /// using the given <paramref name="container"/>.
         /// </summary>
         /// <typeparam name="T">The service type to create.</typeparam>
         /// <param name="container">The container that will instantiate the service.</param>
+        /// <param name="additionalArguments">The additional arguments that will be used to construct the service type.</param>
         /// <returns>If successful, it will return a service instance that is compatible with the given type;
         /// otherwise, it will just return a <c>null</c> value.</returns>
-        public static T GetService<T>(this IContainer container)
+        public static T GetService<T>(this IContainer container, params object[] additionalArguments)
             where T : class
         {
             Type serviceType = typeof(T);
-            return container.GetService(serviceType) as T;
+            return container.GetService(serviceType, additionalArguments) as T;
         }
 
         /// <summary>
@@ -159,11 +201,12 @@ namespace LinFu.IoC
         /// </summary>
         /// <param name="container">The container that will instantiate the service.</param>
         /// <param name="info">The description of the requested service.</param>
+        /// <param name="additionalArguments">The additional arguments that will be used to construct the service type.</param>
         /// <returns>If successful, it will return a service instance that is compatible with the given type;
         /// otherwise, it will just return a <c>null</c> value.</returns>
-        public static object GetService(this IServiceContainer container, IServiceInfo info)
+        public static object GetService(this IServiceContainer container, IServiceInfo info, params object[] additionalArguments)
         {
-            return container.GetService(info.ServiceName, info.ServiceType);
+            return container.GetService(info.ServiceName, info.ServiceType, additionalArguments);
         }
 
         /// <summary>
@@ -173,12 +216,13 @@ namespace LinFu.IoC
         /// <typeparam name="T">The service type to create.</typeparam>
         /// <param name="container">The container that will instantiate the service.</param>
         /// <param name="serviceName">The name of the service to instantiate.</param>
+        /// <param name="additionalArguments">The additional arguments that will be used to construct the service type.</param>
         /// <returns>If successful, it will return a service instance that is compatible with the given type;
         /// otherwise, it will just return a <c>null</c> value.</returns>
-        public static T GetService<T>(this IServiceContainer container, string serviceName)
+        public static T GetService<T>(this IServiceContainer container, string serviceName, params object[] additionalArguments)
             where T : class
         {
-            return container.GetService(serviceName, typeof(T)) as T;
+            return container.GetService(serviceName, typeof(T), additionalArguments) as T;
         }
 
         /// <summary>
@@ -201,8 +245,8 @@ namespace LinFu.IoC
         /// <param name="serviceType">The type of service being implemented.</param>
         /// <param name="implementingType">The concrete type that will implement the service type.</param>
         public static void AddService(this IServiceContainer container, string serviceName, Type serviceType, Type implementingType)
-        {           
-            Func<Type, IContainer, object> factoryMethod = null;
+        {
+            Func<Type, IContainer, object[], object> factoryMethod = null;
 
             // Use the standard factory method for non-generic and closed generic types
             if (!serviceType.ContainsGenericParameters)
@@ -214,10 +258,10 @@ namespace LinFu.IoC
                     throw new ArgumentException(message);
                 }
 
-                factoryMethod = (type, currentContainer) =>
+                factoryMethod = (type, currentContainer, arguments) =>
                 {
                     var serviceContainer = (IServiceContainer)currentContainer;
-                    return serviceContainer.AutoCreate(implementingType);
+                    return serviceContainer.AutoCreate(implementingType, arguments);
                 };
                 container.AddFactory(serviceName, serviceType, new OncePerRequestFactory<object>(factoryMethod));
                 return;
@@ -226,7 +270,7 @@ namespace LinFu.IoC
             // TODO: Determine if the implementing type's type definition directly derives from
             // the service type and throw an exception if the open generic implementation type 
             // does not derive from the service type
-            factoryMethod = (type, currentContainer) =>
+            factoryMethod = (type, currentContainer, arguments) =>
             {
                 // Extract the generic parameterTypes
                 var typeArguments = type.GetGenericArguments();
@@ -235,7 +279,7 @@ namespace LinFu.IoC
                 var concreteType = implementingType.MakeGenericType(typeArguments);
 
                 var serviceContainer = (IServiceContainer)currentContainer;
-                return serviceContainer.AutoCreate(concreteType);
+                return serviceContainer.AutoCreate(concreteType, arguments);
             };
 
             IFactory factoryInstance = new FunctorFactory(factoryMethod);
@@ -290,7 +334,7 @@ namespace LinFu.IoC
         public static void AddService<T>(this IServiceContainer container, string serviceName, T instance)
         {
             container.AddFactory(serviceName, typeof(T), new InstanceFactory(instance));
-        }        
+        }
 
         /// <summary>
         /// Returns all the services in the container that match the given

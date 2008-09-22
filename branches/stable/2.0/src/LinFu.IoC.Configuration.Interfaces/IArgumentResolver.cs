@@ -19,7 +19,8 @@ namespace LinFu.IoC.Configuration.Interfaces
         /// </summary>
         /// <param name="parameterTypes">The parameter types for the target method.</param>
         /// <param name="container">The container that will provide the method arguments.</param>
+        /// <param name="additionalArguments">The additional arguments that will be passed to the target method.</param>
         /// <returns>An array of objects that represent the arguments to be passed to the target method.</returns>
-        object[] ResolveFrom(IEnumerable<Type> parameterTypes, IServiceContainer container);
+        object[] ResolveFrom(IEnumerable<Type> parameterTypes, IServiceContainer container, params object[] additionalArguments);
     }
 }

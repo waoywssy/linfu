@@ -33,6 +33,17 @@ namespace LinFu.IoC.Configuration
         /// <seealso cref="IGenerateFactory{T}"/>
         /// <param name="factoryMethod">The factory method that will be used to instantiate the actual service instance.</param>
         /// <returns>A non-null <see cref="IGenerateFactory{T}"/> instance that will be used to create a factory and add it to a specific container.</returns>
+        IGenerateFactory<TService> Using(Func<IServiceContainer, object[], TService> factoryMethod);
+
+        /// <summary>
+        /// Creates a service instance using the
+        /// <paramref name="factoryMethod"/> to
+        /// instantiate the service instance
+        /// with a particular factory type.
+        /// </summary>
+        /// <seealso cref="IGenerateFactory{T}"/>
+        /// <param name="factoryMethod">The factory method that will be used to instantiate the actual service instance.</param>
+        /// <returns>A non-null <see cref="IGenerateFactory{T}"/> instance that will be used to create a factory and add it to a specific container.</returns>
         IGenerateFactory<TService> Using(Func<IServiceContainer, TService> factoryMethod);
 
         /// <summary>

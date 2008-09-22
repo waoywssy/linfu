@@ -20,7 +20,7 @@ namespace LinFu.IoC.Configuration
         /// instantiate the actual <typeparamref name="TService"/>
         /// instance.
         /// </summary>
-        public Func<Type, IServiceContainer, TService> FactoryMethod
+        public Func<Type, IServiceContainer, object[], TService> FactoryMethod
         {
             get; set;
         }

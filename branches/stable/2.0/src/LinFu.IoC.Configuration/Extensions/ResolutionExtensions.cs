@@ -122,13 +122,15 @@ namespace LinFu.IoC.Configuration
         /// <param name="resolver">The <see cref="IArgumentResolver"/> instance that will determine the method arguments.</param>
         /// <param name="method">The target method.</param>
         /// <param name="container">The container that will provide the method arguments.</param>
+        /// <param name="additionalArguments">The additional arguments that will be passed to the target method.</param>
         /// <returns>An array of objects to be used with the target method.</returns>
-        public static object[] ResolveFrom(this IArgumentResolver resolver, MethodBase method, IServiceContainer container)
+        public static object[] ResolveFrom(this IArgumentResolver resolver, MethodBase method, 
+            IServiceContainer container, params object[] additionalArguments)
         {
             var parameterTypes = from p in method.GetParameters()
                                  select p.ParameterType;
 
-            return resolver.ResolveFrom(parameterTypes, container);
+            return resolver.ResolveFrom(parameterTypes, container, additionalArguments);
         }
         /// <summary>
         /// Casts an <see cref="IEnumerable"/> set of items into an array of

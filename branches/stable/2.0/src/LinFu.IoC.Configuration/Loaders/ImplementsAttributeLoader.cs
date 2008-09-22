@@ -133,7 +133,7 @@ namespace LinFu.IoC.Configuration
             MethodInfo factoryMethodDefinition = typeof(ImplementsAttributeLoader).GetMethod("CreateFactoryMethodInternal", flags);
             MethodInfo factoryMethod = factoryMethodDefinition.MakeGenericMethod(serviceType, implementingType);
 
-            // Create the Func<Type, IContainer, TService> factory delegate
+            // Create the Func<Type, IContainer, object[], TService> factory delegate
             var result = factoryMethod.Invoke(null, new object[0]) as MulticastDelegate;
 
             return result;
@@ -146,19 +146,19 @@ namespace LinFu.IoC.Configuration
         /// <typeparam name="TService">The service type being instantiated.</typeparam>
         /// <typeparam name="TImplementation">The type that will provide the implementation for the actual service.</typeparam>
         /// <returns>A strongly-typed factory method delegate that can create the given service.</returns>
-        internal static Func<Type, IContainer, TService> CreateFactoryMethodInternal<TService, TImplementation>()
+        internal static Func<Type, IContainer, object[], TService> CreateFactoryMethodInternal<TService, TImplementation>()
             where TImplementation : TService
         {
-            return (type, container) =>
+            return (type, container, arguments) =>
                        {
                            var serviceContainer = container as IServiceContainer;
 
                            // Attempt to autoresolve the constructor
                            if (serviceContainer != null)
-                               return (TService)serviceContainer.AutoCreate(typeof(TImplementation));
+                               return (TService)serviceContainer.AutoCreate(typeof(TImplementation), arguments);
 
                            // Otherwise, use the default constructor
-                           return (TService)Activator.CreateInstance(typeof(TImplementation));
+                           return (TService)Activator.CreateInstance(typeof(TImplementation), arguments);
                        };
         }
     }

@@ -39,6 +39,11 @@ namespace LinFu.IoC
         /// </summary>
         public IServiceContainer Container { get; internal set; }
 
+        /// <summary>
+        /// Gets or sets the value indicating the additional arguments that
+        /// were used during the service request.
+        /// </summary>
+        public object[] AdditionalArguments { get; internal set; }
         #endregion
     }
 }

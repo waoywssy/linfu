@@ -12,8 +12,9 @@ namespace LinFu.IoC.Interfaces
         /// <summary>
         /// Creates a service instance using the given <paramref name="container"/>.
         /// </summary>
-        /// <param name="container">The container that will ultimately hold the given service instance</param>
+        /// <param name="container">The container that will ultimately hold the given service instance.</param>
+        /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
         /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
-        T CreateInstance(IContainer container);
+        T CreateInstance(IContainer container, params object[] additionalArguments);
     }
 }

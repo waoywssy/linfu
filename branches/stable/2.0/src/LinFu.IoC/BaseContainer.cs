@@ -50,9 +50,10 @@ namespace LinFu.IoC
         /// is set to false. Otherwise, it will simply return null.
         /// </summary>
         /// <param name="serviceType">The service type to instantiate.</param>
+        /// <param name="additionalArguments">The additional arguments that will be used to instantiate the service type.</param>
         /// <returns>If successful, it will return a service instance that is compatible with the given type;
         /// otherwise, it will just return a null value.</returns>
-        public virtual object GetService(Type serviceType)
+        public virtual object GetService(Type serviceType, params object[] additionalArguments)
         {
             object result = null;
             if (!_factories.ContainsKey(serviceType) && !SuppressErrors)
@@ -65,7 +66,7 @@ namespace LinFu.IoC
             // and create the service instance
             IFactory factory = _factories[serviceType];
             if (factory != null)
-                result = factory.CreateInstance(serviceType, this);
+                result = factory.CreateInstance(serviceType, this, additionalArguments);
 
             return result;
         }
@@ -78,8 +79,8 @@ namespace LinFu.IoC
             get
             {
                 var results = (from type in _factories.Keys
-                              let info = new ServiceInfo(string.Empty, type)
-                              select info as IServiceInfo).AsEnumerable();
+                               let info = new ServiceInfo(string.Empty, type)
+                               select info as IServiceInfo).AsEnumerable();
 
                 return results;
             }

@@ -20,8 +20,9 @@ namespace LinFu.IoC.Configuration
         /// </summary>
         /// <param name="parameterTypes">The parameter types for the target method.</param>
         /// <param name="container">The container that will provide the method arguments.</param>
+        /// <param name="additionalArguments">The additional arguments that will be passed to the target method.</param>
         /// <returns>An array of objects that represent the arguments to be passed to the target method.</returns>
-        public object[] ResolveFrom(IEnumerable<Type> parameterTypes, IServiceContainer container)
+        public object[] ResolveFrom(IEnumerable<Type> parameterTypes, IServiceContainer container, params object[] additionalArguments)
         {
             var enumerableDefinition = typeof(IEnumerable<>);
 
@@ -54,6 +55,10 @@ namespace LinFu.IoC.Configuration
                 argumentList.Add(currentArgument);
             }
 
+            // Append the existing arguments
+            if (additionalArguments != null && additionalArguments.Length > 0)
+                argumentList.AddRange(additionalArguments);
+
             return argumentList.ToArray();
         }
 
@@ -64,7 +69,7 @@ namespace LinFu.IoC.Configuration
         /// <param name="parameterType">The current parameter type.</param>
         /// <param name="container">The container that will be used to build the array of services.</param>
         /// <param name="argumentList">The list that will store new service array.</param>
-        private static void AddArrayArgument(Type parameterType, IServiceContainer container, 
+        private static void AddArrayArgument(Type parameterType, IServiceContainer container,
                                              ICollection<object> argumentList)
         {
             var isArrayOfServices = parameterType.ExistsAsServiceArray();
