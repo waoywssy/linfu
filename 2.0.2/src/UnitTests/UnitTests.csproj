@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E3B1686C-DCB3-44E7-BB25-9483592EA942}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LinFu.UnitTests</RootNamespace>
+    <AssemblyName>LinFu.UnitTests</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AutomatedDebug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\build\Debug\UnitTests\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Mono.Cecil, Version=0.6.8.8607, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq, Version=2.0.2991.26580, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="NUnit.framework">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\NUnit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AOP\ParameterDefinitionExtensionTests.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="BaseTestFixture.cs" />
+    <Compile Include="IOC\PropertyInjectionTests.cs" />
+    <Compile Include="IOC\ResolutionTests.cs" />
+    <Compile Include="Proxy\InterfaceExtractorTests.cs" />
+    <Compile Include="Proxy\MockInterceptor.cs" />
+    <Compile Include="Proxy\ProxyFactoryTests.cs" />
+    <Compile Include="Finders\FinderTests.cs" />
+    <Compile Include="IOC\FluentExtensionTests.Implementation.cs" />
+    <Compile Include="IOC\Configuration\AssemblyContainerLoaderTests.cs" />
+    <Compile Include="IOC\Configuration\ConfigurationTests.cs" />
+    <Compile Include="IOC\Configuration\LoaderAttributeTests.cs" />
+    <Compile Include="IOC\Configuration\NamedOncePerRequestSampleService.cs" />
+    <Compile Include="IOC\Configuration\NamedOncePerThreadSampleService.cs" />
+    <Compile Include="IOC\Configuration\NamedSingletonSampleService.cs" />
+    <Compile Include="IOC\Configuration\OncePerRequestSampleService.cs" />
+    <Compile Include="IOC\Configuration\OncePerThreadSampleService.cs" />
+    <Compile Include="IOC\Configuration\SingletonSampleService.cs" />
+    <Compile Include="IOC\Factories\FactoryTests.cs" />
+    <Compile Include="IOC\FluentExtensionTests.cs" />
+    <Compile Include="IOC\FluentPropertyInjectionTests.cs" />
+    <Compile Include="IOC\InversionOfControlTests.cs" />
+    <Compile Include="Reflection\BasePEVerifyTestCase.cs" />
+    <Compile Include="Reflection\ReflectionEmitTests.cs" />
+    <Compile Include="Tools\ITest.cs" />
+    <Compile Include="Tools\PEVerifier.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LinFu.AOP.Interfaces\LinFu.AOP.Interfaces.csproj">
+      <Project>{0F8C48B0-4AE9-4429-AB90-C5141D710C2C}</Project>
+      <Name>LinFu.AOP.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.AOP\LinFu.AOP.csproj">
+      <Project>{613B6547-DCBB-4505-82B8-B4179BFC95CE}</Project>
+      <Name>LinFu.AOP</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Proxy.Interfaces\LinFu.Proxy.Interfaces.csproj">
+      <Project>{6C29A409-6148-49AC-A192-DC6F33F3304C}</Project>
+      <Name>LinFu.Proxy.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Proxy\LinFu.Proxy.csproj">
+      <Project>{54DA7856-9026-439A-8FFE-88BBF99577B8}</Project>
+      <Name>LinFu.Proxy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Finders.Interfaces\LinFu.Finders.Interfaces.csproj">
+      <Project>{8960CC95-08E4-4E06-94F8-F24B8FCA7842}</Project>
+      <Name>LinFu.Finders.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Finders\LinFu.Finders.csproj">
+      <Project>{020A9D4F-3C8C-48B5-830F-2EDAB07E0D97}</Project>
+      <Name>LinFu.Finders</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.IoC.Configuration.Interfaces\LinFu.IoC.Configuration.Interfaces.csproj">
+      <Project>{857A7827-0969-4BC7-A941-61A060B9BBA8}</Project>
+      <Name>LinFu.IoC.Configuration.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.IoC.Configuration\LinFu.IoC.Configuration.csproj">
+      <Project>{EFBACCF3-C834-4114-9FC1-1F190DD6CE98}</Project>
+      <Name>LinFu.IoC.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.IoC.Factories\LinFu.IoC.Factories.csproj">
+      <Project>{14DB06BE-3178-4A01-98AB-DFC65485E567}</Project>
+      <Name>LinFu.IoC.Factories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.IoC.Interfaces\LinFu.IoC.Interfaces.csproj">
+      <Project>{C6AC7707-9288-4ADF-9053-34FE71FFE0BE}</Project>
+      <Name>LinFu.IoC.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.IoC\LinFu.IoC.csproj">
+      <Project>{FA3D5517-EFF4-4363-AFF2-EF67B981334E}</Project>
+      <Name>LinFu.IoC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection.Emit.Interfaces\LinFu.Reflection.Emit.Interfaces.csproj">
+      <Project>{5DDB50DF-F14A-4D05-9A6B-99AC348617F1}</Project>
+      <Name>LinFu.Reflection.Emit.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection.Emit\LinFu.Reflection.Emit.csproj">
+      <Project>{22B3D63C-29E9-49D3-86CB-28FF7D2C70E7}</Project>
+      <Name>LinFu.Reflection.Emit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection.Interfaces\LinFu.Reflection.Interfaces.csproj">
+      <Project>{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}</Project>
+      <Name>LinFu.Reflection.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection.Plugins\LinFu.Reflection.Plugins.csproj">
+      <Project>{E931E87A-3ED8-4028-8990-F0F4054C0847}</Project>
+      <Name>LinFu.Reflection.Plugins</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LinFu.Reflection\LinFu.Reflection.csproj">
+      <Project>{22EEB00F-F471-486C-A6AD-60F088821C78}</Project>
+      <Name>LinFu.Reflection</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SampleLibrary\SampleLibrary.csproj">
+      <Project>{DEFBEF97-B03C-448F-9518-394735439E2E}</Project>
+      <Name>SampleLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
