@@ -307,7 +307,7 @@ namespace LinFu.UnitTests.Proxy
 
         [Test]
         [Ignore("TODO: Implement this")]
-        public void ShouldMustSupportSerialization()
+        public void ShouldSupportSerialization()
         {
             throw new NotImplementedException();
         }
