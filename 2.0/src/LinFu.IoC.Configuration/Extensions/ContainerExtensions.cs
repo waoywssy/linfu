@@ -62,6 +62,17 @@ namespace LinFu.IoC
         }
 
         /// <summary>
+        /// Initializes the target <see cref="IServiceContainer"/>
+        /// with the default services.
+        /// </summary>
+        /// <param name="container"></param>
+        public static void Initialize(this IServiceContainer container)
+        {
+            // Load the configuration assembly by default
+            container.LoadFrom(typeof(Loader).Assembly);
+        }
+
+        /// <summary>
         /// Automatically instantiates a <paramref name="concreteType"/>
         /// with the constructor with the most resolvable parameters from
         /// the given <paramref name="container"/> instance.

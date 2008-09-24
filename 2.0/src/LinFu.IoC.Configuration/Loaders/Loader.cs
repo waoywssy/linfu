@@ -25,6 +25,7 @@ namespace LinFu.IoC.Configuration
             QueuedActions.Add(container => container.AddService<IArgumentResolver>(new ArgumentResolver()));
             QueuedActions.Add(container => container.AddService<IConstructorInvoke>(new ConstructorInvoke()));
             QueuedActions.Add(container => container.AddService<IConstructorResolver>(new ConstructorResolver()));
+            QueuedActions.Add(container=>container.AddService<IPropertyInjectionFilter>(new PropertyInjectionFilter()));
 
             // Load everything else into the container
             var hostAssembly = typeof(Loader).Assembly;
