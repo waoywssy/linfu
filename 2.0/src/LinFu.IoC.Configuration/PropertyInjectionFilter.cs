@@ -14,59 +14,28 @@ namespace LinFu.IoC.Configuration
     /// defined.
     /// </summary>
     [Implements(typeof(IPropertyInjectionFilter), LifecycleType.OncePerRequest)]
-    public class PropertyInjectionFilter : IPropertyInjectionFilter, IInitialize
+    public class PropertyInjectionFilter : BasePropertyInjectionFilter
     {
-        private static readonly Dictionary<Type, IEnumerable<PropertyInfo>> _propertyCache =
-            new Dictionary<Type, IEnumerable<PropertyInfo>>();
-
-        private IServiceContainer _container;
         /// <summary>
-        /// Returns the list of <see cref="PropertyInfo"/> objects
-        /// whose setters should be injected with arbitrary values.
+        /// Determines which properties should be injected from the <see cref="IServiceContainer"/> instance.
         /// </summary>
-        /// <remarks>This implementation selects properties that are marked with the <see cref="InjectAttribute"/>.</remarks>
-        /// <param name="targetType">The target type that contains the target properties.</param>
-        /// <returns>A set of properties that describe which parameters should be injected.</returns>
-        public IEnumerable<PropertyInfo> GetInjectableProperties(Type targetType)
+        /// <param name="container">The source container that will supply the property values for the selected properties.</param>
+        /// <param name="properties">The list of properties to be filtered.</param>
+        /// <returns>A list of properties that should be injected.</returns>
+        protected override IEnumerable<PropertyInfo> Filter(IServiceContainer container, 
+            IEnumerable<PropertyInfo> properties)
         {
-            IEnumerable<PropertyInfo> properties = null;
-
-            // Retrieve the property list only once
-            if (!_propertyCache.ContainsKey(targetType))
-            {
-                properties = from p in targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                          let propertyType = p.PropertyType
-                          where p.CanWrite
-                          select p;
-                
-                lock(_propertyCache)
-                {
-                    _propertyCache[targetType] = properties;
-                }
-            }
-
-            properties = _propertyCache[targetType];
-
             // The property must have the InjectAttribute defined and the
             // service must exist in the container
             var results = from p in properties
                           let propertyType = p.PropertyType
                           let isServiceArray = propertyType.ExistsAsServiceArray()
-                          let attributes = p.GetCustomAttributes(typeof(InjectAttribute), false) 
-                          where isServiceArray(_container) || _container.Contains(propertyType)
-                          && attributes != null && attributes.Length > 0
+                          let attributes = p.GetCustomAttributes(typeof(InjectAttribute), false)
+                          where isServiceArray(container) || container.Contains(propertyType)
+                                                              && attributes != null && attributes.Length > 0
                           select p;
 
             return results;
-        }
-
-        /// <summary>
-        /// Initializes the <see cref="PropertyInjectionFilter"/> class.
-        /// </summary>
-        /// <param name="source">The host container.</param>
-        public void Initialize(IServiceContainer source)
-        {
-            _container = source;
         }
     }
 }

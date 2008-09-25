@@ -50,6 +50,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AutoPropertyInjector.cs" />
+    <Compile Include="BasePropertyInjectionFilter.cs" />
     <Compile Include="FluentInterfaces\ActionContext.cs" />
     <Compile Include="ActionDelegates.cs" />
     <Compile Include="FluentInterfaces\ActionPostProcessor.cs" />
