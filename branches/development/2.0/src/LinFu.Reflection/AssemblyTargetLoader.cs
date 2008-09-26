@@ -23,10 +23,8 @@ namespace LinFu.Reflection
         public AssemblyTargetLoader()
         {
             AssemblyLoader = new AssemblyLoader();
-            TypeExtractor = new TypeExtractor();
+            AssemblyActionLoader = new AssemblyActionLoader<TTarget>(() => TypeLoaders);
         }
-
-        #region IAssemblyTargetLoader<TTarget> Members
 
         /// <summary>
         /// The <see cref="IAssemblyLoader"/> instance that will load
@@ -34,11 +32,17 @@ namespace LinFu.Reflection
         /// </summary>
         public IAssemblyLoader AssemblyLoader { get; set; }
 
+
         /// <summary>
-        /// The <see cref="ITypeExtractor"/> instance that will
-        /// determine which types will be extracted from an assembly.
+        /// Gets or sets the value indicating the action loader 
+        /// responsible for reading an assembly and converting it to 
+        /// a list of actions to be performed against the target type.
         /// </summary>
-        public ITypeExtractor TypeExtractor { get; set; }
+        public IActionLoader<IList<Action<TTarget>>, Assembly> AssemblyActionLoader
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// The list of ActionLoaders that will be used to
@@ -75,8 +79,6 @@ namespace LinFu.Reflection
         /// <returns>A set of <see cref="Action{IServiceContainer}"/> instances to apply to a target type.</returns>
         public IEnumerable<Action<TTarget>> Load(string filename)
         {
-            var defaultResult = new Action<TTarget>[0];
-
             Assembly assembly = null;
 
             if (AssemblyLoader == null)
@@ -85,52 +87,14 @@ namespace LinFu.Reflection
             // Load the assembly into memory
             assembly = AssemblyLoader.Load(filename);
 
-            // Grab the types embedded in the assembly
-            IEnumerable<Type> types = new Type[0];
-            if (assembly != null && TypeExtractor != null)
-                types = TypeExtractor.GetTypes(assembly);
-
-            if (types.Count() == 0 || TypeLoaders.Count == 0)
-                return defaultResult;
-
-            // Pass the loaded types to
-            // the type loaders for processing
             var results = new List<Action<TTarget>>();
-
-            foreach (Type type in types)
+            var listActions = AssemblyActionLoader.Load(assembly);
+            foreach (var action in listActions)
             {
-                // Skip any invalid types
-                if (type == null)
-                    continue;
-
-                LoadResultsFromType(type, results);
+                action(results);
             }
 
             return results;
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Generates the list of <see cref="Action{TTarget}"/>
-        /// instances which will be used to configure a target instance.
-        /// </summary>
-        /// <param name="type">The <see cref="Type"/> instance that holds the configuration information.</param>
-        /// <param name="results">The list that will hold the actions which will configure the container.</param>
-        private void LoadResultsFromType(Type type, List<Action<TTarget>> results)
-        {
-            foreach (var typeLoader in TypeLoaders)
-            {
-                if (typeLoader == null || !typeLoader.CanLoad(type))
-                    continue;
-
-                IEnumerable<Action<TTarget>> actions = typeLoader.Load(type);
-
-                if (actions.Count() == 0)
-                    continue;
-
-                results.AddRange(actions);
-            }
         }
     }
 }

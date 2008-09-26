@@ -20,7 +20,7 @@ namespace LinFu.UnitTests.IOC.Factories
             // Create a new mock service instance on each
             // factory method call
             createInstance =
-                (type, container) => (new Mock<ISerializable>()).Object;
+                (type, container, arguments) => (new Mock<ISerializable>()).Object;
         }
 
         [TearDown]
@@ -31,7 +31,7 @@ namespace LinFu.UnitTests.IOC.Factories
 
         #endregion
 
-        private Func<Type, IContainer, ISerializable> createInstance;
+        private Func<Type, IContainer, object[], ISerializable> createInstance;
 
         [Test]
         public void GenericFactoryAdapterShouldCallUntypedFactoryInstance()
@@ -42,7 +42,7 @@ namespace LinFu.UnitTests.IOC.Factories
             var adapter = new FactoryAdapter<ISerializable>(mockFactory.Object);
 
             // The adapter itself should call the container on creation
-            mockFactory.Expect(f => f.CreateInstance(container)).Returns(mockService.Object);
+            mockFactory.Expect(f => f.CreateInstance(container, It.IsAny<object[]>())).Returns(mockService.Object);
 
             Assert.IsInstanceOfType(typeof(IFactory), adapter);
 

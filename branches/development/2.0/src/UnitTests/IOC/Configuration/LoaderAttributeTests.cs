@@ -235,7 +235,7 @@ namespace LinFu.UnitTests.IOC.Configuration
             var mockFactory = new Mock<IFactory>();
             var serviceInstance = new SampleGenericImplementation<int>();
 
-            mockFactory.Expect(f => f.CreateInstance(It.IsAny<Type>(), It.IsAny<IServiceContainer>()))
+            mockFactory.Expect(f => f.CreateInstance(It.IsAny<Type>(), It.IsAny<IServiceContainer>(), It.IsAny<object[]>()))
                 .Returns(serviceInstance);
 
             var container = new ServiceContainer();

@@ -65,9 +65,10 @@ namespace LinFu.IoC
         /// </summary>
         /// <param name="serviceName">The name of the service to instantiate.</param>
         /// <param name="serviceType">The service type to instantiate.</param>        
+        /// <param name="additionalArguments">The additional arguments that will be used to instantiate the service type.</param>
         /// <returns>If successful, it will return a service instance that is compatible with the given type;
         /// otherwise, it will just return a <c>null</c> value.</returns>
-        public virtual object GetService(string serviceName, Type serviceType)
+        public virtual object GetService(string serviceName, Type serviceType, params object[] additionalArguments)
         {
             // Used the other GetService method if
             // the name is blank
@@ -90,9 +91,10 @@ namespace LinFu.IoC
                 factory = _namedFactories[serviceName][serviceType];
 
             object result = null;
+
             // Make sure that the factory exists
             if (factory != null)
-                result = factory.CreateInstance(serviceType, this);
+                result = factory.CreateInstance(serviceType, this, additionalArguments);
 
             return result;
         }

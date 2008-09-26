@@ -17,10 +17,11 @@ namespace LinFu.IoC.Factories
         /// </summary>
         /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
         /// <param name="serviceType">The service type to be instantiated.</param>
+        /// /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
         /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
-        object IFactory.CreateInstance(Type serviceType, IContainer container)
+        object IFactory.CreateInstance(Type serviceType, IContainer container, params object[] additionalArguments)
         {
-            return CreateInstance(container);
+            return CreateInstance(container, additionalArguments);
         }
 
         #endregion
@@ -36,9 +37,10 @@ namespace LinFu.IoC.Factories
         /// from scratch. This should cut down on some of the boilerplate
         /// code necessary to get a factory class up and running.
         /// </remarks>
+        /// /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
         /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
         /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
-        public abstract T CreateInstance(IContainer container);
+        public abstract T CreateInstance(IContainer container, params object[] additionalArguments);
 
         #endregion
     }
