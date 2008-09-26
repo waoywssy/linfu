@@ -180,6 +180,7 @@ namespace LinFu.Reflection
             _loaderActions.Clear();
             _loadedFiles.Clear();
         }
+        
 
         /// <summary>
         /// Loads the <paramref name="currentFile">current file</paramref>
