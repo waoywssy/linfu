@@ -58,6 +58,7 @@
     <Compile Include="Loader.cs" />
     <Compile Include="LoaderPluginAttribute.cs" />
     <Compile Include="PluginLoader.cs" />
+    <Compile Include="Runtime.cs" />
     <Compile Include="TypeExtractor.cs" />
   </ItemGroup>
   <ItemGroup>
