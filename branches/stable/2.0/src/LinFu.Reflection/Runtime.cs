@@ -15,7 +15,7 @@ namespace LinFu.Reflection
         /// Gets a value indicating if the application is
         /// currently running on the Mono platform.
         /// </summary>
-        public static bool IsRunningMono
+        public static bool IsRunningOnMono
         {
             get
             {

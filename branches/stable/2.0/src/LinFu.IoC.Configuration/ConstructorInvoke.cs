@@ -51,7 +51,7 @@ namespace LinFu.IoC.Configuration
 
             // HACK: Since the Mono runtime does not yet implement the DynamicMethod class,
             // we'll actually have to use the constructor itself to construct the target type            
-            result = Runtime.IsRunningMono ? targetConstructor : CreateMethod(targetConstructor);
+            result = Runtime.IsRunningOnMono ? targetConstructor : CreateMethod(targetConstructor);
 
             // Save the results
             lock (_cache)
