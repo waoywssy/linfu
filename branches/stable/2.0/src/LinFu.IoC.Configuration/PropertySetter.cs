@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using LinFu.IoC.Configuration.Interfaces;
+using LinFu.Reflection;
 
 namespace LinFu.IoC.Configuration
 {
@@ -68,6 +69,11 @@ namespace LinFu.IoC.Configuration
                 throw new ArgumentException(
                     string.Format("The property '{0}' must have a publicly visible setter in order to be modified", targetProperty));
 
+            // HACK: Manually invoke the setter since the Mono runtime currently 
+            // does not support the DynamicMethod class
+            if (Runtime.IsRunningMono)
+                return (target, value) => setterMethod.Invoke(target, new object[] {value});
+            
             var dynamicMethod = new DynamicMethod(string.Empty, typeof(void), _parameterTypes);
             var IL = dynamicMethod.GetILGenerator();
             
