@@ -71,7 +71,7 @@ namespace LinFu.IoC.Configuration
 
             // HACK: Manually invoke the setter since the Mono runtime currently 
             // does not support the DynamicMethod class
-            if (Runtime.IsRunningMono)
+            if (Runtime.IsRunningOnMono)
                 return (target, value) => setterMethod.Invoke(target, new object[] {value});
             
             var dynamicMethod = new DynamicMethod(string.Empty, typeof(void), _parameterTypes);
