@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
+using LinFu.Proxy.Interfaces;
 using Moq;
 using NUnit.Framework;
 using SampleLibrary;
@@ -39,12 +40,22 @@ namespace LinFu.UnitTests.IOC
         }
 
         [Test]
-        [Ignore("TODO: Implement this")]
         public void ContainerMustAllowServicesToBeIntercepted()
         {
-            // TODO: Wrap a decorator around an IContainer
-            // instance
-            throw new NotImplementedException();
+            var container = new ServiceContainer();
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+
+            var mock = new Mock<ISampleInterceptedInterface>();
+            var mockInstance = mock.Object;
+            container.AddService(mockInstance);
+
+            // The container must automatically load the interceptor
+            // from the sample assembly
+            var result = container.GetService<ISampleInterceptedInterface>();
+            Assert.AreNotSame(mockInstance, result);
+
+            var proxy = (IProxy) result;
+            Assert.IsInstanceOfType(typeof (SampleInterceptorClass), proxy.Interceptor);
         }
 
         [Test]
