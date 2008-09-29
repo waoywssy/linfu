@@ -78,6 +78,7 @@
     <Compile Include="Loaders\PostProcessorLoader.cs" />
     <Compile Include="FluentInterfaces\PropertyInjectionLambda.cs" />
     <Compile Include="Extensions\ResolutionExtensions.cs" />
+    <Compile Include="AttributedPropertyInjectionFilter.cs" />
     <Compile Include="PropertyInjectionFilter.cs" />
     <Compile Include="PropertySetter.cs" />
     <Compile Include="RecursiveDependencyException.cs" />

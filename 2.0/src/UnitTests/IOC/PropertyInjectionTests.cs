@@ -64,6 +64,29 @@ namespace LinFu.UnitTests.IOC
         }
 
         [Test]
+        public void ShouldAutoInjectPropertyWithoutCustomAttribute()
+        {
+            var container = new ServiceContainer();
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
+
+            var instance = new SampleClassWithUnmarkedInjectionProperties();
+
+            // Initialize the container with the dummy service
+            container.Inject<ISampleService>().Using<SampleClass>().OncePerRequest();
+            container.Inject<ISampleService>("MyService").Using(c => instance).OncePerRequest();
+
+            // Enable automatic property injection for every property
+            container.SetCustomPropertyInjectionAttribute(null);
+
+            // Get the service instance
+            var result = container.GetService<ISampleService>("MyService");
+            Assert.AreSame(result, instance);
+
+            // Ensure that the injection occurred
+            Assert.IsNotNull(instance.SomeProperty);
+            Assert.IsInstanceOfType(typeof (SampleClass), instance.SomeProperty);
+        }
+        [Test]
         public void ShouldAutoInjectProperty()
         {
             var container = new ServiceContainer();

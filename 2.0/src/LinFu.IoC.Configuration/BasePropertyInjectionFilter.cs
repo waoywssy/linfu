@@ -19,7 +19,7 @@ namespace LinFu.IoC.Configuration
 
         /// <summary>
         /// Returns the list of <see cref="PropertyInfo"/> objects
-        /// whose setters should be injected with arbitrary values.
+        /// whose setters will injected with arbitrary values.
         /// </summary>
         /// <remarks>This implementation selects properties that are marked with the <see cref="InjectAttribute"/>.</remarks>
         /// <param name="targetType">The target type that contains the target properties.</param>
@@ -65,7 +65,7 @@ namespace LinFu.IoC.Configuration
         }
 
         /// <summary>
-        /// Initializes the <see cref="PropertyInjectionFilter"/> class.
+        /// Initializes the <see cref="BasePropertyInjectionFilter"/> class.
         /// </summary>
         /// <param name="source">The host container.</param>
         public void Initialize(IServiceContainer source)
