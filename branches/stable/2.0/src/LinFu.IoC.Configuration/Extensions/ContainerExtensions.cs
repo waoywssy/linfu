@@ -62,6 +62,20 @@ namespace LinFu.IoC
         }
 
         /// <summary>
+        /// Sets the custom attribute type that will be used to mark properties
+        /// for automatic injection.
+        /// </summary>
+        /// <param name="container">The target <see cref="IServiceContainer"/> instance.</param>
+        /// <param name="attributeType">The custom property attribute that will be used to mark properties for injection.</param>
+        public static void SetCustomPropertyInjectionAttribute(this IServiceContainer container, 
+            Type attributeType)
+        {
+            // Modify the property injection filter to select properties marked
+            // with the custom attribute type
+            container.AddService<IPropertyInjectionFilter>(new AttributedPropertyInjectionFilter(attributeType));
+        }
+
+        /// <summary>
         /// Initializes the target <see cref="IServiceContainer"/>
         /// with the default services.
         /// </summary>
