@@ -24,16 +24,21 @@ namespace LinFu.IoC.Configuration
         /// <remarks>This implementation selects properties that are marked with the <see cref="InjectAttribute"/>.</remarks>
         /// <param name="targetType">The target type that contains the target properties.</param>
         /// <returns>A set of properties that describe which parameters should be injected.</returns>
-        public IEnumerable<PropertyInfo> GetInjectableProperties(Type targetType)
+        public virtual IEnumerable<PropertyInfo> GetInjectableProperties(Type targetType)
         {
             IEnumerable<PropertyInfo> properties = null;
 
             // Retrieve the property list only once
             if (!_propertyCache.ContainsKey(targetType))
             {
+                // The property must have a getter and the current type
+                // must exist as either a service list or exist as an 
+                // existing service inside the current container
                 properties = from p in targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                              let propertyType = p.PropertyType
-                             where p.CanWrite
+                             let isServiceArray = propertyType.ExistsAsServiceArray()
+                             let isCompatible = isServiceArray(_container) || _container.Contains(propertyType)
+                             where p.CanWrite && isCompatible
                              select p;
 
                 lock (_propertyCache)

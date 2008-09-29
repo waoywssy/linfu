@@ -31,11 +31,10 @@ namespace LinFu.IoC.Configuration
 
             var fuzzyList = constructors.AsFuzzyList();
 
-            // Return the default constructor
+            // Return the first constructor
             // if there are no other alternatives
             if (fuzzyList.Count == 1)
                 return fuzzyList[0].Item;
-
 
             var additionalArgumentTypes = (from argument in additionalArguments
                                           let argumentType = argument == null ? typeof(object) : argument.GetType()
@@ -99,6 +98,17 @@ namespace LinFu.IoC.Configuration
 
                 bestMatch = constructor;
                 bestParameterCount = parameterCount;
+            }
+
+            // If all else fails, find the
+            // default constructor and use it as the
+            // best match by default
+            if (bestMatch == null)
+            {
+                var defaultConstructor = concreteType.GetConstructor(BindingFlags.Public | BindingFlags.Instance, null,
+                                                                     new Type[0], null);
+
+                bestMatch = defaultConstructor;
             }
 
             return bestMatch;
