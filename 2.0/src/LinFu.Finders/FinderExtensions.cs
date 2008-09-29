@@ -114,7 +114,7 @@ namespace LinFu.Finders
         /// Converts a list into a list of <see cref="IFuzzyItem{T}"/> objects.
         /// </summary>
         /// <typeparam name="TItem">The item type will be used in the fuzzy search.</typeparam>
-        /// <param name="list">The target list to be converted.</param>
+        /// <param name="items">The target list to be converted.</param>
         /// <returns>A fuzzy list containing the elements from the given list.</returns>
         public static IList<IFuzzyItem<TItem>> AsFuzzyList<TItem>(this IEnumerable<TItem> items)
         {
