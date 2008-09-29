@@ -33,6 +33,9 @@ namespace LinFu.IoC.Interceptors
             _serviceName = serviceName;
         }
 
+        /// <summary>
+        /// Gets the value indicating the name of the service to intercept.
+        /// </summary>
         public string ServiceName
         {
             get { return _serviceName; }

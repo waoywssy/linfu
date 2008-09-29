@@ -306,6 +306,7 @@ namespace LinFu.IoC
         /// <param name="serviceName">The name of the service being requested. By default, this is usually blank.</param>
         /// <param name="serviceType">The type of service being requested.</param>
         /// <param name="instance">The original instance returned by container's service instantiation attempt.</param>
+        /// <param name="additionalArguments">The list of additional arguments that were used during the service request.</param>
         /// <returns>A <see cref="IServiceRequestResult"/> representing the results returned as a result of the postprocessors.</returns>
         private IServiceRequestResult PostProcess(string serviceName, Type serviceType, object instance, object[] additionalArguments)
         {
