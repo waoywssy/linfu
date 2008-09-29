@@ -52,6 +52,7 @@
     <Compile Include="IOC\SampleClassWithArrayPropertyDependency.cs" />
     <Compile Include="IOC\SampleClassWithInjectionProperties.cs" />
     <Compile Include="IOC\SampleClassWithServiceArrayAsConstructorArgument.cs" />
+    <Compile Include="IOC\SampleClassWithUnmarkedInjectionProperties.cs" />
     <Compile Include="IOC\SampleInterceptorClass.cs" />
     <Compile Include="IOC\SampleRecursiveTestComponent1.cs" />
     <Compile Include="IOC\SampleRecursiveTestComponent2.cs" />
