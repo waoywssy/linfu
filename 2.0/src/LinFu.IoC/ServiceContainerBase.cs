@@ -73,7 +73,7 @@ namespace LinFu.IoC
             // Used the other GetService method if
             // the name is blank
             if (serviceName == string.Empty)
-                return GetService(serviceType);
+                return GetService(serviceType, additionalArguments);
 
             // Determine if the service exists, and
             // suppress the errors if necessary

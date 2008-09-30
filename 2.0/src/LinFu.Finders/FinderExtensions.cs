@@ -111,6 +111,18 @@ namespace LinFu.Finders
         }
         
         /// <summary>
+        /// Resets the scores of all fuzzy items in the current list.
+        /// </summary>
+        /// <typeparam name="TItem">The target item type.</typeparam>
+        /// <param name="list">The fuzzy list itself.</param>
+        public static void Reset<TItem>(this IList<IFuzzyItem<TItem>> list)
+        {
+            foreach(var item in list)
+            {
+                item.Reset();
+            }
+        }
+        /// <summary>
         /// Converts a list into a list of <see cref="IFuzzyItem{T}"/> objects.
         /// </summary>
         /// <typeparam name="TItem">The item type will be used in the fuzzy search.</typeparam>

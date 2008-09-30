@@ -98,7 +98,7 @@ namespace LinFu.IoC
             lock (this)
             {
                 SuppressErrors = true;
-                instance = base.GetService(serviceType);
+                instance = base.GetService(serviceType, additionalArguments);
                 SuppressErrors = suppressErrors;
             }
 
@@ -224,6 +224,9 @@ namespace LinFu.IoC
 
             if (!_namedFactories.ContainsKey(string.Empty))
                 _namedFactories[string.Empty] = new Dictionary<Type, IFactory>();
+
+            //if (!_namedFactories[string.Empty].ContainsKey(serviceType))
+            //    return;
 
             _namedFactories[string.Empty].Add(serviceType, factory);
         }

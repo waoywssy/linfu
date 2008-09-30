@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using LinFu.IoC;
 using LinFu.IoC.Configuration.Interfaces;
@@ -24,12 +25,12 @@ namespace LinFu.UnitTests.IOC
             var container = new ServiceContainer();
             container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
 
-            var filter = container.GetService<IPropertyInjectionFilter>();
+            var filter = container.GetService<IMemberInjectionFilter<PropertyInfo>>();
 
             Assert.IsNotNull(filter);
 
             // The filter should return the targetProperty
-            var properties = filter.GetInjectableProperties(targetType);
+            var properties = filter.GetInjectableMembers(targetType);
             Assert.IsTrue(properties.Count() > 0);
 
             var result = properties.First();
