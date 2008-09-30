@@ -108,8 +108,22 @@ namespace LinFu.IoC.Configuration
             if (bestMatch == null)
             {
                 fuzzyList.Reset();
-                CheckAdditionalArguments(fuzzyList, additionalArgumentTypes);
+                // Match the number of arguments
+                Func<T, bool> matchParameterCount = method =>
+                                                       {
+                                                           var parameters = method.GetParameters();
+                                                           var parameterCount = parameters != null
+                                                                                    ? parameters.Length
+                                                                                    : 0;
 
+                                                           return parameterCount == additionalArgumentCount;
+                                                       };
+
+                // Remove any methods that do not match
+                // the parameter count
+                fuzzyList.AddCriteria(matchParameterCount, CriteriaType.Critical);
+
+                CheckAdditionalArguments(fuzzyList, additionalArgumentTypes);                
                 var nextBestMatch = fuzzyList.BestMatch();
 
                 if (nextBestMatch != null)
