@@ -9,12 +9,12 @@ using LinFu.IoC.Interfaces;
 namespace LinFu.IoC.Configuration
 {
     /// <summary>
-    /// A default implementation of the <see cref="IPropertyInjectionFilter"/>
+    /// A default implementation of the <see cref="IMemberInjectionFilter{PropertyInfo}"/>
     /// class that returns properties which have the <see cref="InjectAttribute"/>
     /// defined.
     /// </summary>
-    [Implements(typeof(IPropertyInjectionFilter), LifecycleType.OncePerRequest)]
-    public class AttributedPropertyInjectionFilter : BasePropertyInjectionFilter
+    [Implements(typeof(IMemberInjectionFilter<PropertyInfo>), LifecycleType.OncePerRequest)]
+    public class AttributedPropertyInjectionFilter : BaseMemberInjectionFilter<PropertyInfo>
     {
         private readonly Type _attributeType;
 
@@ -53,6 +53,25 @@ namespace LinFu.IoC.Configuration
                           let propertyType = p.PropertyType                          
                           let attributes = p.GetCustomAttributes(_attributeType, false)
                           where attributes != null && attributes.Length > 0
+                          select p;
+
+            return results;
+        }
+
+        /// <summary>
+        /// Determines which members should be selected from the <paramref name="targetType"/>
+        /// using the <paramref name="container"/>
+        /// </summary>
+        /// <param name="targetType">The target type that will supply the list of members that will be filtered.</param>
+        /// <param name="container">The target container.</param>
+        /// <returns>A list of <see cref="PropertyInfo"/> objects that pass the filter description.</returns>
+        protected override IEnumerable<PropertyInfo> GetMembers(Type targetType, IServiceContainer container)
+        {
+            var results = from p in targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                          let propertyType = p.PropertyType
+                          let isServiceArray = propertyType.ExistsAsServiceArray()
+                          let isCompatible = isServiceArray(container) || container.Contains(propertyType)
+                          where p.CanWrite && isCompatible
                           select p;
 
             return results;

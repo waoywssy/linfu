@@ -125,8 +125,9 @@ namespace LinFu.UnitTests.IOC
 
             // Add an ISampleService instance
             container.AddService(mockSampleService.Object);
-            container.AddService<IConstructorResolver>(new ConstructorResolver());
-            var resolver = container.GetService<IConstructorResolver>();
+            container.AddService<IMemberResolver<ConstructorInfo>>(new ConstructorResolver());
+            container.AddService<IMethodFinder<ConstructorInfo>>(new MethodFinder<ConstructorInfo>());
+            var resolver = container.GetService<IMemberResolver<ConstructorInfo>>();
             Assert.IsNotNull(resolver);
 
             // The resolver should return the constructor with two ISampleService parameters
@@ -145,9 +146,10 @@ namespace LinFu.UnitTests.IOC
 
             // Add an ISampleService instance
             container.AddService(mockSampleService.Object);
-            container.AddService<IConstructorResolver>(new ConstructorResolver());
+            container.AddService<IMemberResolver<ConstructorInfo>>(new ConstructorResolver());
+            container.AddService<IMethodFinder<ConstructorInfo>>(new MethodFinder<ConstructorInfo>());
 
-            var resolver = container.GetService<IConstructorResolver>();
+            var resolver = container.GetService<IMemberResolver<ConstructorInfo>>();
             Assert.IsNotNull(resolver);
 
             // The resolver should return the constructor
@@ -167,9 +169,9 @@ namespace LinFu.UnitTests.IOC
 
             // Add an ISampleService instance
             container.AddService(mockSampleService.Object);
-            container.AddService<IConstructorResolver>(new ConstructorResolver());
+            container.AddService<IMemberResolver<ConstructorInfo>>(new ConstructorResolver());
 
-            var resolver = container.GetService<IConstructorResolver>();
+            var resolver = container.GetService<IMemberResolver<ConstructorInfo>>();
             Assert.IsNotNull(resolver);
 
             var instance = container.AutoCreate(typeof(SampleClassWithAdditionalArgument), 42) as SampleClassWithAdditionalArgument;
@@ -206,15 +208,30 @@ namespace LinFu.UnitTests.IOC
 
             // Initialize the container
             IServiceContainer container = new ServiceContainer();
-            container.AddService<IConstructorInvoke>(new ConstructorInvoke());
+            container.AddDefaultServices();
 
-            var constructorInvoke = container.GetService<IConstructorInvoke>();
-            object result = constructorInvoke.CreateWith(targetConstructor, arguments);
+            var constructorInvoke = container.GetService<IMethodInvoke<ConstructorInfo>>();
+            object result = constructorInvoke.Invoke(null, targetConstructor, arguments);
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(typeof(SampleClassWithMultipleConstructors), result);
         }
 
+        [Test]
+        public void ShouldInstantiateClassWithNonServiceArguments()
+        {
+            var container = new ServiceContainer();
+            container.AddDefaultServices();
+            
+            container.AddService(typeof (SampleClassWithNonServiceArgument), typeof (SampleClassWithNonServiceArgument));
+
+            var text = "Hello, World!";
+            var serviceName = string.Empty;
+            var result = container.GetService<SampleClassWithNonServiceArgument>(serviceName, text);
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Value == text);
+        }
         private static ServiceContainer GetContainerWithMockSampleServices()
         {
             var mockSampleService = new Mock<ISampleService>();

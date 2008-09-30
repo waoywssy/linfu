@@ -50,18 +50,25 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AutoPropertyInjector.cs" />
-    <Compile Include="BasePropertyInjectionFilter.cs" />
+    <Compile Include="Injectors\AttributedFieldInjectionFilter.cs" />
+    <Compile Include="Injectors\AttributedMethodInjectionFilter.cs" />
+    <Compile Include="Injectors\AutoFieldInjector.cs" />
+    <Compile Include="Injectors\AutoMemberInjector.cs" />
+    <Compile Include="Injectors\AutoMethodInjector.cs" />
+    <Compile Include="Injectors\AutoPropertyInjector.cs" />
+    <Compile Include="Injectors\BaseMemberInjectionFilter.cs" />
+    <Compile Include="ConstructorMethodBuilder.cs" />
     <Compile Include="FluentInterfaces\ActionContext.cs" />
     <Compile Include="ActionDelegates.cs" />
     <Compile Include="FluentInterfaces\ActionPostProcessor.cs" />
-    <Compile Include="ArgumentResolver.cs" />
+    <Compile Include="MethodBuilder.cs" />
+    <Compile Include="Resolvers\ArgumentResolver.cs" />
     <Compile Include="Attributes\InjectAttribute.cs" />
     <Compile Include="InMemoryAssemblyLoader.cs" />
     <Compile Include="Loaders\AssemblyContainerLoader.cs" />
     <Compile Include="FluentInterfaces\BaseContext.cs" />
-    <Compile Include="ConstructorInvoke.cs" />
-    <Compile Include="ConstructorResolver.cs" />
+    <Compile Include="MethodInvoke.cs" />
+    <Compile Include="Resolvers\ConstructorResolver.cs" />
     <Compile Include="Extensions\ContainerExtensions.cs" />
     <Compile Include="Attributes\FactoryAttribute.cs" />
     <Compile Include="Loaders\FactoryAttributeLoader.cs" />
@@ -78,8 +85,11 @@
     <Compile Include="Loaders\PostProcessorLoader.cs" />
     <Compile Include="FluentInterfaces\PropertyInjectionLambda.cs" />
     <Compile Include="Extensions\ResolutionExtensions.cs" />
-    <Compile Include="AttributedPropertyInjectionFilter.cs" />
-    <Compile Include="PropertyInjectionFilter.cs" />
+    <Compile Include="Injectors\AttributedPropertyInjectionFilter.cs" />
+    <Compile Include="Resolvers\MemberResolver.cs" />
+    <Compile Include="BaseMethodBuilder.cs" />
+    <Compile Include="Resolvers\MethodFinder.cs" />
+    <Compile Include="Injectors\PropertyInjectionFilter.cs" />
     <Compile Include="PropertySetter.cs" />
     <Compile Include="RecursiveDependencyException.cs" />
     <Compile Include="ServiceInstance.cs" />

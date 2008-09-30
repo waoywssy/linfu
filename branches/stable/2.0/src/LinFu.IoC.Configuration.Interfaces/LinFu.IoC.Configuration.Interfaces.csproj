@@ -51,13 +51,15 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="IArgumentResolver.cs" />
-    <Compile Include="IConstructorInvoke.cs" />
-    <Compile Include="IConstructorResolver.cs" />
+    <Compile Include="IMethodInvoke.cs" />
     <Compile Include="IContainerLoader.cs" />
     <Compile Include="IContainerPlugin.cs" />
     <Compile Include="IGenerateFactory.cs" />
     <Compile Include="IInitialize.cs" />
-    <Compile Include="IPropertyInjectionFilter.cs" />
+    <Compile Include="IMemberResolver.cs" />
+    <Compile Include="IMethodBuilder.cs" />
+    <Compile Include="IMethodInjectionFilter.cs" />
+    <Compile Include="IMethodFinder.cs" />
     <Compile Include="IPropertyInjectionLambda.cs" />
     <Compile Include="IPropertySetter.cs" />
     <Compile Include="ITypeLoader.cs" />

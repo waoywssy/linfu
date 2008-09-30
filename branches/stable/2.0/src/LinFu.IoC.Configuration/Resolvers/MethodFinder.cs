@@ -1,52 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Reflection;
 using LinFu.Finders;
 using LinFu.Finders.Interfaces;
+using LinFu.IoC.Configuration;
 using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Interfaces;
+
 
 namespace LinFu.IoC.Configuration
 {
     /// <summary>
-    /// Represents the default implementation of the <see cref="IConstructorResolver"/> class.
+    /// Represents a class that determines which method best matches the
+    /// services currently in the target container.
     /// </summary>
-    public class ConstructorResolver : IConstructorResolver
+    /// <typeparam name="T">The method type to search.</typeparam>
+    public class MethodFinder<T> : IMethodFinder<T>
+        where T : MethodBase
     {
         /// <summary>
-        /// Uses the <paramref name="container"/> to determine which constructor can be used to instantiate
-        /// a <paramref name="concreteType">concrete type</paramref>.
+        /// Determines which method best matches the
+        /// services currently in the target container.
         /// </summary>
-        /// <param name="concreteType">The target type.</param>
-        /// <param name="container">The container that contains the constructor parameters that will be used to invoke the constructor.</param>
-        /// <param name="additionalArguments">The additional arguments that will be used to evaluate the best constructor to use to instantiate the target type.</param>
-        /// <returns>A <see cref="ConstructorInfo"/> instance if a match is found; otherwise, it will return <c>null</c>.</returns>
-        public ConstructorInfo ResolveFrom(Type concreteType, IServiceContainer container, 
-            params object[] additionalArguments)
+        /// <param name="items">The list of methods to search.</param>
+        /// <param name="additionalArguments">The additional arguments that will be passed to the method.</param>
+        /// <param name="container">The target <see cref="IServiceContainer"/> that will supply the method arguments.</param>
+        /// <returns>Returns the method with the most resolvable parameters from the target <see cref="IServiceContainer"/> instance.</returns>
+        public T GetBestMatch(IEnumerable<T> items, IEnumerable<object> additionalArguments, 
+            IServiceContainer container)        
         {
-            var constructors = concreteType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
-            if (constructors == null)
-                return null;
-
-            var fuzzyList = constructors.AsFuzzyList();
+            T bestMatch = null;
+            var fuzzyList = items.AsFuzzyList();
 
             // Return the first constructor
-            // if there are no other alternatives
+            // if there is no other alternative
             if (fuzzyList.Count == 1)
                 return fuzzyList[0].Item;
 
             var additionalArgumentTypes = (from argument in additionalArguments
-                                          let argumentType = argument == null ? typeof(object) : argument.GetType()
-                                          select argumentType).ToList();
+                                           let argumentType = argument == null ? typeof(object) : argument.GetType()
+                                           select argumentType).ToList();
 
             int additionalArgumentCount = additionalArgumentTypes.Count;
             if (additionalArgumentCount > 0)
             {
                 // Eliminate constructors with parameterCounts
                 // that are shorter than the additional argument list
-                Func<ConstructorInfo, bool> isSmallerThanArgList =
-                constructor =>
+                Func<T, bool> isSmallerThanArgList =
+                    constructor =>
                     {
                         var parameterCount = constructor.GetParameters().Count();
 
@@ -55,7 +58,8 @@ namespace LinFu.IoC.Configuration
 
                 fuzzyList.AddCriteria(isSmallerThanArgList, CriteriaType.Critical);
 
-
+                // Match the parameter types starting from the
+                // end of the parameter list
                 CheckAdditionalArguments(fuzzyList, additionalArgumentTypes);
             }
 
@@ -86,63 +90,64 @@ namespace LinFu.IoC.Configuration
             // the most parameters
 
             int bestParameterCount = -1;
-            ConstructorInfo bestMatch = null;
             foreach (var candidate in candidates)
             {
-                var constructor = candidate.Item;
-                var parameters = constructor.GetParameters();
+                var currentItem = candidate.Item;
+                var parameters = currentItem.GetParameters();
                 var parameterCount = parameters.Count();
 
                 if (parameterCount <= bestParameterCount)
                     continue;
 
-                bestMatch = constructor;
+                bestMatch = currentItem;
                 bestParameterCount = parameterCount;
             }
-
-            // If all else fails, find the
-            // default constructor and use it as the
-            // best match by default
+            
+            // If all else fails, find the method
+            // that matches only the additional arguments
             if (bestMatch == null)
             {
-                var defaultConstructor = concreteType.GetConstructor(BindingFlags.Public | BindingFlags.Instance, null,
-                                                                     new Type[0], null);
+                fuzzyList.Reset();
+                CheckAdditionalArguments(fuzzyList, additionalArgumentTypes);
 
-                bestMatch = defaultConstructor;
+                var nextBestMatch = fuzzyList.BestMatch();
+
+                if (nextBestMatch != null)
+                    bestMatch = nextBestMatch.Item;
             }
 
             return bestMatch;
         }
-        
+
         /// <summary>
         /// Attempts to match the <paramref name="additionalArgumentTypes"/> against the <paramref name="fuzzyList">list of constructors</paramref>.
         /// </summary>
         /// <param name="fuzzyList">The list of items currently being compared.</param>
         /// <param name="additionalArgumentTypes">The set of <see cref="Type"/> instances that describe each supplied argument type.</param>
-        private static void CheckAdditionalArguments(IList<IFuzzyItem<ConstructorInfo>> fuzzyList, 
+        private static void CheckAdditionalArguments(IList<IFuzzyItem<T>> fuzzyList,
             IEnumerable<Type> additionalArgumentTypes)
         {
             int reverseOffset = 0;
-            foreach(var argumentType in additionalArgumentTypes)
+            foreach (var argumentType in additionalArgumentTypes)
             {
                 int currentOffset = reverseOffset;
                 var currentArgumentType = argumentType;
-                Func<ConstructorInfo, bool> hasCompatibleArgument = constructor=>
-                                                                        {
-                                                                            var parameters = constructor.GetParameters();
-                                                                            var parameterCount = parameters.Length;
-                                                                            var targetPosition = parameterCount - currentOffset;
-                                                                            var targetParameterIndex = targetPosition - 1;
+                Func<T, bool> hasCompatibleArgument = constructor =>
+                {
+                    var parameters = constructor.GetParameters();
+                    var parameterCount = parameters.Length;
+                    var targetPosition = parameterCount - currentOffset;
+                    var targetParameterIndex = targetPosition - 1;
 
-                                                                            // Make sure that the index is valid
-                                                                            if (targetParameterIndex < 0 || targetParameterIndex >= parameterCount)
-                                                                                return false;
+                    // Make sure that the index is valid
+                    if (targetParameterIndex < 0 || targetParameterIndex >= parameterCount)
+                        return false;
 
-                                                                            // The parameter type must be compatible with the
-                                                                            // given argument type
-                                                                            var parameterType = parameters[targetParameterIndex].ParameterType;
-                                                                            return parameterType.IsAssignableFrom(currentArgumentType);
-                                                                        };
+                    // The parameter type must be compatible with the
+                    // given argument type
+                    var parameterType = parameters[targetParameterIndex].ParameterType;
+                    return parameterType.IsAssignableFrom(currentArgumentType);
+                };
 
                 // Match each additional argument type to its
                 // relative position from the end of the parameter
@@ -161,7 +166,7 @@ namespace LinFu.IoC.Configuration
         /// <param name="container">The container that contains the services that will be used to instantiate the target type.</param>
         /// <param name="maxIndex">Indicates the index that 
         /// marks the point where the user-supplied arguments begin.</param>
-        private static void CheckParameters(IFuzzyItem<ConstructorInfo> fuzzyItem,
+        private static void CheckParameters(IFuzzyItem<T> fuzzyItem,
                                             IServiceContainer container, int maxIndex)
         {
             var constructor = fuzzyItem.Item;
@@ -172,7 +177,7 @@ namespace LinFu.IoC.Configuration
                     break;
 
                 var parameterType = param.ParameterType;
-                var criteria = new Criteria<ConstructorInfo> { Type = CriteriaType.Critical, Weight = 1 };
+                var criteria = new Criteria<T> { Type = CriteriaType.Critical, Weight = 1 };
 
                 // The type must either be an existing service
                 // or a list of services that can be created from the container

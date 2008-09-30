@@ -73,13 +73,41 @@ namespace LinFu.IoC
             if (attributeType == null)
             {
                 // Enable automatic injection for all properties
-                container.AddService<IPropertyInjectionFilter>(new PropertyInjectionFilter());
+                container.AddService<IMemberInjectionFilter<PropertyInfo>>(new PropertyInjectionFilter());
                 return;
             }
 
             // Modify the property injection filter to select properties marked
             // with the custom attribute type
-            container.AddService<IPropertyInjectionFilter>(new AttributedPropertyInjectionFilter(attributeType));
+            container.AddService<IMemberInjectionFilter<PropertyInfo>>(new AttributedPropertyInjectionFilter(attributeType));
+        }
+
+        /// <summary>
+        /// Sets the custom attribute type that will be used to mark methods
+        /// for automatic injection.
+        /// </summary>
+        /// <param name="container">The target <see cref="IServiceContainer"/> instance.</param>
+        /// <param name="attributeType">The custom property attribute that will be used to mark method for injection.</param>
+        public static void SetCustomMethodInjectionAttribute(this IServiceContainer container,
+            Type attributeType)
+        {
+            // Modify the method injection filter to select methods marked
+            // with the custom attribute type
+            container.AddService<IMemberInjectionFilter<MethodInfo>>(new AttributedMethodInjectionFilter(attributeType));
+        }
+
+        /// <summary>
+        /// Sets the custom attribute type that will be used to mark fields
+        /// for automatic injection.
+        /// </summary>
+        /// <param name="container">The target <see cref="IServiceContainer"/> instance.</param>
+        /// <param name="attributeType">The custom property attribute that will be used to mark fields for injection.</param>
+        public static void SetCustomFieldInjectionAttribute(this IServiceContainer container,
+            Type attributeType)
+        {
+            // Modify the method injection filter to select fields marked
+            // with the custom attribute type
+            container.AddService<IMemberInjectionFilter<FieldInfo>>(new AttributedFieldInjectionFilter(attributeType));
         }
 
         /// <summary>
@@ -133,18 +161,10 @@ namespace LinFu.IoC
                 throw new RecursiveDependencyException(list);
             }
 
-            #region Add the required services if necessary
-            if (!container.Contains(typeof(IConstructorResolver)))
-                container.AddService<IConstructorResolver>(new ConstructorResolver());
+            // Add the required services if necessary
+            container.AddDefaultServices();
 
-            if (!container.Contains(typeof(IArgumentResolver)))
-                container.AddService<IArgumentResolver>(new ArgumentResolver());
-
-            if (!container.Contains(typeof(IConstructorInvoke)))
-                container.AddService<IConstructorInvoke>(new ConstructorInvoke());
-            #endregion
-
-            var resolver = container.GetService<IConstructorResolver>();
+            var resolver = container.GetService<IMemberResolver<ConstructorInfo>>();
 
             // Determine which constructor
             // contains the most resolvable
@@ -160,9 +180,9 @@ namespace LinFu.IoC
 
             // Instantiate the object
             var constructorInvoke =
-                container.GetService<IConstructorInvoke>();
+                container.GetService<IMethodInvoke<ConstructorInfo>>();
 
-            var result = constructorInvoke.CreateWith(constructor, arguments);
+            var result = constructorInvoke.Invoke(null, constructor, arguments);
 
             lock (_requests)
             {
@@ -172,6 +192,40 @@ namespace LinFu.IoC
             _counter.Decrement(concreteType);
 
             return result;
+        }
+
+        /// <summary>
+        /// Initializes the container with the minimum required services.
+        /// </summary>
+        /// <param name="container">The target service container.</param>
+        public static void AddDefaultServices(this IServiceContainer container)
+        {
+            if (!container.Contains(typeof(IMemberResolver<ConstructorInfo>)))
+                container.AddService<IMemberResolver<ConstructorInfo>>(new ConstructorResolver());
+
+            if (!container.Contains(typeof(IArgumentResolver)))
+                container.AddService<IArgumentResolver>(new ArgumentResolver());
+
+            if (!container.Contains(typeof(IMethodInvoke<ConstructorInfo>)))
+                container.AddService<IMethodInvoke<ConstructorInfo>>(new MethodInvoke<ConstructorInfo>());
+
+            if (!container.Contains(typeof(IMethodFinder<ConstructorInfo>)))
+                container.AddService<IMethodFinder<ConstructorInfo>>(new MethodFinder<ConstructorInfo>());
+
+            if (!container.Contains(typeof(IMethodFinder<MethodInfo>)))
+                container.AddService<IMethodFinder<MethodInfo>>(new MethodFinder<MethodInfo>());
+
+            if (!container.Contains(typeof(IMethodBuilder<ConstructorInfo>)))
+                container.AddService<IMethodBuilder<ConstructorInfo>>(new ConstructorMethodBuilder());
+
+            if (!container.Contains(typeof(IMethodBuilder<MethodInfo>)))
+                container.AddService<IMethodBuilder<MethodInfo>>(new MethodBuilder());
+
+            if (!container.Contains(typeof(IMemberInjectionFilter<MethodInfo>)))
+                container.AddService<IMemberInjectionFilter<MethodInfo>>(new AttributedMethodInjectionFilter());
+
+            if (!container.PostProcessors.HasElementWith(p => p is Initializer))
+                container.PostProcessors.Add(new Initializer());
         }
 
         /// <summary>

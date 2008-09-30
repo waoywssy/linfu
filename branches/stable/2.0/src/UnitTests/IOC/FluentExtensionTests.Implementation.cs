@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
@@ -104,9 +105,7 @@ namespace LinFu.UnitTests.IOC
             var container = new ServiceContainer();
             
             // HACK: Manually inject the required services into the container
-            container.AddService<IConstructorInvoke>(new ConstructorInvoke());
-            container.AddService<IConstructorResolver>(new ConstructorResolver());
-            container.AddService<IArgumentResolver>(new ArgumentResolver());
+            container.AddDefaultServices();
 
             Inject(serviceName, usingFactory, doInject, container);
             verifyResult(serviceName, container);

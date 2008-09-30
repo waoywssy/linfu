@@ -50,7 +50,10 @@
     <Compile Include="IOC\ISampleInterceptedInterface.cs" />
     <Compile Include="IOC\SampleClassWithAdditionalArgument.cs" />
     <Compile Include="IOC\SampleClassWithArrayPropertyDependency.cs" />
+    <Compile Include="IOC\SampleClassWithInjectionField.cs" />
+    <Compile Include="IOC\SampleClassWithInjectionMethod.cs" />
     <Compile Include="IOC\SampleClassWithInjectionProperties.cs" />
+    <Compile Include="IOC\SampleClassWithNonServiceArgument.cs" />
     <Compile Include="IOC\SampleClassWithServiceArrayAsConstructorArgument.cs" />
     <Compile Include="IOC\SampleClassWithUnmarkedInjectionProperties.cs" />
     <Compile Include="IOC\SampleInterceptorClass.cs" />
