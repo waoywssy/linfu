@@ -63,17 +63,9 @@
       <Project>{0F8C48B0-4AE9-4429-AB90-C5141D710C2C}</Project>
       <Name>LinFu.AOP.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LinFu.IoC.Configuration\LinFu.IoC.Configuration.csproj">
-      <Project>{EFBACCF3-C834-4114-9FC1-1F190DD6CE98}</Project>
-      <Name>LinFu.IoC.Configuration</Name>
-    </ProjectReference>
     <ProjectReference Include="..\LinFu.IoC\LinFu.IoC.csproj">
       <Project>{FA3D5517-EFF4-4363-AFF2-EF67B981334E}</Project>
       <Name>LinFu.IoC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LinFu.Reflection.Emit.Interfaces\LinFu.Reflection.Emit.Interfaces.csproj">
-      <Project>{5DDB50DF-F14A-4D05-9A6B-99AC348617F1}</Project>
-      <Name>LinFu.Reflection.Emit.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\LinFu.Reflection.Emit\LinFu.Reflection.Emit.csproj">
       <Project>{22B3D63C-29E9-49D3-86CB-28FF7D2C70E7}</Project>

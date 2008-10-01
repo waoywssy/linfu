@@ -14,25 +14,27 @@
       <property name="Configuration" value="AutomatedDebug" />
     </msbuild>
   </target>
-  <target name="release">
+  
+  <target name="compile-release">
     <msbuild project="src\LinFu.sln">
       <property name="Configuration" value="Release" />
     </msbuild>
-    <msbuild project="src\ILMerge.MSBuild"/>
   </target>
   
   <target name="merge" depends="compile, run-unit-tests">
     <msbuild project="src\ILMerge.MSBuild"/>
   </target>
 
-  <target name="ioc" depends="compile, run-unit-tests">
-    <msbuild project="src\LinFu.IoC.ILMerge.MSBuild"/>
+  <target name="ioc" depends="compile-release, run-unit-tests">
+    <msbuild project="src\LinFu.IoC.ILMerge.MSBuild">
+      <property name="Configuration" value="Release" />
+    </msbuild>
   </target>
 
   <target name="test" depends="compile, run-unit-tests"
 		description="Compile and Run Tests" />
 
-  <target name="full" depends="clean, test, release, dist"	description="Compiles, tests, and produces distributions" />
+  <target name="full" depends="clean, test, compile-release, dist"	description="Compiles, tests, and produces distributions" />
 
   <!-- Internal targets -->
   <target name="run-unit-tests">
