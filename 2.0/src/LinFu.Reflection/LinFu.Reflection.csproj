@@ -56,17 +56,21 @@
     <Compile Include="BasePluginLoader.cs" />
     <Compile Include="CollectionExtensions.cs" />
     <Compile Include="DefaultDirectoryLister.cs" />
+    <Compile Include="Interfaces\IActionLoader.cs" />
+    <Compile Include="Interfaces\IAssemblyLoader.cs" />
+    <Compile Include="Interfaces\IAssemblyTargetLoader.cs" />
+    <Compile Include="Interfaces\IDirectoryListing.cs" />
+    <Compile Include="Interfaces\IInitialize.cs" />
+    <Compile Include="Interfaces\ILoader.cs" />
+    <Compile Include="Interfaces\ILoaderPlugin.cs" />
+    <Compile Include="Interfaces\ITypeExtractor.cs" />
     <Compile Include="Loader.cs" />
     <Compile Include="LoaderPluginAttribute.cs" />
     <Compile Include="PluginLoader.cs" />
+    <Compile Include="Plugins\BaseLoaderPlugin.cs" />
+    <Compile Include="Plugins\BaseTargetLoaderPlugin.cs" />
     <Compile Include="Runtime.cs" />
     <Compile Include="TypeExtractor.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LinFu.Reflection.Interfaces\LinFu.Reflection.Interfaces.csproj">
-      <Project>{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}</Project>
-      <Name>LinFu.Reflection.Interfaces</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

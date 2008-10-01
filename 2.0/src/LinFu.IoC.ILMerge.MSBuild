@@ -6,14 +6,12 @@
     <ItemGroup Condition=" '$(Configuration)' == 'Release' ">
         <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Release\LinFu.IoC*.dll"/>
         <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Release\LinFu.Finders*.dll"/>
-        <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Release\LinFu.Reflection.dll"/>
-        <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Release\LinFu.Reflection.Interfaces.dll"/>
+        <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Release\LinFu.Reflection.dll"/>        
     </ItemGroup>
     <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
         <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Debug\LinFu.IoC*.dll"/>
         <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Debug\LinFu.Finders*.dll"/>
-        <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Debug\LinFu.Reflection.dll"/>
-        <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Debug\LinFu.Reflection.Interfaces.dll"/>
+        <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Debug\LinFu.Reflection.dll"/>        
     </ItemGroup>
 
     <Target Name="iocmerge">

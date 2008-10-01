@@ -5,7 +5,7 @@
     </PropertyGroup>
     <ItemGroup Condition=" '$(Configuration)' == 'Release' ">
         <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Release\LinFu*.dll"/>
-        <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Debug\Mono.Cecil.dll"/>
+        <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Release\Mono.Cecil.dll"/>
     </ItemGroup>
     <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
         <ILMergeAssemblies Include="$(MSBuildProjectDirectory)\..\build\Debug\LinFu*.dll"/>

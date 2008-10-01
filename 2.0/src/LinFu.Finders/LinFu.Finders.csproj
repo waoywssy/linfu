@@ -53,13 +53,10 @@
     <Compile Include="Criteria.cs" />
     <Compile Include="FinderExtensions.cs" />
     <Compile Include="FuzzyItem.cs" />
+    <Compile Include="Interfaces\CriteriaType.cs" />
+    <Compile Include="Interfaces\ICriteria.cs" />
+    <Compile Include="Interfaces\IFuzzyItem.cs" />
     <Compile Include="PredicateExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LinFu.Finders.Interfaces\LinFu.Finders.Interfaces.csproj">
-      <Project>{8960CC95-08E4-4E06-94F8-F24B8FCA7842}</Project>
-      <Name>LinFu.Finders.Interfaces</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

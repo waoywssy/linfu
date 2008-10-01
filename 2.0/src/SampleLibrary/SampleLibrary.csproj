@@ -90,25 +90,13 @@
       <Project>{0F8C48B0-4AE9-4429-AB90-C5141D710C2C}</Project>
       <Name>LinFu.AOP.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LinFu.IoC.Configuration.Interfaces\LinFu.IoC.Configuration.Interfaces.csproj">
-      <Project>{857A7827-0969-4BC7-A941-61A060B9BBA8}</Project>
-      <Name>LinFu.IoC.Configuration.Interfaces</Name>
+    <ProjectReference Include="..\LinFu.IoC\LinFu.IoC.csproj">
+      <Project>{FA3D5517-EFF4-4363-AFF2-EF67B981334E}</Project>
+      <Name>LinFu.IoC</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LinFu.IoC.Configuration\LinFu.IoC.Configuration.csproj">
-      <Project>{EFBACCF3-C834-4114-9FC1-1F190DD6CE98}</Project>
-      <Name>LinFu.IoC.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LinFu.IoC.Interceptors\LinFu.IoC.Interceptors.csproj">
-      <Project>{03DDA918-9AAA-4DFB-BF4F-FDA66F6F894B}</Project>
-      <Name>LinFu.IoC.Interceptors</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LinFu.IoC.Interfaces\LinFu.IoC.Interfaces.csproj">
-      <Project>{C6AC7707-9288-4ADF-9053-34FE71FFE0BE}</Project>
-      <Name>LinFu.IoC.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LinFu.Reflection.Interfaces\LinFu.Reflection.Interfaces.csproj">
-      <Project>{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}</Project>
-      <Name>LinFu.Reflection.Interfaces</Name>
+    <ProjectReference Include="..\LinFu.Reflection\LinFu.Reflection.csproj">
+      <Project>{22EEB00F-F471-486C-A6AD-60F088821C78}</Project>
+      <Name>LinFu.Reflection</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -56,20 +56,11 @@
     </Compile>
     <Compile Include="AssemblyDefinitionExtensions.cs" />
     <Compile Include="CilWorkerExtensions.cs" />
+    <Compile Include="Interfaces\ITypeBuilder.cs" />
     <Compile Include="MethodDefinitionExtensions.cs" />
     <Compile Include="ModuleDefinitionExtensions.cs" />
     <Compile Include="ParameterDefinitionExtensions.cs" />
     <Compile Include="TypeDefinitionExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LinFu.IoC.Configuration\LinFu.IoC.Configuration.csproj">
-      <Project>{EFBACCF3-C834-4114-9FC1-1F190DD6CE98}</Project>
-      <Name>LinFu.IoC.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LinFu.Reflection.Emit.Interfaces\LinFu.Reflection.Emit.Interfaces.csproj">
-      <Project>{5DDB50DF-F14A-4D05-9A6B-99AC348617F1}</Project>
-      <Name>LinFu.Reflection.Emit.Interfaces</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
