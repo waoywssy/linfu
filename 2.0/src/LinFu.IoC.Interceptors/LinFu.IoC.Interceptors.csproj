@@ -93,10 +93,6 @@
       <Project>{6C29A409-6148-49AC-A192-DC6F33F3304C}</Project>
       <Name>LinFu.Proxy.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LinFu.Proxy\LinFu.Proxy.csproj">
-      <Project>{54DA7856-9026-439A-8FFE-88BBF99577B8}</Project>
-      <Name>LinFu.Proxy</Name>
-    </ProjectReference>
     <ProjectReference Include="..\LinFu.Reflection.Interfaces\LinFu.Reflection.Interfaces.csproj">
       <Project>{2470C3FC-4EFD-40DC-9EB7-759325B35E5C}</Project>
       <Name>LinFu.Reflection.Interfaces</Name>
