@@ -9,6 +9,7 @@ using LinFu.Reflection;
 using Moq;
 using NUnit.Framework;
 using SampleLibrary;
+using SampleLibrary.IOC;
 
 namespace LinFu.UnitTests.IOC.Configuration
 {
@@ -43,6 +44,23 @@ namespace LinFu.UnitTests.IOC.Configuration
             Assert.IsTrue(matches.Count() > 0, "The postprocessor failed to load.");
         }
 
+        [Test]
+        public void ClassMarkedWithPreprocessorAttributeMustBeInjectedIntoContainer()
+        {
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            var loader = new Loader();
+            loader.LoadDirectory(baseDirectory, "*.dll");
+            var container = new ServiceContainer();
+
+            loader.LoadInto(container);
+
+            IEnumerable<IPreprocessor> matches = from p in container.Preprocessors
+                                                  where p != null &&
+                                                        p.GetType() == typeof(SamplePreprocessor)
+                                                  select p;
+
+            Assert.IsTrue(matches.Count() > 0, "The preprocessor failed to load.");
+        }
         [Test]
         public void CreatedServicesMustBeAbleToInitializeThemselves()
         {

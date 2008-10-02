@@ -28,7 +28,7 @@ namespace LinFu.IoC.Interfaces
 
 
         /// <summary>
-        /// Gets or sets the value indicating the additional arguments that
+        /// Gets the value indicating the additional arguments that
         /// were used during the service request.
         /// </summary>
         object[] AdditionalArguments { get; }

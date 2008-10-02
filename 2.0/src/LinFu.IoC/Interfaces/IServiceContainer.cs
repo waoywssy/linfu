@@ -12,6 +12,12 @@ namespace LinFu.IoC.Interfaces
     public interface IServiceContainer : IContainer
     {
         /// <summary>
+        /// The list of preprocessors that will handle
+        /// every service request before each actual service is created.
+        /// </summary>
+        IList<IPreprocessor> Preprocessors { get; }
+
+        /// <summary>
         /// The list of postprocessors that will handle every
         /// service request result.
         /// </summary>

@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// Represents a class that can inspect or modify service requests
-    /// from a given container.
+    /// from a given container once a service is created.
     /// </summary>
     public interface IPostProcessor
     {

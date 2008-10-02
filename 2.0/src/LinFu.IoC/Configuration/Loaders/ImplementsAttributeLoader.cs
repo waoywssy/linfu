@@ -5,7 +5,7 @@ using System.Reflection;
 using LinFu.IoC.Factories;
 using LinFu.IoC.Interfaces;
 
-namespace LinFu.IoC.Configuration
+namespace LinFu.IoC.Configuration.Loaders
 {
     /// <summary>
     /// A loader class that scans a type for <see cref="ImplementsAttribute"/>

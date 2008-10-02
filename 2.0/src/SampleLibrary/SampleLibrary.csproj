@@ -57,6 +57,7 @@
     <Compile Include="IOC\SampleClassWithServiceArrayAsConstructorArgument.cs" />
     <Compile Include="IOC\SampleClassWithUnmarkedInjectionProperties.cs" />
     <Compile Include="IOC\SampleInterceptorClass.cs" />
+    <Compile Include="IOC\SamplePreprocessor.cs" />
     <Compile Include="IOC\SampleRecursiveTestComponent1.cs" />
     <Compile Include="IOC\SampleRecursiveTestComponent2.cs" />
     <Compile Include="Proxy\ClassWithGenericMethod.cs" />
