@@ -50,11 +50,11 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Configuration\ActionDelegates.cs" />
     <Compile Include="Configuration\Attributes\FactoryAttribute.cs" />
     <Compile Include="Configuration\Attributes\ImplementsAttribute.cs" />
     <Compile Include="Configuration\Attributes\InjectAttribute.cs" />
     <Compile Include="Configuration\Attributes\PostProcessorAttribute.cs" />
+    <Compile Include="Configuration\Attributes\PreprocessorAttribute.cs" />
     <Compile Include="Configuration\BaseMethodBuilder.cs" />
     <Compile Include="Configuration\ConstructorMethodBuilder.cs" />
     <Compile Include="Configuration\Extensions\ContainerExtensions.cs" />
@@ -85,6 +85,7 @@
     <Compile Include="Configuration\Loaders\ImplementsAttributeLoader.cs" />
     <Compile Include="Configuration\Loaders\Loader.cs" />
     <Compile Include="Configuration\Loaders\PostProcessorLoader.cs" />
+    <Compile Include="Configuration\Loaders\PreprocessorLoader.cs" />
     <Compile Include="Configuration\MethodBuilder.cs" />
     <Compile Include="Configuration\MethodInvoke.cs" />
     <Compile Include="Configuration\PropertySetter.cs" />
@@ -125,9 +126,11 @@
     <Compile Include="Interfaces\IFactory.cs" />
     <Compile Include="Interfaces\IFactoryOfT.cs" />
     <Compile Include="Interfaces\IPostProcessor.cs" />
+    <Compile Include="Interfaces\IPreprocessor.cs" />
     <Compile Include="Interfaces\IServiceContainer.cs" />
     <Compile Include="Interfaces\IServiceInfo.cs" />
     <Compile Include="Interfaces\IServiceInstance.cs" />
+    <Compile Include="Interfaces\IServiceRequest.cs" />
     <Compile Include="Interfaces\IServiceRequestResult.cs" />
     <Compile Include="ServiceContainer.cs" />
     <Compile Include="ServiceContainerBase.cs" />
@@ -135,6 +138,7 @@
     <Compile Include="ServiceInfo.cs" />
     <Compile Include="ServiceNotFoundException.cs" />
     <Compile Include="BaseContainer.cs" />
+    <Compile Include="ServiceRequest.cs" />
     <Compile Include="ServiceRequestResult.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -64,11 +64,26 @@ namespace LinFu.IoC
 
             // Use the corresponding factory 
             // and create the service instance
-            IFactory factory = _factories[serviceType];
+            IFactory factory = GetFactory(serviceType, additionalArguments);
             if (factory != null)
                 result = factory.CreateInstance(serviceType, this, additionalArguments);
 
             return result;
+        }
+
+        /// <summary>
+        /// Allows subclasses to determine which factories should be used
+        /// for a particular service request.
+        /// </summary>
+        /// <param name="serviceType">The type of service being requested.</param>
+        /// <param name="additionalArguments">The additional arguments that will be used to instantiate the service type.</param>
+        /// <returns>A factory instance.</returns>
+        protected virtual IFactory GetFactory(Type serviceType, object[] additionalArguments)
+        {
+            if (_factories.ContainsKey(serviceType))
+                return _factories[serviceType];
+
+            return null;
         }
 
         /// <summary>

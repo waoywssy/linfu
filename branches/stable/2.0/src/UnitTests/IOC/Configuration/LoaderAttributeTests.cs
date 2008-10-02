@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
+using LinFu.IoC.Configuration.Loaders;
 using LinFu.IoC.Factories;
 using LinFu.IoC.Interfaces;
 using Moq;

@@ -15,6 +15,7 @@ namespace LinFu.IoC
             new Dictionary<string, Dictionary<Type, IFactory>>();
 
         private readonly List<IPostProcessor> _postProcessors = new List<IPostProcessor>();
+        private readonly List<IPreprocessor> _preprocessors = new List<IPreprocessor>();
 
         /// <summary>
         /// Adds an <see cref="IFactory"/> instance and associates it
@@ -86,9 +87,9 @@ namespace LinFu.IoC
 
             // Use the named factory if it exists
             IFactory factory = null;
-            if (_namedFactories.ContainsKey(serviceName) && 
+            if (_namedFactories.ContainsKey(serviceName) &&
                 _namedFactories[serviceName].ContainsKey(serviceType))
-                factory = _namedFactories[serviceName][serviceType];
+                factory = GetFactory(serviceName, serviceType, additionalArguments);
 
             object result = null;
 
@@ -100,12 +101,36 @@ namespace LinFu.IoC
         }
 
         /// <summary>
+        /// Allows subclasses to determine which factories should be used
+        /// for a particular service request.
+        /// </summary>
+        /// <param name="serviceName">The name of the service to instantiate.</param>
+        /// <param name="serviceType">The type of service being requested.</param>
+        /// <param name="additionalArguments">The additional arguments that will be used to instantiate the service type.</param>
+        /// <returns>A factory instance.</returns>
+        protected virtual IFactory GetFactory(string serviceName, Type serviceType, object[] additionalArguments)
+        {
+            if (_namedFactories.ContainsKey(serviceName) && _namedFactories[serviceName].ContainsKey(serviceType))
+                return _namedFactories[serviceName][serviceType];
+
+            return null;
+        }
+        /// <summary>
         /// The list of postprocessors that will handle every
         /// service request result.
         /// </summary>
         public IList<IPostProcessor> PostProcessors
         {
             get { return _postProcessors; }
+        }
+
+        /// <summary>
+        /// The list of preprocessors that will handle
+        /// every service request before each actual service is created.
+        /// </summary>
+        public IList<IPreprocessor> Preprocessors
+        {
+            get { return _preprocessors; }
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using LinFu.IoC.Interfaces;
+using LinFu.Proxy.Interfaces;
 
 namespace LinFu.IoC.Interceptors
 {
@@ -31,6 +32,14 @@ namespace LinFu.IoC.Interceptors
         public void PostProcess(IServiceRequestResult result)
         {
             if (!_filterPredicate(result))
+                return;
+
+            var container = result.Container;
+            var hasProxyFactory = container.Contains(typeof (IProxyFactory));
+
+            // Inject proxies only if a
+            // proxy factory instance is available
+            if (!hasProxyFactory)
                 return;
 
             // Replace the actual result with the proxy itself

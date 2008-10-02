@@ -33,31 +33,20 @@ namespace LinFu.IoC
 
             // Save the old state
             bool suppressErrors = SuppressErrors;
-            lock (this)
-            {
-                SuppressErrors = true;
-                instance = base.GetService(serviceName, serviceType, additionalArguments);
-                SuppressErrors = suppressErrors;
-            }
 
             // Attempt to create the service type using
             // the generic factories, if possible
-            if (instance == null && serviceType.IsGenericType &&
-                !serviceType.IsGenericTypeDefinition)
-            {
-                // Check if any factories can create the service
-                // with the given definition type
-                var definitionType = serviceType.GetGenericTypeDefinition();
-                if (_namedFactories.ContainsKey(serviceName) &&
-                    _namedFactories[serviceName].ContainsKey(definitionType))
-                {
-                    var factory = _namedFactories[serviceName][definitionType];
+            IFactory proposedFactory = serviceName == string.Empty ? GetFactory(serviceType, additionalArguments) : 
+                GetFactory(serviceName, serviceType, additionalArguments);
 
-                    // Generate the service instance
-                    if (factory != null)
-                        instance = factory.CreateInstance(serviceType, this, additionalArguments);
-                }
-            }
+            // Allow users to intercept the instantiation process
+            IServiceRequest serviceRequest = Preprocess(serviceName, serviceType, additionalArguments, proposedFactory);
+
+            var actualFactory = serviceRequest.ActualFactory;
+
+            // Generate the service instance
+            if (actualFactory != null)
+                instance = actualFactory.CreateInstance(serviceType, this, additionalArguments);
 
             IServiceRequestResult result = PostProcess(serviceName, serviceType, instance, additionalArguments);
 
@@ -69,6 +58,72 @@ namespace LinFu.IoC
                 throw new NamedServiceNotFoundException(serviceName, serviceType);
 
             return instance;
+        }
+
+        private IServiceRequest Preprocess(string serviceName, Type serviceType, object[] additionalArguments, IFactory proposedFactory)
+        {
+            var serviceRequest = new ServiceRequest(serviceName, serviceType, additionalArguments, proposedFactory, this);
+            foreach(var preprocessor in Preprocessors)
+            {
+                preprocessor.Preprocess(serviceRequest);
+            }
+            return serviceRequest;
+        }
+
+        /// <summary>
+        /// Allows subclasses to determine which factories should be used
+        /// for a particular service request.
+        /// </summary>
+        /// <remarks>This particular override attempts to use a generic factory if the named service type cannot be found.</remarks>
+        /// <param name="serviceName">The name of the service to instantiate.</param>
+        /// <param name="serviceType">The type of service being requested.</param>
+        /// <param name="additionalArguments">The additional arguments that will be used to instantiate the service type.</param>
+        /// <returns>A factory instance.</returns>
+        protected override IFactory GetFactory(string serviceName, Type serviceType, object[] additionalArguments)
+        {
+            if (!serviceType.IsGenericType)
+                return base.GetFactory(serviceName, serviceType, additionalArguments);
+
+            // If possible, return the generic factory
+            var definitionType = serviceType.GetGenericTypeDefinition();
+            var hasServiceName = _namedFactories.ContainsKey(serviceName);
+            var hasDefinition = _namedFactories[serviceName].ContainsKey(definitionType);
+
+            if (hasServiceName && hasDefinition)
+                return _namedFactories[serviceName][definitionType];
+
+            return base.GetFactory(serviceName, serviceType, additionalArguments);
+        }
+
+        /// <summary>
+        /// Allows subclasses to determine which factories should be used
+        /// for a particular service request.
+        /// </summary>
+        /// /// <remarks>This particular override attempts to use a generic factory if the service type cannot be found.</remarks>
+        /// <param name="serviceType">The type of service being requested.</param>
+        /// <param name="additionalArguments">The additional arguments that will be used to instantiate the service type.</param>
+        /// <returns>A factory instance.</returns>
+        protected override IFactory GetFactory(Type serviceType, object[] additionalArguments)
+        {
+            if (!serviceType.IsGenericType)
+                return base.GetFactory(serviceType, additionalArguments);
+
+            var serviceName = string.Empty;
+
+            // If possible, return the unnamed generic factory
+            var definitionType = serviceType.GetGenericTypeDefinition();
+            var hasServiceName = _namedFactories.ContainsKey(serviceName);
+
+            // The service name must exist
+            if (!hasServiceName)
+                return base.GetFactory(serviceType, additionalArguments);
+
+            // The definition type must exist
+            var hasDefinition = _namedFactories[serviceName].ContainsKey(definitionType);
+            if (hasDefinition)
+                return _namedFactories[serviceName][definitionType];            
+
+            return base.GetFactory(serviceType, additionalArguments);
         }
 
         /// <summary>
@@ -89,43 +144,15 @@ namespace LinFu.IoC
         public override object GetService(Type serviceType, params object[] additionalArguments)
         {
             object instance = null;
-
-            // Save the old state
-            bool suppressErrors = SuppressErrors;
-
-            // Attempt to create the service
-            // without throwing an exception
-            lock (this)
-            {
-                SuppressErrors = true;
-                instance = base.GetService(serviceType, additionalArguments);
-                SuppressErrors = suppressErrors;
-            }
-
+            var suppressErrors = SuppressErrors;
 
             // Attempt to create the service type using
             // the generic factories, if possible
-            if (instance == null && serviceType.IsGenericType &&
-                !serviceType.IsGenericTypeDefinition)
-            {
-                Dictionary<Type, IFactory> genericFactories = null;
+            var factory = GetFactory(serviceType, additionalArguments);
 
-
-                // Check if any factories can create the service
-                // with the given definition type
-                var definitionType = serviceType.GetGenericTypeDefinition();
-                if (_namedFactories.ContainsKey(string.Empty))
-                    genericFactories = _namedFactories[string.Empty];
-
-                if (genericFactories != null && genericFactories.ContainsKey(definitionType))
-                {
-                    var factory = genericFactories[definitionType];
-
-                    // Generate the service instance
-                    if (factory != null)
-                        instance = factory.CreateInstance(serviceType, this, additionalArguments);
-                }
-            }
+            // Generate the service instance
+            if (factory != null)
+                instance = factory.CreateInstance(serviceType, this, additionalArguments);
 
             IServiceRequestResult result = PostProcess(string.Empty, serviceType, instance, additionalArguments);
 

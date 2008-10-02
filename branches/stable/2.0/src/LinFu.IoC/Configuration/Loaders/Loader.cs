@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using LinFu.IoC.Configuration.Interfaces;
+using LinFu.IoC.Configuration.Loaders;
 using LinFu.IoC.Interfaces;
 using LinFu.Reflection;
 
@@ -22,8 +23,9 @@ namespace LinFu.IoC.Configuration
             var containerLoader = new AssemblyContainerLoader();
             containerLoader.TypeLoaders.Add(new FactoryAttributeLoader());
             containerLoader.TypeLoaders.Add(new ImplementsAttributeLoader());
+            containerLoader.TypeLoaders.Add(new PreprocessorLoader());
             containerLoader.TypeLoaders.Add(new PostProcessorLoader());
-
+            
             // Add the default services
             AddService<IArgumentResolver, ArgumentResolver>();
 
