@@ -94,7 +94,7 @@ namespace LinFu.IoC
             get
             {
                 var results = (from type in _factories.Keys
-                               let info = new ServiceInfo(string.Empty, type)
+                               let info = new ServiceInfo(null, type)
                                select info as IServiceInfo).AsEnumerable();
 
                 return results;

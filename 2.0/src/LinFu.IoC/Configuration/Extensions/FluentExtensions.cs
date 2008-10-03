@@ -45,7 +45,7 @@ namespace LinFu.IoC
         {
             var context = new InjectionContext<TService>
             {
-                ServiceName = string.Empty,
+                ServiceName = null,
                 Container = container
             };
 
@@ -60,7 +60,7 @@ namespace LinFu.IoC
         /// <returns>A <see cref="IPropertyInjectionLambda{T}"/> instance. This cannot be <c>null</c>.</returns>
         public static IPropertyInjectionLambda<TService> Initialize<TService>(this IServiceContainer container)
         {
-            return container.Initialize<TService>(string.Empty);
+            return container.Initialize<TService>(null);
         }
 
         /// <summary>

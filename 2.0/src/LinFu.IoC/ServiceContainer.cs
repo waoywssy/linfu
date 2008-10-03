@@ -11,9 +11,10 @@ namespace LinFu.IoC
     /// </summary>
     public class ServiceContainer : ServiceContainerBase
     {
-        private readonly Dictionary<string, Dictionary<Type, IFactory>> _namedFactories =
+        private readonly Dictionary<string, Dictionary<Type, IFactory>> _namedGenericFactories =
             new Dictionary<string, Dictionary<Type, IFactory>>();
 
+        private readonly Dictionary<Type, IFactory> _genericFactories = new Dictionary<Type, IFactory>();
         /// <summary>
         /// Overridden. This method modifies the original
         /// <see cref="BaseContainer.GetService"/> method
@@ -27,6 +28,9 @@ namespace LinFu.IoC
         /// otherwise, it will just return a <c>null</c> value.</returns>
         public override object GetService(string serviceName, Type serviceType, params object[] additionalArguments)
         {
+            if (serviceName == null)
+                return GetService(serviceType, additionalArguments);
+
             // Attempt to create the service
             // without throwing an exception
             object instance = null;
@@ -36,7 +40,7 @@ namespace LinFu.IoC
 
             // Attempt to create the service type using
             // the generic factories, if possible
-            IFactory proposedFactory = serviceName == string.Empty ? GetFactory(serviceType, additionalArguments) : 
+            IFactory proposedFactory = serviceName == null ? GetFactory(serviceType, additionalArguments) : 
                 GetFactory(serviceName, serviceType, additionalArguments);
 
             // Allow users to intercept the instantiation process
@@ -81,16 +85,19 @@ namespace LinFu.IoC
         /// <returns>A factory instance.</returns>
         protected override IFactory GetFactory(string serviceName, Type serviceType, object[] additionalArguments)
         {
+            if (serviceName == null)
+                return base.GetFactory(serviceType, additionalArguments);
+
             if (!serviceType.IsGenericType)
                 return base.GetFactory(serviceName, serviceType, additionalArguments);
 
             // If possible, return the generic factory
             var definitionType = serviceType.GetGenericTypeDefinition();
-            var hasServiceName = _namedFactories.ContainsKey(serviceName);
-            var hasDefinition = _namedFactories[serviceName].ContainsKey(definitionType);
+            var hasServiceName = _namedGenericFactories.ContainsKey(serviceName);
+            var hasDefinition = _namedGenericFactories[serviceName].ContainsKey(definitionType);
 
             if (hasServiceName && hasDefinition)
-                return _namedFactories[serviceName][definitionType];
+                return _namedGenericFactories[serviceName][definitionType];
 
             return base.GetFactory(serviceName, serviceType, additionalArguments);
         }
@@ -108,20 +115,13 @@ namespace LinFu.IoC
             if (!serviceType.IsGenericType)
                 return base.GetFactory(serviceType, additionalArguments);
 
-            var serviceName = string.Empty;
-
             // If possible, return the unnamed generic factory
             var definitionType = serviceType.GetGenericTypeDefinition();
-            var hasServiceName = _namedFactories.ContainsKey(serviceName);
-
-            // The service name must exist
-            if (!hasServiceName)
-                return base.GetFactory(serviceType, additionalArguments);
 
             // The definition type must exist
-            var hasDefinition = _namedFactories[serviceName].ContainsKey(definitionType);
+            var hasDefinition = _genericFactories.ContainsKey(definitionType);
             if (hasDefinition)
-                return _namedFactories[serviceName][definitionType];            
+                return _genericFactories[definitionType];            
 
             return base.GetFactory(serviceType, additionalArguments);
         }
@@ -154,7 +154,7 @@ namespace LinFu.IoC
             if (factory != null)
                 instance = factory.CreateInstance(serviceType, this, additionalArguments);
 
-            IServiceRequestResult result = PostProcess(string.Empty, serviceType, instance, additionalArguments);
+            IServiceRequestResult result = PostProcess(null, serviceType, instance, additionalArguments);
 
             // Use the modified result, if possible; otherwise,
             // use the original result.
@@ -185,11 +185,17 @@ namespace LinFu.IoC
                 return;
             }
 
-            // Create a new dictionary entry, if necessary
-            if (!_namedFactories.ContainsKey(serviceName))
-                _namedFactories[serviceName] = new Dictionary<Type, IFactory>();
+            if (serviceName == null)
+            {
+                AddFactory(serviceType, factory);
+                return;
+            }
 
-            _namedFactories[serviceName][serviceType] = factory;
+            // Create a new dictionary entry, if necessary
+            if (!_namedGenericFactories.ContainsKey(serviceName))
+                _namedGenericFactories[serviceName] = new Dictionary<Type, IFactory>();
+
+            _namedGenericFactories[serviceName][serviceType] = factory;
         }
 
         /// <summary>
@@ -225,8 +231,8 @@ namespace LinFu.IoC
                 // Check if there are any generic factories that can create
                 // the entire family of services whose type definitions
                 // match the base type
-                result = _namedFactories.ContainsKey(serviceName) &&
-                         _namedFactories[serviceName].ContainsKey(baseDefinition);
+                result = _namedGenericFactories.ContainsKey(serviceName) &&
+                         _namedGenericFactories[serviceName].ContainsKey(baseDefinition);
             }
 
             return result;
@@ -248,14 +254,7 @@ namespace LinFu.IoC
                 return;
             }
 
-
-            if (!_namedFactories.ContainsKey(string.Empty))
-                _namedFactories[string.Empty] = new Dictionary<Type, IFactory>();
-
-            //if (!_namedFactories[string.Empty].ContainsKey(serviceType))
-            //    return;
-
-            _namedFactories[string.Empty].Add(serviceType, factory);
+            _genericFactories[serviceType] = factory;
         }
 
         /// <summary>
@@ -282,12 +281,6 @@ namespace LinFu.IoC
             if (result)
                 return true;
 
-            Dictionary<Type, IFactory> genericFactories = null;
-
-            if (!_namedFactories.ContainsKey(string.Empty))
-                return false;
-
-            genericFactories = _namedFactories[string.Empty];
             if (serviceType.IsGenericType && !serviceType.IsGenericTypeDefinition)
             {
                 // Determine the base type definition
@@ -296,7 +289,7 @@ namespace LinFu.IoC
                 // Check if there are any generic factories that can create
                 // the entire family of services whose type definitions
                 // match the base type
-                result = genericFactories.ContainsKey(baseDefinition);
+                result = _genericFactories.ContainsKey(baseDefinition);
             }
 
             return result;
@@ -314,12 +307,20 @@ namespace LinFu.IoC
                 var result = new List<IServiceInfo>();
 
                 // Append the named services
-                var namedServices = from name in _namedFactories.Keys
-                                    from type in _namedFactories[name].Keys
+                var namedServices = from name in _namedGenericFactories.Keys
+                                    from type in _namedGenericFactories[name].Keys
                                     let info = new ServiceInfo(name, type) as IServiceInfo
                                     select info;
 
                 result.AddRange(namedServices);
+
+                // Append the unnamed services
+                var unnamedServices = from type in _genericFactories.Keys
+                                      where type != null
+                                      let info = new ServiceInfo(null, type) as IServiceInfo
+                                      select info;
+
+                result.AddRange(unnamedServices);
 
                 // Reuse the results from the base class
                 result.AddRange(base.AvailableServices);
@@ -343,7 +344,7 @@ namespace LinFu.IoC
             // Initialize the results
             var result = new ServiceRequestResult
                              {
-                                 ServiceName = serviceName ?? string.Empty,
+                                 ServiceName = serviceName,
                                  ActualResult = instance,
                                  Container = this,
                                  OriginalResult = instance,

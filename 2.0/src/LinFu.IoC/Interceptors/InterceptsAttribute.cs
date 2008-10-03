@@ -12,7 +12,7 @@ namespace LinFu.IoC.Interceptors
     public class InterceptsAttribute : Attribute
     {
         private readonly Type _targetType;
-        private readonly string _serviceName = string.Empty;
+        private readonly string _serviceName;
 
         /// <summary>
         /// Initializes the class with the given <paramref name="targetType"/>.

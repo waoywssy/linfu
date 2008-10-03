@@ -226,7 +226,7 @@ namespace LinFu.UnitTests.IOC
             container.AddService(typeof (SampleClassWithNonServiceArgument), typeof (SampleClassWithNonServiceArgument));
 
             var text = "Hello, World!";
-            var serviceName = string.Empty;
+            string serviceName = null;
             var result = container.GetService<SampleClassWithNonServiceArgument>(serviceName, text);
 
             Assert.IsNotNull(result);

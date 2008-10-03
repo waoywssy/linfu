@@ -55,7 +55,7 @@ namespace LinFu.UnitTests.IOC.Configuration
             mockContainer.Expect(container => container.PostProcessors)
                 .Returns(mockPostProcessors.Object);
 
-            mockContainer.Expect(container => container.AddFactory(string.Empty,
+            mockContainer.Expect(container => container.AddFactory(null,
                                                                    serviceType, It.IsAny<SampleOpenGenericFactory>()));
 
             // The postprocessor list should have an additional element added
@@ -102,7 +102,7 @@ namespace LinFu.UnitTests.IOC.Configuration
         {
             var mockContainer = new Mock<IServiceContainer>();
             Type serviceType = typeof(ISampleService);
-            string serviceName = string.Empty;
+            string serviceName = null;
 
             // The container should add the expected
             // factory type
@@ -212,21 +212,21 @@ namespace LinFu.UnitTests.IOC.Configuration
             Type serviceType = typeof(ISampleService);
             var converter = new ImplementsAttributeLoader();
 
-            TestFactoryConverterWith<OncePerRequestFactory<ISampleService>>(string.Empty,
+            TestFactoryConverterWith<OncePerRequestFactory<ISampleService>>(null,
                                                                             serviceType, implementingType, converter);
         }
 
         [Test]
         public void OncePerThreadFactoryMustBeCreatedFromTypeWithImplementsAttribute()
         {
-            TestFactoryConverterWith<OncePerThreadFactory<ISampleService>>(string.Empty,
+            TestFactoryConverterWith<OncePerThreadFactory<ISampleService>>(null,
                                                                            typeof(ISampleService), typeof(OncePerThreadSampleService), new ImplementsAttributeLoader());
         }
 
         [Test]
         public void SingletonFactoryMustBeCreatedFromTypeWithImplementsAttribute()
         {
-            TestFactoryConverterWith<SingletonFactory<ISampleService>>(string.Empty,
+            TestFactoryConverterWith<SingletonFactory<ISampleService>>(null,
                                                                        typeof(ISampleService), typeof(SingletonSampleService), new ImplementsAttributeLoader());
         }
 
