@@ -206,6 +206,9 @@ namespace LinFu.IoC
             if (!container.Contains(typeof(IArgumentResolver)))
                 container.AddService<IArgumentResolver>(new ArgumentResolver());
 
+            if (!container.Contains(typeof(IMethodInvoke<MethodInfo>)))
+                container.AddService<IMethodInvoke<MethodInfo>>(new MethodInvoke<MethodInfo>());
+
             if (!container.Contains(typeof(IMethodInvoke<ConstructorInfo>)))
                 container.AddService<IMethodInvoke<ConstructorInfo>>(new MethodInvoke<ConstructorInfo>());
 

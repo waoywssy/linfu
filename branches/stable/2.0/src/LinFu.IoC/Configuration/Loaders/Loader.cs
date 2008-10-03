@@ -31,13 +31,16 @@ namespace LinFu.IoC.Configuration
 
             // Add the constructor related services
             AddService<IMemberResolver<ConstructorInfo>, ConstructorResolver>();
-            AddService<IMethodBuilder<ConstructorInfo>, ConstructorMethodBuilder>();
-            AddService<IMethodInvoke<ConstructorInfo>, MethodInvoke<ConstructorInfo>>();
+            AddService<IMethodBuilder<ConstructorInfo>, ConstructorMethodBuilder>();            
             AddService<IMethodBuilder<MethodInfo>, MethodBuilder>();
 
             // Add the method finders for constructors and methods
             AddService<IMethodFinder<ConstructorInfo>, MethodFinder<ConstructorInfo>>();            
             AddService<IMethodFinder<MethodInfo>, MethodFinder<MethodInfo>>();
+
+            // Add the fast method invokers
+            AddService<IMethodInvoke<ConstructorInfo>, MethodInvoke<ConstructorInfo>>();
+            AddService<IMethodInvoke<MethodInfo>, MethodInvoke<MethodInfo>>();
 
             // Add the injection filters
             AddService<IMemberInjectionFilter<MethodInfo>, AttributedMethodInjectionFilter>();
