@@ -320,7 +320,7 @@ namespace LinFu.IoC
         /// <param name="implementingType">The concrete type that will implement the service type.</param>
         public static void AddService(this IServiceContainer container, Type serviceType, Type implementingType)
         {
-            container.AddService(string.Empty, serviceType, implementingType);
+            container.AddService(null, serviceType, implementingType);
         }
         /// <summary>
         /// Configures the container to instantiate the <paramref name="implementingType"/>

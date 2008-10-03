@@ -25,7 +25,6 @@ namespace LinFu.IoC.Configuration
         public FactoryAttribute(Type serviceType)
         {
             _serviceType = serviceType;
-            ServiceName = string.Empty;
         }
 
         /// <summary>

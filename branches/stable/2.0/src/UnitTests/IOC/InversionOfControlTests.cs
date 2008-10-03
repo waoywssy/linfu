@@ -278,7 +278,7 @@ namespace LinFu.UnitTests.IOC
         }
 
         [Test]
-        public void ContainerMustUseUnnamedAddFactoryMethodIfNameIsEmpty()
+        public void ContainerMustUseUnnamedAddFactoryMethodIfNameIsNull()
         {
             var mockFactory = new Mock<IFactory>();
             var mockService = new Mock<ISerializable>();
@@ -287,10 +287,10 @@ namespace LinFu.UnitTests.IOC
 
             Type serviceType = typeof(ISerializable);
 
-            // Add the service using a blank name;
+            // Add the service using a null name;
             // the container should register this factory
             // as if it had no name
-            container.AddFactory(string.Empty, serviceType, mockFactory.Object);
+            container.AddFactory(null, serviceType, mockFactory.Object);
             mockFactory.Expect(f => f.CreateInstance(serviceType, container, It.IsAny<object[]>())).Returns(mockService.Object);
 
             // Verify the result
@@ -299,7 +299,7 @@ namespace LinFu.UnitTests.IOC
         }
 
         [Test]
-        public void ContainerMustUseUnnamedContainsMethodIfNameIsEmpty()
+        public void ContainerMustUseUnnamedContainsMethodIfNameIsNull()
         {
             var mockFactory = new Mock<IFactory>();
             var mockService = new Mock<ISerializable>();
@@ -314,11 +314,11 @@ namespace LinFu.UnitTests.IOC
             // IContainer.Contains(Type) method instead of the
             // IContainer.Contains(string, Type) method if the
             // service name is blank
-            Assert.IsTrue(container.Contains(string.Empty, typeof(ISerializable)));
+            Assert.IsTrue(container.Contains(null, typeof(ISerializable)));
         }
 
         [Test]
-        public void ContainerMustUseUnnamedGetServiceMethodIfNameIsEmpty()
+        public void ContainerMustUseUnnamedGetServiceMethodIfNameIsNull()
         {
             var mockFactory = new Mock<IFactory>();
             var mockService = new Mock<ISerializable>();
@@ -329,7 +329,7 @@ namespace LinFu.UnitTests.IOC
             mockFactory.Expect(f => f.CreateInstance(It.IsAny<Type>(), container, It.IsAny<object[]>())).Returns(mockService.Object);
             container.AddFactory(serviceType, mockFactory.Object);
 
-            object result = container.GetService(string.Empty, serviceType);
+            object result = container.GetService(null, serviceType);
 
             Assert.AreSame(mockService.Object, result);
         }

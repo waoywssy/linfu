@@ -66,7 +66,7 @@ namespace LinFu.IoC.Configuration
             var container = _context.Container;
             var adapter = _context.FactoryMethod.CreateAdapter();
             var factory = createFactory(adapter);
-            var serviceName = _context.ServiceName ?? string.Empty;
+            var serviceName = _context.ServiceName;
 
             container.AddFactory<TService>(serviceName, factory);
         }

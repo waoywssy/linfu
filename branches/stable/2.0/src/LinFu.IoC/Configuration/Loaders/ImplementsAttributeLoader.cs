@@ -48,7 +48,7 @@ namespace LinFu.IoC.Configuration.Loaders
             IFactory singletonFactory = null;
             foreach (ImplementsAttribute attribute in attributeList)
             {
-                string serviceName = attribute.ServiceName ?? string.Empty;
+                string serviceName = attribute.ServiceName;
                 Type serviceType = attribute.ServiceType;
                 LifecycleType lifeCycle = attribute.LifecycleType;
 

@@ -27,7 +27,7 @@ namespace LinFu.IoC
         /// <param name="factory">The <see cref="IFactory"/> instance that will create the object instance.</param>
         public virtual void AddFactory(string serviceName, Type serviceType, IFactory factory)
         {
-            if (serviceName == string.Empty)
+            if (serviceName == null)
             {
                 AddFactory(serviceType, factory);
                 return;
@@ -51,7 +51,7 @@ namespace LinFu.IoC
         {
             // Use the standard IContainer.Contains(Type)
             // if the service name is blank
-            if (serviceName == string.Empty)
+            if (serviceName == null)
                 return Contains(serviceType);
 
             return _namedFactories.ContainsKey(serviceName) &&
@@ -73,7 +73,7 @@ namespace LinFu.IoC
         {
             // Used the other GetService method if
             // the name is blank
-            if (serviceName == string.Empty)
+            if (serviceName == null)
                 return GetService(serviceType, additionalArguments);
 
             // Determine if the service exists, and
@@ -110,6 +110,9 @@ namespace LinFu.IoC
         /// <returns>A factory instance.</returns>
         protected virtual IFactory GetFactory(string serviceName, Type serviceType, object[] additionalArguments)
         {
+            if (serviceName == null)
+                return GetFactory(serviceType, additionalArguments);
+
             if (_namedFactories.ContainsKey(serviceName) && _namedFactories[serviceName].ContainsKey(serviceType))
                 return _namedFactories[serviceName][serviceType];
 

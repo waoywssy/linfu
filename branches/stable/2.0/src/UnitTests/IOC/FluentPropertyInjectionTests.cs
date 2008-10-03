@@ -24,7 +24,7 @@ namespace LinFu.UnitTests.IOC
         [Test]
         public void UnnamedPropertyMustBeInjectedIntoInjectionTarget()
         {
-            var serviceName = string.Empty;
+            string serviceName = null;
 
             TestPropertyInjection(serviceName);
         }

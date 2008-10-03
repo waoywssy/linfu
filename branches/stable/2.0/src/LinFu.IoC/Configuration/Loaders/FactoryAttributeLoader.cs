@@ -27,7 +27,7 @@ namespace LinFu.IoC.Configuration
                 throw new ArgumentNullException("sourceType");
 
             // Extract the factory attributes from the current type
-            object[] attributes = sourceType.GetCustomAttributes(typeof (FactoryAttribute), false);
+            object[] attributes = sourceType.GetCustomAttributes(typeof(FactoryAttribute), false);
             List<FactoryAttribute> attributeList = attributes.Cast<FactoryAttribute>()
                 .Where(f => f != null).ToList();
 
@@ -72,31 +72,31 @@ namespace LinFu.IoC.Configuration
 
             Func<Type, object, IFactory> createFactory =
                 (currentServiceType, factory) =>
+                {
+                    // Determine if the factory implements
+                    // the generic IFactory<T> instance
+                    // and use that instance if possible
+                    IFactory result = null;
+                    Type genericType = typeof(IFactory<>).MakeGenericType(currentServiceType);
+
+                    if (implementedInterfaces.Contains(genericType))
                     {
-                        // Determine if the factory implements
-                        // the generic IFactory<T> instance
-                        // and use that instance if possible
-                        IFactory result = null;
-                        Type genericType = typeof(IFactory<>).MakeGenericType(currentServiceType);
-
-                        if (implementedInterfaces.Contains(genericType))
-                        {
-                            // Convert the IFactory<T> instance down to an IFactory
-                            // instance so that it can be used by the target container
-                            Type adapterType = typeof(FactoryAdapter<>).MakeGenericType(currentServiceType);
-                            result = (IFactory)Activator.CreateInstance(adapterType, new[] { factory });
-                            return result;
-                        }
-
-                        // Otherwise, use the untyped IFactory instance instead
-                        result = factory as IFactory;
+                        // Convert the IFactory<T> instance down to an IFactory
+                        // instance so that it can be used by the target container
+                        Type adapterType = typeof(FactoryAdapter<>).MakeGenericType(currentServiceType);
+                        result = (IFactory)Activator.CreateInstance(adapterType, new[] { factory });
                         return result;
-                    };
+                    }
+
+                    // Otherwise, use the untyped IFactory instance instead
+                    result = factory as IFactory;
+                    return result;
+                };
 
 
             // Build the list of services that this factory can implement
             var servicesToImplement = from f in attributeList
-                                      let serviceName = f.ServiceName ?? string.Empty
+                                      let serviceName = f.ServiceName
                                       let serviceType = f.ServiceType
                                       let factory = createFactory(serviceType, factoryInstance)
                                       where factory != null
