@@ -434,12 +434,13 @@ namespace LinFu.IoC
         /// <returns>The list of services that implement the given service type.</returns>
         public static IEnumerable<T> GetServices<T>(this IServiceContainer container)
         {
-            foreach (var info in container.AvailableServices)
+            var targetServices = container.AvailableServices.Where(info => info.ServiceType == typeof(T));
+            foreach (var info in targetServices)
             {
                 yield return (T)container.GetService(info.ServiceName, info.ServiceType);
             }
         }
-
+        
         /// <summary>
         /// Returns a list of services that match the given <paramref name="condition"/>.
         /// </summary>
