@@ -54,8 +54,8 @@ namespace LinFu.UnitTests.IOC
             var result = container.GetService<ISampleInterceptedInterface>();
             Assert.AreNotSame(mockInstance, result);
 
-            var proxy = (IProxy) result;
-            Assert.IsInstanceOfType(typeof (SampleInterceptorClass), proxy.Interceptor);
+            var proxy = (IProxy)result;
+            Assert.IsInstanceOfType(typeof(SampleInterceptorClass), proxy.Interceptor);
         }
 
         [Test]
@@ -428,6 +428,27 @@ namespace LinFu.UnitTests.IOC
         }
 
         [Test]
+        public void ContainerMustGetMultipleServicesOfTheSameTypeInOneCall()
+        {
+            var container = new ServiceContainer();
+            var mockServiceCount = 10;
+
+            // Add a set of dummy services
+            for (int i = 0; i < mockServiceCount; i++)
+            {
+                var mockService = new Mock<ISampleService>();
+                container.AddService(string.Format("Service{0}", i + 1), mockService.Object);
+            }
+
+            var instances = container.GetServices<ISampleService>();
+            foreach(var serviceInstance in instances)
+            {
+                Assert.IsInstanceOfType(typeof (ISampleService), serviceInstance);
+                Assert.IsNotNull(serviceInstance);
+            }
+        }
+
+        [Test]
         public void ContainerMustGracefullyHandleRecursiveServiceDependencies()
         {
             var container = new ServiceContainer();
@@ -440,7 +461,7 @@ namespace LinFu.UnitTests.IOC
             {
                 var result = container.GetService<SampleRecursiveTestComponent1>();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Assert.IsNotInstanceOfType(typeof(StackOverflowException), ex);
             }

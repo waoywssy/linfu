@@ -62,7 +62,6 @@ namespace LinFu.UnitTests.Reflection
             var instance = new object();
 
             var hash = instance.GetHashCode();
-            var container = new ServiceContainer();
             container.AddDefaultServices();
 
             var invoker = container.GetService<IMethodInvoke<MethodInfo>>();
