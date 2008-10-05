@@ -21,6 +21,6 @@ namespace LinFu.IoC.Configuration.Interfaces
         /// <param name="targetMethod">The target method to invoke.</param>
         /// <param name="arguments">The arguments to be used with the method.</param>
         /// <returns>The method return value.</returns>
-        object Invoke(object target, TMethod targetMethod, object[] arguments);
+        object Invoke(object target, TMethod targetMethod, params object[] arguments);
     }
 }

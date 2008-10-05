@@ -38,6 +38,20 @@ namespace LinFu.IoC
         }
 
         /// <summary>
+        /// Automatically instantiates a <paramref name="concreteType"/>
+        /// with the constructor with the most resolvable parameters from
+        /// the given <paramref name="container"/> instance.
+        /// </summary>
+        /// <param name="container">The service container that contains the arguments that will automatically be injected into the constructor.</param>
+        /// <param name="concreteType">The type to instantiate.</param>
+        /// <param name="additionalArguments">The list of arguments to pass to the target type.</param>
+        /// <returns>A valid, non-null object reference.</returns>
+        public static object AutoCreateFrom(this Type concreteType, IServiceContainer container, params object[] additionalArguments)
+        {
+            return container.AutoCreate(concreteType, additionalArguments);
+        }
+
+        /// <summary>
         /// Loads an existing <paramref name="assembly"/> into the container.
         /// </summary>
         /// <param name="container">The target container to be configured.</param>
@@ -429,25 +443,27 @@ namespace LinFu.IoC
         /// Returns all the services in the container that match the given
         /// <typeparamref name="T">service type</typeparamref>.
         /// </summary>
-        /// <typeparam name="T">The type of service to return.</typeparam>
+        /// <typeparam name="T">The type of service to return.</typeparam>        
         /// <param name="container">The target container.</param>
+        /// <param name="additionalArguments">The additional arguments that will be used to construct the service type.</param>
         /// <returns>The list of services that implement the given service type.</returns>
-        public static IEnumerable<T> GetServices<T>(this IServiceContainer container)
+        public static IEnumerable<T> GetServices<T>(this IServiceContainer container, params object[] additionalArguments)
         {
             var targetServices = container.AvailableServices.Where(info => info.ServiceType == typeof(T));
             foreach (var info in targetServices)
             {
-                yield return (T)container.GetService(info.ServiceName, info.ServiceType);
+                yield return (T)container.GetService(info, additionalArguments);
             }
         }
-        
+
         /// <summary>
         /// Returns a list of services that match the given <paramref name="condition"/>.
         /// </summary>
         /// <param name="condition">The predicate that determines which services should be returned.</param>
         /// <returns>A list of <see cref="IServiceInstance"/> objects that describe the services returned as well as provide a reference to the resulting services themselves.</returns>
         /// <param name="container">the target <see cref="IServiceContainer"/> instance.</param>
-        public static IEnumerable<IServiceInstance> GetServices(this IServiceContainer container, Func<IServiceInfo, bool> condition)
+        /// <param name="additionalArguments">The additional arguments that will be used to construct the service type.</param>
+        public static IEnumerable<IServiceInstance> GetServices(this IServiceContainer container, Func<IServiceInfo, bool> condition, params object[] additionalArguments)
         {
             // Create the services that match
             // the given description
@@ -457,7 +473,7 @@ namespace LinFu.IoC
                               new ServiceInstance()
                                   {
                                       ServiceInfo = info,
-                                      Object = container.GetService(info.ServiceName, info.ServiceType)
+                                      Object = container.GetService(info, additionalArguments)
                                   } as IServiceInstance;
 
             return results;
