@@ -37,9 +37,19 @@ namespace LinFu.IoC.Configuration
             {
                 GenerateFactoryMethod(targetMethod);
             }
+            
+            // Make sure the first parameter is the taget instance
+            // itself
+            var actualArguments = new List<object>();
+
+            // Only methods need a target
+            if (typeof(TMethod) != typeof(ConstructorInfo) && !targetMethod.IsStatic)
+                actualArguments.Add(target);
+
+            actualArguments.AddRange(arguments);
 
             var factoryMethod = _cache[targetMethod];
-            result = factoryMethod.Invoke(null, arguments);
+            result = factoryMethod.Invoke(null, actualArguments.ToArray());
 
             return result;
         }

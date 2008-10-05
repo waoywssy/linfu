@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
+using LinFu.IoC.Configuration.Interfaces;
 using LinFu.Reflection;
 using LinFu.Reflection.Emit;
 using LinFu.Reflection.Emit.Interfaces;
@@ -52,6 +53,23 @@ namespace LinFu.UnitTests.Reflection
 
             Assembly assembly = definition.ToAssembly();
             Assert.IsTrue(assembly != null);
+        }
+
+        [Test]
+        public void MethodInvokerShouldProperlyHandleReturnValues()
+        {
+            var targetMethod = typeof (object).GetMethod("GetHashCode");
+            var instance = new object();
+
+            var hash = instance.GetHashCode();
+            var container = new ServiceContainer();
+            container.AddDefaultServices();
+
+            var invoker = container.GetService<IMethodInvoke<MethodInfo>>();
+            Assert.IsNotNull(invoker);
+
+            var result = invoker.Invoke(instance, targetMethod, new object[]{});
+            Assert.AreEqual(result, hash);
         }
     }
 }

@@ -36,6 +36,22 @@ namespace LinFu.IoC.Configuration
         }
 
         /// <summary>
+        /// Determines the parameter types of the dynamically generated method.
+        /// </summary>
+        /// <param name="existingMethod">The target method.</param>
+        /// <param name="parameterTypes">The target method argument types.</param>
+        /// <returns>The list of <see cref="System.Type"/> objects that describe the signature of the method to generate.</returns>
+        /// <remarks>This override will add an additional parameter type to accomodate the method target.</remarks>
+        protected override IList<Type> GetParameterList(MethodInfo existingMethod, Type[] parameterTypes)
+        {
+            var parameterList = new List<Type>(parameterTypes);
+
+            if (!existingMethod.IsStatic)
+                parameterList.Add(existingMethod.DeclaringType);
+
+            return parameterList;
+        }
+        /// <summary>
         /// Emits the instruction to call the target <paramref name="method"/>
         /// </summary>
         /// <param name="IL">The <see cref="ILGenerator"/> of the target method body.</param>
