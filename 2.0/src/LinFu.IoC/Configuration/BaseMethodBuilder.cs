@@ -26,7 +26,9 @@ namespace LinFu.IoC.Configuration
             var parameterTypes = (from p in existingMethod.GetParameters()
                                   select p.ParameterType).ToArray();
 
-            var dynamicMethod = new DynamicMethod(string.Empty, returnType, parameterTypes);
+            IList<Type> parameterList = GetParameterList(existingMethod, parameterTypes);
+
+            var dynamicMethod = new DynamicMethod(string.Empty, returnType, parameterList.ToArray());
             var IL = dynamicMethod.GetILGenerator();
 
             PushInstance(IL, existingMethod);
@@ -34,13 +36,33 @@ namespace LinFu.IoC.Configuration
             // Push the method arguments onto the stack
             for (var index = 0; index < parameterTypes.Length; index++)
             {
+                var parameterType = parameterTypes[index];
                 IL.Emit(OpCodes.Ldarg, index);
+
+                //if (parameterType.IsValueType)
+                //    IL.Emit(OpCodes.Box, parameterType);
             }
 
             EmitCall(IL, existingMethod);
+
+            // Unbox the return type
+            //if (returnType.IsValueType)
+            //    IL.Emit(OpCodes.Box, returnType);
+
             IL.Emit(OpCodes.Ret);
 
             return dynamicMethod;
+        }
+
+        /// <summary>
+        /// Determines the parameter types of the dynamically generated method.
+        /// </summary>
+        /// <param name="existingMethod">The target method.</param>
+        /// <param name="parameterTypes">The target method argument types.</param>
+        /// <returns>The list of <see cref="System.Type"/> objects that describe the signature of the method to generate.</returns>
+        protected virtual IList<Type> GetParameterList(TMethod existingMethod, Type[] parameterTypes)
+        {            
+            return new List<Type>(parameterTypes);
         }
 
         /// <summary>
