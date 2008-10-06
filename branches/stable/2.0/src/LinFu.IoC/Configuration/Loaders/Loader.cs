@@ -24,38 +24,14 @@ namespace LinFu.IoC.Configuration
             containerLoader.TypeLoaders.Add(new FactoryAttributeLoader());
             containerLoader.TypeLoaders.Add(new ImplementsAttributeLoader());
             containerLoader.TypeLoaders.Add(new PreprocessorLoader());
-            containerLoader.TypeLoaders.Add(new PostProcessorLoader());
-            
-            // Add the default services
-            AddService<IArgumentResolver, ArgumentResolver>();
-
-            // Add the constructor related services
-            AddService<IMemberResolver<ConstructorInfo>, ConstructorResolver>();
-            AddService<IMethodBuilder<ConstructorInfo>, ConstructorMethodBuilder>();            
-            AddService<IMethodBuilder<MethodInfo>, MethodBuilder>();
-
-            // Add the method finders for constructors and methods
-            AddService<IMethodFinder<ConstructorInfo>, MethodFinder<ConstructorInfo>>();            
-            AddService<IMethodFinder<MethodInfo>, MethodFinder<MethodInfo>>();
-
-            // Add the fast method invokers
-            AddService<IMethodInvoke<ConstructorInfo>, MethodInvoke<ConstructorInfo>>();
-            AddService<IMethodInvoke<MethodInfo>, MethodInvoke<MethodInfo>>();
-
-            // Add the injection filters
-            AddService<IMemberInjectionFilter<MethodInfo>, AttributedMethodInjectionFilter>();
-            AddService<IMemberInjectionFilter<PropertyInfo>, AttributedPropertyInjectionFilter>();
-            AddService<IMemberInjectionFilter<FieldInfo>, AttributedFieldInjectionFilter>();
+            containerLoader.TypeLoaders.Add(new PostProcessorLoader());            
 
             // Load everything else into the container
             var hostAssembly = typeof(Loader).Assembly;
             QueuedActions.Add(container => container.LoadFrom(hostAssembly));
-
+            
 
             // Make sure that the plugins are only added once
-            if (!Plugins.HasElementWith(p => p is InitializerPlugin))
-                Plugins.Add(new InitializerPlugin());
-
             if (!Plugins.HasElementWith(p => p is AutoPropertyInjector))
                 Plugins.Add(new AutoPropertyInjector());
 
@@ -64,6 +40,11 @@ namespace LinFu.IoC.Configuration
 
             if (!Plugins.HasElementWith(p => p is AutoFieldInjector))
                 Plugins.Add(new AutoFieldInjector());
+
+            // Add the initializer to the end of
+            // the instantiation pipeline
+            if (!Plugins.HasElementWith(p => p is InitializerPlugin))
+                Plugins.Add(new InitializerPlugin());
 
             FileLoaders.Add(containerLoader);
         }

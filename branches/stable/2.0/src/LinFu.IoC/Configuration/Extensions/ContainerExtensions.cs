@@ -215,32 +215,26 @@ namespace LinFu.IoC
         /// <param name="container">The target service container.</param>
         public static void AddDefaultServices(this IServiceContainer container)
         {
-            if (!container.Contains(typeof(IMemberResolver<ConstructorInfo>)))
-                container.AddService<IMemberResolver<ConstructorInfo>>(new ConstructorResolver());
+            // Initialize the services only once
+            if (container.Contains(typeof(IFactoryBuilder)))
+                return;
 
-            if (!container.Contains(typeof(IArgumentResolver)))
-                container.AddService<IArgumentResolver>(new ArgumentResolver());
+            container.AddService<IFactoryBuilder>(new FactoryBuilder());
 
-            if (!container.Contains(typeof(IMethodInvoke<MethodInfo>)))
-                container.AddService<IMethodInvoke<MethodInfo>>(new MethodInvoke<MethodInfo>());
+            container.AddService<IMemberResolver<ConstructorInfo>>(new ConstructorResolver());
+            container.AddService<IArgumentResolver>(new ArgumentResolver());
 
-            if (!container.Contains(typeof(IMethodInvoke<ConstructorInfo>)))
-                container.AddService<IMethodInvoke<ConstructorInfo>>(new MethodInvoke<ConstructorInfo>());
+            container.AddService<IMethodInvoke<MethodInfo>>(new MethodInvoke<MethodInfo>());
+            container.AddService<IMethodInvoke<ConstructorInfo>>(new MethodInvoke<ConstructorInfo>());
 
-            if (!container.Contains(typeof(IMethodFinder<ConstructorInfo>)))
-                container.AddService<IMethodFinder<ConstructorInfo>>(new MethodFinderFromContainer<ConstructorInfo>());
+            container.AddService<IMethodFinder<ConstructorInfo>>(new MethodFinderFromContainer<ConstructorInfo>());
+            container.AddService<IMethodFinder<MethodInfo>>(new MethodFinderFromContainer<MethodInfo>());
 
-            if (!container.Contains(typeof(IMethodFinder<MethodInfo>)))
-                container.AddService<IMethodFinder<MethodInfo>>(new MethodFinderFromContainer<MethodInfo>());
+            container.AddService<IMethodBuilder<ConstructorInfo>>(new ConstructorMethodBuilder());
+            container.AddService<IMethodBuilder<MethodInfo>>(new MethodBuilder());
 
-            if (!container.Contains(typeof(IMethodBuilder<ConstructorInfo>)))
-                container.AddService<IMethodBuilder<ConstructorInfo>>(new ConstructorMethodBuilder());
-
-            if (!container.Contains(typeof(IMethodBuilder<MethodInfo>)))
-                container.AddService<IMethodBuilder<MethodInfo>>(new MethodBuilder());
-
-            if (!container.Contains(typeof(IMemberInjectionFilter<MethodInfo>)))
-                container.AddService<IMemberInjectionFilter<MethodInfo>>(new AttributedMethodInjectionFilter());
+            container.AddService<IMemberInjectionFilter<MethodInfo>>(new AttributedMethodInjectionFilter());
+            container.AddService<IMemberInjectionFilter<FieldInfo>>(new AttributedFieldInjectionFilter());
 
             if (!container.PostProcessors.HasElementWith(p => p is Initializer))
                 container.PostProcessors.Add(new Initializer());
@@ -338,8 +332,60 @@ namespace LinFu.IoC
         /// <param name="implementingType">The concrete type that will implement the service type.</param>
         public static void AddService(this IServiceContainer container, Type serviceType, Type implementingType)
         {
-            container.AddService(null, serviceType, implementingType);
+            container.AddService(null, serviceType, implementingType, LifecycleType.OncePerRequest);
         }
+
+        /// <summary>
+        /// Configures the container to instantiate the <paramref name="implementingType"/>
+        /// on every request for the <paramref name="serviceType"/>.
+        /// </summary>
+        /// <param name="container">The container that will hold the service type.</param>
+        /// <param name="serviceType">The type of service being implemented.</param>
+        /// <param name="implementingType">The concrete type that will implement the service type.</param>
+        /// <param name="lifecycle">The service <see cref="LifecycleType"/>.</param>
+        public static void AddService(this IServiceContainer container, Type serviceType,
+            Type implementingType, LifecycleType lifecycle)
+        {
+            container.AddService(null, serviceType, implementingType, lifecycle);
+        }
+
+        /// <summary>
+        /// Registers an existing service instance with the container using the given
+        /// <paramref name="serviceName"/> and <paramref name="serviceType"/>.
+        /// </summary>
+        /// <param name="container">The target container instance.</param>
+        /// <param name="serviceName">The service name that will be associated with the service instance.</param>
+        /// <param name="serviceType">The target service type.</param>
+        /// <param name="serviceInstance">The actual service instance that will represent the service type.</param>
+        public static void AddService(this IServiceContainer container, string serviceName, Type serviceType, object serviceInstance)
+        {
+            #region Validation
+            if (serviceInstance == null)
+                throw new ArgumentNullException("serviceInstance");
+
+            var instanceType = serviceInstance.GetType();
+            if (!serviceType.IsAssignableFrom(instanceType))
+                throw new ArgumentException(
+                    string.Format("The given service instance type '{0}' is not compatible with service type {1}",
+                    instanceType.AssemblyQualifiedName,
+                    serviceType.AssemblyQualifiedName));
+            #endregion
+
+            container.AddFactory(serviceName, serviceType, new InstanceFactory(serviceInstance));
+        }
+
+        /// <summary>
+        /// Registers an existing service instance with the container using the given
+        /// <paramref name="serviceType"/>.
+        /// </summary>
+        /// <param name="container">The target container instance.</param>
+        /// <param name="serviceType">The target service type.</param>
+        /// <param name="serviceInstance">The actual service instance that will represent the service type.</param>
+        public static void AddService(this IServiceContainer container, Type serviceType, object serviceInstance)
+        {
+            container.AddService(null, serviceType, serviceInstance);
+        }
+
         /// <summary>
         /// Configures the container to instantiate the <paramref name="implementingType"/>
         /// on every request for the <paramref name="serviceType"/>.
@@ -348,45 +394,23 @@ namespace LinFu.IoC
         /// <param name="container">The container that will hold the service type.</param>
         /// <param name="serviceType">The type of service being implemented.</param>
         /// <param name="implementingType">The concrete type that will implement the service type.</param>
-        public static void AddService(this IServiceContainer container, string serviceName, Type serviceType, Type implementingType)
+        /// <param name="lifecycle">The service <see cref="LifecycleType"/>.</param>
+        public static void AddService(this IServiceContainer container, string serviceName,
+            Type serviceType, Type implementingType, LifecycleType lifecycle)
         {
-            Func<Type, IContainer, object[], object> factoryMethod = null;
+            var factoryBuilder = container.GetService<IFactoryBuilder>();
+            var factoryInstance = factoryBuilder.CreateFactory(serviceType, implementingType, lifecycle);
 
             // Use the standard factory method for non-generic and closed generic types
-            if (!serviceType.ContainsGenericParameters)
+            if (!serviceType.ContainsGenericParameters && !serviceType.IsAssignableFrom(implementingType))
             {
-                if (!serviceType.IsAssignableFrom(implementingType))
-                {
-                    var message = string.Format("The implementing type '{0}' must be derived from '{1}'",
+                var message = string.Format("The implementing type '{0}' must be derived from '{1}'",
                                                 implementingType.AssemblyQualifiedName, serviceType.AssemblyQualifiedName);
-                    throw new ArgumentException(message);
-                }
 
-                factoryMethod = (type, currentContainer, arguments) =>
-                {
-                    var serviceContainer = (IServiceContainer)currentContainer;
-                    return serviceContainer.AutoCreate(implementingType, arguments);
-                };
-                container.AddFactory(serviceName, serviceType, new OncePerRequestFactory<object>(factoryMethod));
-                return;
+                throw new ArgumentException(message);
             }
 
-            // TODO: Determine if the implementing type's type definition directly derives from
-            // the service type and throw an exception if the open generic implementation type 
-            // does not derive from the service type
-            factoryMethod = (type, currentContainer, arguments) =>
-            {
-                // Extract the generic parameterTypes
-                var typeArguments = type.GetGenericArguments();
 
-                // Determine the concrete type to instantiate
-                var concreteType = implementingType.MakeGenericType(typeArguments);
-
-                var serviceContainer = (IServiceContainer)currentContainer;
-                return serviceContainer.AutoCreate(concreteType, arguments);
-            };
-
-            IFactory factoryInstance = new FunctorFactory(factoryMethod);
             container.AddFactory(serviceName, serviceType, factoryInstance);
         }
 
