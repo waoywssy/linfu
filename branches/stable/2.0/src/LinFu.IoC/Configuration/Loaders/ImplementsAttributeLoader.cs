@@ -107,13 +107,44 @@ namespace LinFu.IoC.Configuration.Loaders
             Type factoryTypeDefinition = _factoryTypes[lifecycle];
             Type factoryType = factoryTypeDefinition.MakeGenericType(serviceType);
 
+            Type actualType = GetActualType(serviceType, implementingType);
+
             // Create the factory itself
-            MulticastDelegate factoryMethod = CreateFactoryMethod(serviceType, implementingType);
+            MulticastDelegate factoryMethod = CreateFactoryMethod(serviceType, actualType);
             object factoryInstance = Activator.CreateInstance(factoryType, new object[] { factoryMethod });
 
             var result = factoryInstance as IFactory;
 
             return result;
+        }
+
+        private Type GetActualType(Type serviceType, Type implementingType)
+        {
+            var actualType = implementingType;
+            if (implementingType.ContainsGenericParameters)
+            {
+                // The service type must be a generic type with
+                // closed generic parameters
+                if (serviceType.IsGenericType && !serviceType.ContainsGenericParameters)
+                {
+                    // Attempt to apply the generic parameters of the service type
+                    // to the implementing type
+                    var typeParameters = serviceType.GetGenericArguments();
+                    try
+                    {
+                        var concreteType = implementingType.MakeGenericType(typeParameters);
+
+                        // The concrete type must derive from the given service type
+                        if (serviceType.IsAssignableFrom(concreteType))
+                            actualType = concreteType;
+                    }
+                    catch (Exception)                    
+                    {
+                        // Ignore the error
+                    }
+                }
+            }
+            return actualType;
         }
 
         /// <summary>
