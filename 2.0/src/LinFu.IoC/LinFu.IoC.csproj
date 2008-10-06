@@ -94,6 +94,7 @@
     <Compile Include="Configuration\Resolvers\ConstructorResolver.cs" />
     <Compile Include="Configuration\Resolvers\MemberResolver.cs" />
     <Compile Include="Configuration\Resolvers\MethodFinder.cs" />
+    <Compile Include="Configuration\Resolvers\MethodFinderFromContainer.cs" />
     <Compile Include="Configuration\ServiceInstance.cs" />
     <Compile Include="Configuration\TypeCounter.cs" />
     <Compile Include="Factories\BaseFactory.cs" />

@@ -32,7 +32,7 @@ namespace LinFu.IoC.Configuration
                 return null;
 
             var resolver = container.GetService<IMethodFinder<TMember>>();
-            TMember bestMatch = resolver.GetBestMatch(constructors, additionalArguments, container);
+            TMember bestMatch = resolver.GetBestMatch(constructors, additionalArguments);
 
             // If all else fails, find the
             // default constructor and use it as the

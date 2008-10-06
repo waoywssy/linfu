@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Configuration.Interfaces;
+using LinFu.IoC.Configuration.Resolvers;
 using LinFu.IoC.Factories;
 using LinFu.IoC.Interfaces;
 using LinFu.Reflection;
@@ -227,10 +228,10 @@ namespace LinFu.IoC
                 container.AddService<IMethodInvoke<ConstructorInfo>>(new MethodInvoke<ConstructorInfo>());
 
             if (!container.Contains(typeof(IMethodFinder<ConstructorInfo>)))
-                container.AddService<IMethodFinder<ConstructorInfo>>(new MethodFinder<ConstructorInfo>());
+                container.AddService<IMethodFinder<ConstructorInfo>>(new MethodFinderFromContainer<ConstructorInfo>());
 
             if (!container.Contains(typeof(IMethodFinder<MethodInfo>)))
-                container.AddService<IMethodFinder<MethodInfo>>(new MethodFinder<MethodInfo>());
+                container.AddService<IMethodFinder<MethodInfo>>(new MethodFinderFromContainer<MethodInfo>());
 
             if (!container.Contains(typeof(IMethodBuilder<ConstructorInfo>)))
                 container.AddService<IMethodBuilder<ConstructorInfo>>(new ConstructorMethodBuilder());

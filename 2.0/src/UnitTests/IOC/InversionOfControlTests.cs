@@ -449,6 +449,23 @@ namespace LinFu.UnitTests.IOC
         }
 
         [Test]
+        public void ContainerMustLoadSpecificGenericServiceTypesFromAGenericConcreteClassMarkedWithTheImplementsAttribute()
+        {
+            var container = new ServiceContainer();
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+
+            var serviceName = "SpecificGenericService";
+
+            // The container must be able to create both registered service types
+            Assert.IsTrue(container.Contains(serviceName, typeof (ISampleGenericService<int>)));
+            Assert.IsTrue(container.Contains(serviceName, typeof(ISampleGenericService<double>)));
+
+            // Both service types must be valid services
+            Assert.IsNotNull(container.GetService<ISampleGenericService<int>>());
+            Assert.IsNotNull(container.GetService<ISampleGenericService<double>>());
+        }
+
+        [Test]
         public void ContainerMustGracefullyHandleRecursiveServiceDependencies()
         {
             var container = new ServiceContainer();
