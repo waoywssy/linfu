@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Factories;
 using LinFu.IoC.Interfaces;
 
@@ -14,20 +15,7 @@ namespace LinFu.IoC.Configuration.Loaders
     /// </summary>
     /// <seealso cref="IFactory"/>
     public class ImplementsAttributeLoader : ITypeLoader
-    {
-        private static readonly Dictionary<LifecycleType, Type> _factoryTypes =
-            new Dictionary<LifecycleType, Type>();
-
-        /// <summary>
-        /// Initializes the list of factory types.
-        /// </summary>
-        static ImplementsAttributeLoader()
-        {
-            _factoryTypes[LifecycleType.OncePerRequest] = typeof(OncePerRequestFactory<>);
-            _factoryTypes[LifecycleType.OncePerThread] = typeof(OncePerThreadFactory<>);
-            _factoryTypes[LifecycleType.Singleton] = typeof(SingletonFactory<>);
-        }
-
+    {       
         /// <summary>
         /// Converts a given <see cref="System.Type"/> into
         /// a set of <see cref="Action{IServiceContainer}"/> instances so that
@@ -82,6 +70,31 @@ namespace LinFu.IoC.Configuration.Loaders
         }
 
         /// <summary>
+        /// Creates a factory instance that can create instaces of the given
+        /// <paramref name="serviceType"/>  using the <paramref name="implementingType"/>
+        /// as the implementation.
+        /// </summary>
+        /// <param name="serviceType">The service being implemented.</param>
+        /// <param name="implementingType">The actual type that will implement the service.</param>
+        /// <param name="lifecycle">The <see cref="LifecycleType"/> that determines the lifetime of each instance being created.</param>
+        /// <returns>A valid <see cref="IFactory"/> instance.</returns>
+        private static IFactory CreateFactory(Type serviceType, Type implementingType, LifecycleType lifecycle)
+        {
+            // HACK: Use a lazy factory since the actualy IFactoryBuilder instance won't
+            // be available until runtime
+            Func<Type, IContainer, object[], object> factoryMethod =
+                (type, currentContainer, arguments) =>
+                    {
+                        var builder = currentContainer.GetService<IFactoryBuilder>();
+                        var actualFactory = builder.CreateFactory(serviceType, implementingType, lifecycle);
+
+                        return actualFactory.CreateInstance(serviceType, currentContainer, arguments);
+                    };
+
+            return new FunctorFactory(factoryMethod);
+        }
+
+        /// <summary>
         /// Determines whether or not the current <paramref name="sourceType"/>
         /// can be loaded.
         /// </summary>
@@ -90,107 +103,6 @@ namespace LinFu.IoC.Configuration.Loaders
         public bool CanLoad(Type sourceType)
         {
             return sourceType.IsClass;
-        }
-
-        /// <summary>
-        /// Creates a factory instance that can create instaces of the given
-        /// <paramref name="serviceType"/>  using the <paramref name="implementingType"/>
-        /// as the implementation.
-        /// </summary>
-        /// <param name="serviceType">The service being implemented.</param>
-        /// <param name="implementingType">The actual type that will implement the service.</param>
-        /// <param name="lifecycle">The <see cref="LifecycleType"/> that determines the lifetime of each instance being created.</param>
-        /// <returns></returns>
-        private IFactory CreateFactory(Type serviceType, Type implementingType, LifecycleType lifecycle)
-        {
-            // Determine the factory type
-            Type factoryTypeDefinition = _factoryTypes[lifecycle];
-            Type factoryType = factoryTypeDefinition.MakeGenericType(serviceType);
-
-            Type actualType = GetActualType(serviceType, implementingType);
-
-            // Create the factory itself
-            MulticastDelegate factoryMethod = CreateFactoryMethod(serviceType, actualType);
-            object factoryInstance = Activator.CreateInstance(factoryType, new object[] { factoryMethod });
-
-            var result = factoryInstance as IFactory;
-
-            return result;
-        }
-
-        private Type GetActualType(Type serviceType, Type implementingType)
-        {
-            var actualType = implementingType;
-            if (implementingType.ContainsGenericParameters)
-            {
-                // The service type must be a generic type with
-                // closed generic parameters
-                if (serviceType.IsGenericType && !serviceType.ContainsGenericParameters)
-                {
-                    // Attempt to apply the generic parameters of the service type
-                    // to the implementing type
-                    var typeParameters = serviceType.GetGenericArguments();
-                    try
-                    {
-                        var concreteType = implementingType.MakeGenericType(typeParameters);
-
-                        // The concrete type must derive from the given service type
-                        if (serviceType.IsAssignableFrom(concreteType))
-                            actualType = concreteType;
-                    }
-                    catch (Exception)                    
-                    {
-                        // Ignore the error
-                    }
-                }
-            }
-            return actualType;
-        }
-
-        /// <summary>
-        /// A <c>private</c> method that creates the factory method delegate
-        /// for use with a particular factory class.
-        /// </summary>
-        /// <seealso cref="SingletonFactory{T}"/>
-        /// <seealso cref="OncePerRequestFactory{T}"/>
-        /// <seealso cref="OncePerThreadFactory{T}"/>
-        /// <param name="serviceType">The service type being instantiated.</param>
-        /// <param name="implementingType">The type that will provide the implementation for the actual service.</param>
-        /// <returns>A factory method delegate that can create the given service.</returns>
-        private MulticastDelegate CreateFactoryMethod(Type serviceType, Type implementingType)
-        {
-            BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Static;
-
-            MethodInfo factoryMethodDefinition = typeof(ImplementsAttributeLoader).GetMethod("CreateFactoryMethodInternal", flags);
-            MethodInfo factoryMethod = factoryMethodDefinition.MakeGenericMethod(serviceType, implementingType);
-
-            // Create the Func<Type, IContainer, object[], TService> factory delegate
-            var result = factoryMethod.Invoke(null, new object[0]) as MulticastDelegate;
-
-            return result;
-        }
-
-        /// <summary>
-        /// A method that generates the actual lambda function that creates
-        /// the new service instance.
-        /// </summary>
-        /// <typeparam name="TService">The service type being instantiated.</typeparam>
-        /// <typeparam name="TImplementation">The type that will provide the implementation for the actual service.</typeparam>
-        /// <returns>A strongly-typed factory method delegate that can create the given service.</returns>
-        internal static Func<Type, IContainer, object[], TService> CreateFactoryMethodInternal<TService, TImplementation>()
-            where TImplementation : TService
-        {
-            return (type, container, arguments) =>
-                       {
-                           var serviceContainer = container as IServiceContainer;
-
-                           // Attempt to autoresolve the constructor
-                           if (serviceContainer != null)
-                               return (TService)serviceContainer.AutoCreate(typeof(TImplementation), arguments);
-
-                           // Otherwise, use the default constructor
-                           return (TService)Activator.CreateInstance(typeof(TImplementation), arguments);
-                       };
-        }
+        }        
     }
 }

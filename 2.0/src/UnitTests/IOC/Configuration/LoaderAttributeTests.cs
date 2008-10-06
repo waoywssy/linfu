@@ -23,7 +23,7 @@ namespace LinFu.UnitTests.IOC.Configuration
             // the particular factory type
             var mockContainer = new Mock<IServiceContainer>();
             mockContainer.Expect(container =>
-                                 container.AddFactory(serviceName, serviceType, It.Is<IFactory>(f => f != null && f is TFactory)));
+                                 container.AddFactory(serviceName, serviceType, It.Is<IFactory>(f => f != null && f is TFactory || f is FunctorFactory)));
 
             IEnumerable<Action<IServiceContainer>> factoryActions = loader.Load(implementingType);
             Assert.IsNotNull(factoryActions, "The result cannot be null");

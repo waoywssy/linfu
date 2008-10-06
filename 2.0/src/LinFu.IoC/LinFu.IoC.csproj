@@ -60,6 +60,7 @@
     <Compile Include="Configuration\Extensions\ContainerExtensions.cs" />
     <Compile Include="Configuration\Extensions\FluentExtensions.cs" />
     <Compile Include="Configuration\Extensions\ResolutionExtensions.cs" />
+    <Compile Include="Configuration\FactoryBuilder.cs" />
     <Compile Include="Configuration\FluentInterfaces\ActionContext.cs" />
     <Compile Include="Configuration\FluentInterfaces\ActionPostProcessor.cs" />
     <Compile Include="Configuration\FluentInterfaces\BaseContext.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Configuration\Injectors\BaseMemberInjectionFilter.cs" />
     <Compile Include="Configuration\Injectors\PropertyInjectionFilter.cs" />
     <Compile Include="Configuration\InMemoryAssemblyLoader.cs" />
+    <Compile Include="Configuration\Interfaces\IFactoryBuilder.cs" />
     <Compile Include="Configuration\LifecycleType.cs" />
     <Compile Include="Configuration\Loaders\AssemblyContainerLoader.cs" />
     <Compile Include="Configuration\Loaders\FactoryAttributeLoader.cs" />

@@ -17,6 +17,10 @@ namespace LinFu.IoC
         private readonly List<IPostProcessor> _postProcessors = new List<IPostProcessor>();
         private readonly List<IPreprocessor> _preprocessors = new List<IPreprocessor>();
 
+        protected ServiceContainerBase()
+        {
+            this.AddDefaultServices();
+        }
         /// <summary>
         /// Adds an <see cref="IFactory"/> instance and associates it
         /// with the given <paramref name="serviceType">service type</paramref> and
