@@ -83,6 +83,10 @@ namespace LinFu.IoC.Configuration.Resolvers
             }
         }
         
+        /// <summary>
+        /// Initializes the target with the host container.
+        /// </summary>
+        /// <param name="container">The host <see cref="IServiceContainer"/> instance.</param>
         public void Initialize(IServiceContainer container)
         {
             _container = container;

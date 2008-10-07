@@ -96,7 +96,7 @@ namespace LinFu.IoC.Configuration
         }
 
         /// <summary>
-        /// Determines the implementing concrete type from the given <see cref="serviceType"/>.
+        /// Determines the implementing concrete type from the given <paramref name="serviceType"/>.
         /// </summary>
         /// <param name="serviceType">The service type.</param>
         /// <param name="implementingType">The concrete class that will implement the service type.</param>

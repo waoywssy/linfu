@@ -32,7 +32,10 @@ namespace LinFu.IoC.Configuration
             // Determine the property value
             var results = resolver.ResolveFrom(new Type[] { property.PropertyType }, container);
             var propertyValue = results.FirstOrDefault();
-
+            
+            if (propertyValue == null)
+                return;
+            
             // Call the setter against the target property
             setter.Set(target, property, propertyValue);
         }

@@ -17,6 +17,9 @@ namespace LinFu.IoC
         private readonly List<IPostProcessor> _postProcessors = new List<IPostProcessor>();
         private readonly List<IPreprocessor> _preprocessors = new List<IPreprocessor>();
 
+        /// <summary>
+        /// Initializes the container with the default services.
+        /// </summary>
         protected ServiceContainerBase()
         {
             this.AddDefaultServices();
