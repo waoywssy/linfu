@@ -9,7 +9,7 @@ using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
 using LinFu.Reflection.Emit;
 using Mono.Cecil;
-using TypeAttributes=Mono.Cecil.TypeAttributes;
+using TypeAttributes = Mono.Cecil.TypeAttributes;
 
 namespace LinFu.Proxy
 {
@@ -25,7 +25,7 @@ namespace LinFu.Proxy
         public ProxyFactory()
         {
             // Use the forwarding proxy type by default
-            ProxyBuilder = new ProxyBuilder();            
+            ProxyBuilder = new ProxyBuilder();
             InterfaceExtractor = new InterfaceExtractor();
             Cache = new ProxyCache();
         }
@@ -53,8 +53,8 @@ namespace LinFu.Proxy
                                             "baseType");
 
             var hasNonPublicInterfaces = (from t in baseInterfaces
-                                      where t.IsNotPublic
-                                      select t).Count() > 0;
+                                          where t.IsNotPublic
+                                          select t).Count() > 0;
 
             if (hasNonPublicInterfaces)
                 throw new ArgumentException("The proxy factory cannot generate proxies from non-public interfaces.",
@@ -78,9 +78,9 @@ namespace LinFu.Proxy
 
                 var targetList = interfaces.ToArray();
                 // Extract the inherited interfaces
-                foreach(var type in targetList)
+                foreach (var type in targetList)
                 {
-                    InterfaceExtractor.GetInterfaces(type, interfaces);    
+                    InterfaceExtractor.GetInterfaces(type, interfaces);
                 }
             }
 
@@ -91,13 +91,13 @@ namespace LinFu.Proxy
 
             var assemblyName = Guid.NewGuid().ToString();
             var assembly = AssemblyFactory.DefineAssembly(assemblyName, AssemblyKind.Dll);
-            var mainModule = assembly.MainModule;            
+            var mainModule = assembly.MainModule;
             var importedBaseType = mainModule.Import(actualBaseType);
             var attributes = TypeAttributes.AutoClass | TypeAttributes.Class |
                                         TypeAttributes.Public | TypeAttributes.BeforeFieldInit;
 
-            #endregion            
-           
+            #endregion
+
             #region Initialize the proxy type
             var guid = Guid.NewGuid().ToString().Replace("-", "");
             var typeName = string.Format("{0}Proxy-{1}", baseType.Name, guid);
@@ -109,7 +109,7 @@ namespace LinFu.Proxy
             #endregion
 
             if (ProxyBuilder == null)
-                throw new NullReferenceException("The 'ProxyBuilder' property cannot be null");                        
+                throw new NullReferenceException("The 'ProxyBuilder' property cannot be null");
 
             // Add the list of interfaces to the target type
             foreach (var interfaceType in interfaces)
@@ -132,8 +132,8 @@ namespace LinFu.Proxy
             var compiledAssembly = assembly.ToAssembly();
 
             var result = (from t in compiledAssembly.GetTypes()
-                           where t != null && t.IsClass
-                           select t).FirstOrDefault();
+                          where t != null && t.IsClass
+                          select t).FirstOrDefault();
             #endregion
 
             // Cache the result

@@ -17,6 +17,50 @@ namespace LinFu.UnitTests.IOC
     public class InversionOfControlTests
     {
         [Test]
+        public void InterceptorClassesMarkedWithInterceptorAttributeMustGetActualTargetInstance()
+        {
+            var container = new ServiceContainer();
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+            var mockService = new Mock<ISampleInterceptedInterface>();
+            mockService.Expect(mock => mock.DoSomething());
+
+            // Add the target instance
+            container.AddService(mockService.Object);
+
+            // The service must return a proxy
+            var service = container.GetService<ISampleInterceptedInterface>();
+            Assert.AreNotSame(service, mockService.Object);
+
+            // Execute the method and 'catch' the target instance once the method call is made
+            service.DoSomething();
+
+            var holder = container.GetService<ITargetHolder>("SampleInterceptorClass");
+            Assert.AreSame(holder.Target, mockService.Object);
+        }
+
+        [Test]
+        public void AroundInvokeClassesMarkedWithInterceptorAttributeMustGetActualTargetInstance()
+        {
+            var container = new ServiceContainer();
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+            var mockService = new Mock<ISampleWrappedInterface>();
+            mockService.Expect(mock => mock.DoSomething());
+
+            // Add the target instance
+            container.AddService(mockService.Object);
+
+            // The service must return a proxy
+            var service = container.GetService<ISampleWrappedInterface>();
+            Assert.AreNotSame(service, mockService.Object);
+
+            // Execute the method and 'catch' the target instance once the method call is made
+            service.DoSomething();
+
+            var holder = container.GetService<ITargetHolder>("SampleAroundInvokeInterceptorClass");
+            Assert.AreSame(holder.Target, mockService.Object);
+        }
+
+        [Test]
         public void ContainerMustAllowUntypedServiceRegistration()
         {
             var container = new ServiceContainer();
@@ -55,9 +99,27 @@ namespace LinFu.UnitTests.IOC
             Assert.AreNotSame(mockInstance, result);
 
             var proxy = (IProxy)result;
-            Assert.IsInstanceOfType(typeof(SampleInterceptorClass), proxy.Interceptor);
+            Assert.IsNotNull(proxy.Interceptor);
         }
 
+        [Test]
+        public void ContainerMustAllowServicesToBeInterceptedWithAnAroundInvokeInterceptor()
+        {
+            var container = new ServiceContainer();
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+
+            var mock = new Mock<ISampleWrappedInterface>();
+            var mockInstance = mock.Object;
+            container.AddService(mockInstance);
+
+            // The container must automatically load the IAroundInvoke
+            // from the sample assembly
+            var result = container.GetService<ISampleWrappedInterface>();
+            Assert.AreNotSame(mockInstance, result);
+
+            var proxy = (IProxy)result;
+            Assert.IsNotNull(proxy.Interceptor);
+        }
         [Test]
         public void ContainerMustAllowSurrogatesForNonExistentServiceInstances()
         {

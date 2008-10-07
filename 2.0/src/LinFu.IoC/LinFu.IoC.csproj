@@ -106,9 +106,12 @@
     <Compile Include="Factories\OncePerRequestFactory.cs" />
     <Compile Include="Factories\OncePerThreadFactory.cs" />
     <Compile Include="Factories\SingletonFactory.cs" />
+    <Compile Include="Interceptors\AroundInvokeAdapter.cs" />
+    <Compile Include="Interceptors\BaseInterceptor.cs" />
     <Compile Include="Interceptors\InterceptorAttributeLoader.cs" />
     <Compile Include="Interceptors\InterceptorLoaderPlugin.cs" />
     <Compile Include="Interceptors\InterceptsAttribute.cs" />
+    <Compile Include="Interceptors\InvocationInfoInterceptor.cs" />
     <Compile Include="Interceptors\ProxyContainerPlugin.cs" />
     <Compile Include="Interceptors\ProxyInjector.cs" />
     <Compile Include="Configuration\Interfaces\IArgumentResolver.cs" />
@@ -125,6 +128,7 @@
     <Compile Include="Configuration\Interfaces\IPropertySetter.cs" />
     <Compile Include="Configuration\Interfaces\ITypeLoader.cs" />
     <Compile Include="Configuration\Interfaces\IUsingLambda.cs" />
+    <Compile Include="Interceptors\Redirector.cs" />
     <Compile Include="Interfaces\IContainer.cs" />
     <Compile Include="Interfaces\IFactory.cs" />
     <Compile Include="Interfaces\IFactoryOfT.cs" />

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using LinFu.AOP.Interfaces;
+using LinFu.AOP;
 using LinFu.IoC.Configuration;
+using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Interfaces;
 using LinFu.Proxy.Interfaces;
 using LinFu.Reflection;
@@ -36,10 +39,61 @@ namespace LinFu.IoC.Interceptors
         /// <returns>By default, this will always return an empty set of container actions. The actual interceptor itself will be injected at the end of the postprocessor chain.</returns>
         public IEnumerable<Action<IServiceContainer>> Load(Type input)
         {
-            var interceptor = Activator.CreateInstance(input) as IInterceptor;
+            object typeInstance = Activator.CreateInstance(input);
+            var interceptor = typeInstance as IInterceptor;
 
-            // The type must implement the IInterceptor interface
-            if (interceptor == null)
+            Func<IServiceRequestResult, IInterceptor> getInterceptor = null;
+
+            // Return the interceptor by default
+            if (interceptor != null)
+            {
+                getInterceptor = result =>
+                                     {
+                                         var target = result.ActualResult;
+                                         var container = result.Container;
+                                         var methodInvoke = container.GetService<IMethodInvoke<MethodInfo>>();
+                                         var factory = container.GetService<IProxyFactory>();
+
+                                         // Manually initialize the interceptor
+                                         var initialize = interceptor as IInitialize;
+                                         if (initialize != null)
+                                             initialize.Initialize(container);
+
+                                         return new Redirector(() => target, interceptor, factory, methodInvoke);
+                                     };
+            }
+
+            if (typeInstance != null && typeInstance is IAroundInvoke)
+            {
+                // Convert the IAroundInvoke instance into 
+                // a running interceptor
+                var aroundInvoke = typeInstance as IAroundInvoke;
+                getInterceptor = result =>
+                                     {
+                                         var container = result.Container;
+                                         var methodInvoke = container.GetService<IMethodInvoke<MethodInfo>>();
+                                         var factory = container.GetService<IProxyFactory>();
+
+                                         // Manually initialize the interceptor
+                                         var initialize = aroundInvoke as IInitialize;
+                                         if (initialize != null)
+                                             initialize.Initialize(container);
+
+                                         // HACK: The adapter can't be created until runtime since
+                                         // the aroundInvoke instance needs an actual target
+                                         var target = result.ActualResult;
+                                         var adapter = new AroundInvokeAdapter(() => target,
+                                             methodInvoke, aroundInvoke);
+
+                                         var redirector = new Redirector(() => target, adapter, factory, methodInvoke);
+
+                                         return redirector;
+                                     };
+            }
+
+            // The type must implement either the IInterceptor interface
+            // or the IAroundInvoke interface
+            if (getInterceptor == null)
                 return new Action<IServiceContainer>[0];
 
             // Determine which service types should be intercepted
@@ -73,7 +127,16 @@ namespace LinFu.IoC.Interceptors
             // Match the service type with the current type
             Func<IServiceRequestResult, bool> filter = request =>
                 {
+                    var container = request.Container;
+
+                    // There must be a valid proxy factory
+                    if (container == null || !container.Contains(typeof(IProxyFactory)))
+                        return false;
+
                     var serviceType = request.ServiceType;
+                    // Ignore requests to intercept IMethodInvoke<MethodInfo>
+                    if (serviceType == typeof(IMethodInvoke<MethodInfo>))
+                        return false;
 
                     // Sealed types cannot be proxied by default
                     if (serviceType.IsSealed)
@@ -100,7 +163,7 @@ namespace LinFu.IoC.Interceptors
                 };
 
             // Create the proxy using the service request
-            Func<IServiceRequestResult, object> createProxy = request => CreateProxyFrom(request, interceptor);
+            Func<IServiceRequestResult, object> createProxy = request => CreateProxyFrom(request, getInterceptor);
 
             // Place the interceptor at the end of the 
             // postprocessor chain
@@ -114,11 +177,13 @@ namespace LinFu.IoC.Interceptors
         /// Generates a proxy instance from an existing <see cref="IServiceRequestResult"/> instance.
         /// </summary>
         /// <param name="request">The <see cref="IServiceRequestResult"/> instance that describes the proxy type that must be generated.</param>
-        /// <param name="interceptor">The <see cref="IInterceptor"/> that will handle all calls made to the proxy instance.</param>
+        /// <param name="getInterceptor">The <see cref="IInterceptor"/> functor that will create the interceptor which will handle all calls made to the proxy instance.</param>
         /// <returns
         /// >A service proxy.</returns>
-        private static object CreateProxyFrom(IServiceRequestResult request, IInterceptor interceptor)
+        private static object CreateProxyFrom(IServiceRequestResult request, Func<IServiceRequestResult, IInterceptor> getInterceptor)
         {
+            var interceptor = getInterceptor(request);
+
             var container = request.Container;
             var proxyFactory =
                 container.GetService<IProxyFactory>();

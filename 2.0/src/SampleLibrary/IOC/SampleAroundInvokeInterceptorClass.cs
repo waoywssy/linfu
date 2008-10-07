@@ -2,22 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using LinFu.AOP.Interfaces;
 using LinFu.IoC;
 using LinFu.IoC.Interceptors;
+using LinFu.AOP.Interfaces;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
 
 namespace SampleLibrary.IOC
 {
-    [Intercepts(typeof(ISampleInterceptedInterface))]
-    public class SampleInterceptorClass : IInterceptor, IInitialize, ITargetHolder
+    [Intercepts(typeof(ISampleWrappedInterface))]
+    public class SampleAroundInvokeInterceptorClass : IAroundInvoke, IInitialize, ITargetHolder
     {
-        public object Intercept(IInvocationInfo info)
+        public void BeforeInvoke(IInvocationInfo info)
         {
-            // Set the target on every method call
             Target = info.Target;
-            return null;
+        }
+
+        public void AfterInvoke(IInvocationInfo info, object returnValue)
+        {
+            
         }
 
         public void Initialize(IServiceContainer source)
@@ -28,7 +31,8 @@ namespace SampleLibrary.IOC
 
         public object Target
         {
-            get; set;
+            get;
+            set;
         }
     }
 }
