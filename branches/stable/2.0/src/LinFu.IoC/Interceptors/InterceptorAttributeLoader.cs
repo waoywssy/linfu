@@ -142,6 +142,10 @@ namespace LinFu.IoC.Interceptors
                     if (serviceType.IsSealed)
                         return false;
 
+                    // Match any service name if the service name is blank
+                    if (request.ServiceName == null && interceptedTypes.ContainsKey(serviceType))
+                        return true;
+
                     // Match the service name and type
                     if (interceptedTypes.ContainsKey(serviceType) &&
                         interceptedTypes[serviceType].Contains(request.ServiceName))

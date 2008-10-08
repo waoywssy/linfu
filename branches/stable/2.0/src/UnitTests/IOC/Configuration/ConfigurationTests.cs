@@ -54,7 +54,7 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             loader.LoadInto(container);
 
-            IEnumerable<IPreprocessor> matches = from p in container.Preprocessors
+            IEnumerable<IPreProcessor> matches = from p in container.Preprocessors
                                                   where p != null &&
                                                         p.GetType() == typeof(SamplePreprocessor)
                                                   select p;

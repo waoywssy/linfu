@@ -8,7 +8,7 @@ using LinFu.Reflection;
 namespace LinFu.IoC.Configuration.Loaders
 {
     /// <summary>
-    /// A class that automatically loads <see cref="IPreprocessor"/>
+    /// A class that automatically loads <see cref="IPreProcessor"/>
     /// instances and configures a loader to inject those postprocessors
     /// into a container upon initialization.
     /// </summary>
@@ -17,7 +17,7 @@ namespace LinFu.IoC.Configuration.Loaders
         /// <summary>
         /// Determines if the plugin loader can load the <paramref name="inputType"/>.
         /// </summary>
-        /// <remarks>The target type must implement the <see cref="IPreprocessor"/> interface before it can be loaded into memory.</remarks>
+        /// <remarks>The target type must implement the <see cref="IPreProcessor"/> interface before it can be loaded into memory.</remarks>
         /// <param name="inputType">The target type that might contain the target instance.</param>
         /// <returns><c>true</c> if the type can be loaded; otherwise, it returns <c>false</c>.</returns>
         public bool CanLoad(Type inputType)
@@ -34,11 +34,11 @@ namespace LinFu.IoC.Configuration.Loaders
             if (attributeList.Count() == 0)
                 return false;
 
-            return typeof(IPreprocessor).IsAssignableFrom(inputType);
+            return typeof(IPreProcessor).IsAssignableFrom(inputType);
         }
 
         /// <summary>
-        /// Loads a set of <see cref="IPreprocessor"/> instances
+        /// Loads a set of <see cref="IPreProcessor"/> instances
         /// so that they can be loaded into a container upon initialization.
         /// </summary>
         /// <param name="inputType">The type that will be used to configure the target loader.</param>
@@ -48,7 +48,7 @@ namespace LinFu.IoC.Configuration.Loaders
             var defaultResult = new Action<IServiceContainer>[0];
 
             // Create the postprocessor instance
-            var instance = Activator.CreateInstance(inputType) as IPreprocessor;
+            var instance = Activator.CreateInstance(inputType) as IPreProcessor;
             if (instance == null)
                 return defaultResult;
 
