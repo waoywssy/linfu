@@ -186,7 +186,7 @@ namespace LinFu.IoC
             // parameters
             var constructor = resolver.ResolveFrom(concreteType, container, additionalArguments);
 
-            List<Type> parameterTypes = GetMissingParameterTypes(constructor, additionalArguments);
+            var parameterTypes = GetMissingParameterTypes(constructor, additionalArguments);
 
             // Generate the arguments for the target constructor
             var argumentResolver = container.GetService<IArgumentResolver>();
@@ -221,14 +221,15 @@ namespace LinFu.IoC
 
             container.AddService<IFactoryBuilder>(new FactoryBuilder());
 
-            container.AddService<IMemberResolver<ConstructorInfo>>(new ConstructorResolver());
+            container.AddService<IMemberResolver<ConstructorInfo>>(new ConstructorResolver(ioc => ioc.GetService<IMethodFinderWithContainer<ConstructorInfo>>()));
             container.AddService<IArgumentResolver>(new ArgumentResolver());
 
             container.AddService<IMethodInvoke<MethodInfo>>(new MethodInvoke<MethodInfo>());
             container.AddService<IMethodInvoke<ConstructorInfo>>(new MethodInvoke<ConstructorInfo>());
 
             container.AddService<IMethodFinder<ConstructorInfo>>(new MethodFinderFromContainer<ConstructorInfo>());
-            container.AddService<IMethodFinder<MethodInfo>>(new MethodFinderFromContainer<MethodInfo>());
+            container.AddService<IMethodFinderWithContainer<ConstructorInfo>>(new MethodFinderFromContainer<ConstructorInfo>());
+            container.AddService<IMethodFinderWithContainer<MethodInfo>>(new MethodFinderFromContainer<MethodInfo>());
 
             container.AddService<IMethodBuilder<ConstructorInfo>>(new ConstructorMethodBuilder());
             container.AddService<IMethodBuilder<MethodInfo>>(new MethodBuilder());

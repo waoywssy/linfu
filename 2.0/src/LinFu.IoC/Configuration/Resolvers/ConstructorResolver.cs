@@ -15,6 +15,22 @@ namespace LinFu.IoC.Configuration
     public class ConstructorResolver : MemberResolver<ConstructorInfo>
     {
         /// <summary>
+        /// Initializes the class with the default values.
+        /// </summary>
+        public ConstructorResolver()
+        {            
+        }
+
+        /// <summary>
+        /// Initializes the class using the custom method finder.
+        /// </summary>
+        /// <param name="getFinder">The functor that will be used to instantiate the method finder.</param>
+        public ConstructorResolver(Func<IServiceContainer, 
+            IMethodFinder<ConstructorInfo>> getFinder) : base(getFinder)
+        {
+        }
+
+        /// <summary>
         /// Returns the constructors that belong to the <paramref name="concreteType"/>.
         /// </summary>
         /// <param name="concreteType">The type that contains the list of constructors.</param>

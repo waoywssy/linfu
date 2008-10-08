@@ -81,6 +81,7 @@
     <Compile Include="Configuration\Injectors\PropertyInjectionFilter.cs" />
     <Compile Include="Configuration\InMemoryAssemblyLoader.cs" />
     <Compile Include="Configuration\Interfaces\IFactoryBuilder.cs" />
+    <Compile Include="Configuration\Interfaces\IMethodFinderWithContainer.cs" />
     <Compile Include="Configuration\LifecycleType.cs" />
     <Compile Include="Configuration\Loaders\AssemblyContainerLoader.cs" />
     <Compile Include="Configuration\Loaders\FactoryAttributeLoader.cs" />
