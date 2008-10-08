@@ -109,7 +109,6 @@
     <Compile Include="Interceptors\AroundInvokeAdapter.cs" />
     <Compile Include="Interceptors\BaseInterceptor.cs" />
     <Compile Include="Interceptors\InterceptorAttributeLoader.cs" />
-    <Compile Include="Interceptors\InterceptorLoaderPlugin.cs" />
     <Compile Include="Interceptors\InterceptsAttribute.cs" />
     <Compile Include="Interceptors\InvocationInfoInterceptor.cs" />
     <Compile Include="Interceptors\ProxyContainerPlugin.cs" />

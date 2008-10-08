@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Configuration.Loaders;
+using LinFu.IoC.Interceptors;
 using LinFu.IoC.Interfaces;
 using LinFu.Reflection;
 
@@ -24,7 +25,8 @@ namespace LinFu.IoC.Configuration
             containerLoader.TypeLoaders.Add(new FactoryAttributeLoader());
             containerLoader.TypeLoaders.Add(new ImplementsAttributeLoader());
             containerLoader.TypeLoaders.Add(new PreprocessorLoader());
-            containerLoader.TypeLoaders.Add(new PostProcessorLoader());            
+            containerLoader.TypeLoaders.Add(new PostProcessorLoader());
+            containerLoader.TypeLoaders.Add(new InterceptorAttributeLoader(this));
 
             // Load everything else into the container
             var hostAssembly = typeof(Loader).Assembly;
@@ -40,6 +42,9 @@ namespace LinFu.IoC.Configuration
 
             if (!Plugins.HasElementWith(p => p is AutoFieldInjector))
                 Plugins.Add(new AutoFieldInjector());
+
+            //if (!Plugins.HasElementWith(p => p is InterceptorLoaderPlugin))
+            //    Plugins.Add(new InterceptorLoaderPlugin());
 
             // Add the initializer to the end of
             // the instantiation pipeline

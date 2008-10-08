@@ -34,7 +34,7 @@
   <target name="test" depends="compile, run-unit-tests"
 		description="Compile and Run Tests" />
 
-  <target name="full" depends="clean, test, compile-release, dist"	description="Compiles, tests, and produces distributions" />
+  <target name="full" depends="clean, test, compile, dist"	description="Compiles, tests, and produces distributions" />
 
   <!-- Internal targets -->
   <target name="run-unit-tests">

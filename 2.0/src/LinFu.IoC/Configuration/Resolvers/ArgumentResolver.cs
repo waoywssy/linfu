@@ -73,19 +73,19 @@ namespace LinFu.IoC.Configuration
                                              ICollection<object> argumentList)
         {
             var isArrayOfServices = parameterType.ExistsAsServiceArray();
-            if (isArrayOfServices(container))
-            {
-                var elementType = parameterType.GetElementType();
+            if (!isArrayOfServices(container)) 
+                return;
+            
+            var elementType = parameterType.GetElementType();
 
-                // Instantiate all services that match
-                // the element type
-                var services = (from info in container.AvailableServices
-                                where info.ServiceType == elementType
-                                select container.GetService(info));
+            // Instantiate all services that match
+            // the element type
+            var services = (from info in container.AvailableServices
+                            where info.ServiceType == elementType
+                            select container.GetService(info));
 
-                var serviceArray = services.Cast(elementType);
-                argumentList.Add(serviceArray);
-            }
+            var serviceArray = services.Cast(elementType);
+            argumentList.Add(serviceArray);
         }
 
         /// <summary>

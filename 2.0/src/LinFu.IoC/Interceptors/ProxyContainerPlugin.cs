@@ -9,7 +9,7 @@ namespace LinFu.IoC.Interceptors
 {
     /// <summary>
     /// A <see cref="IContainerPlugin"/> implementation that inserts
-    /// <see cref="ProxyInjector"/> instances at the end of a <see cref="IServiceContainer"/>
+    /// <see cref="ProxyInjector"/> instances at the beginning of a <see cref="IServiceContainer"/>
     /// loading sequence.
     /// </summary>
     internal class ProxyContainerPlugin : IContainerPlugin
@@ -26,21 +26,21 @@ namespace LinFu.IoC.Interceptors
         }
 
         /// <summary>
-        /// Does absolutely nothing.
+        /// Injects a <see cref="ProxyInjector"/> into the <paramref name="target">target container</paramref>.
         /// </summary>
-        /// <param name="target">The target container.</param>
+        /// <param name="target">The service container that will hold the <see cref="ProxyInjector"/>.</param>        
         public void BeginLoad(IServiceContainer target)
         {
-            // Do nothing
+            target.PostProcessors.Add(_injector);
         }
 
         /// <summary>
-        /// Injects a <see cref="ProxyInjector"/> into the <paramref name="target">target container</paramref>.
+        /// Does absolutely nothing.
         /// </summary>
-        /// <param name="target">The service container that will hold the <see cref="ProxyInjector"/>.</param>
+        /// <param name="target">The target container.</param>
         public void EndLoad(IServiceContainer target)
         {
-            target.PostProcessors.Add(_injector);
+            // Do nothing
         }
     }
 }
