@@ -8,7 +8,7 @@ using LinFu.IoC.Configuration;
 namespace SampleLibrary.IOC
 {
     [Preprocessor]
-    public class SamplePreprocessor : IPreprocessor
+    public class SamplePreprocessor : IPreProcessor
     {
         public void Preprocess(IServiceRequest result)
         {

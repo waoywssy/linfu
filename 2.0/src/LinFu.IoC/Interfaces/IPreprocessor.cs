@@ -9,7 +9,7 @@ namespace LinFu.IoC.Interfaces
     /// Represents a class that can inspect or modify service requests
     /// from a given container before a service is created.
     /// </summary>
-    public interface IPreprocessor
+    public interface IPreProcessor
     {
         /// <summary>
         /// Allows a <see cref="IPostProcessor"/> instance

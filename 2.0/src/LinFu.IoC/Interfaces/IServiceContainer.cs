@@ -15,7 +15,7 @@ namespace LinFu.IoC.Interfaces
         /// The list of preprocessors that will handle
         /// every service request before each actual service is created.
         /// </summary>
-        IList<IPreprocessor> Preprocessors { get; }
+        IList<IPreProcessor> Preprocessors { get; }
 
         /// <summary>
         /// The list of postprocessors that will handle every

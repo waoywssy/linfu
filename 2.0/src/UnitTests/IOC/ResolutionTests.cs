@@ -175,6 +175,7 @@ namespace LinFu.UnitTests.IOC
             Assert.IsNotNull(instance);
             Assert.IsTrue(instance.Argument == 42);
         }
+
         [Test]
         public void ShouldConstructParametersFromContainer()
         {

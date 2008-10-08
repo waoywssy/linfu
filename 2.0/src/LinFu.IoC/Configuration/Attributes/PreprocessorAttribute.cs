@@ -7,7 +7,7 @@ using LinFu.IoC.Interfaces;
 namespace LinFu.IoC.Configuration
 {
     /// <summary>
-    /// Marks a target type as an <see cref="IPreprocessor"/>
+    /// Marks a target type as an <see cref="IPreProcessor"/>
     /// instance that can be injected into a
     /// <see cref="IServiceContainer"/> instance.
     /// </summary>

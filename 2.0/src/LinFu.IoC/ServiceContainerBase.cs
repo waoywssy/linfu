@@ -15,7 +15,7 @@ namespace LinFu.IoC
             new Dictionary<string, Dictionary<Type, IFactory>>();
 
         private readonly List<IPostProcessor> _postProcessors = new List<IPostProcessor>();
-        private readonly List<IPreprocessor> _preprocessors = new List<IPreprocessor>();
+        private readonly List<IPreProcessor> _preprocessors = new List<IPreProcessor>();
 
         /// <summary>
         /// Initializes the container with the default services.
@@ -138,7 +138,7 @@ namespace LinFu.IoC
         /// The list of preprocessors that will handle
         /// every service request before each actual service is created.
         /// </summary>
-        public IList<IPreprocessor> Preprocessors
+        public IList<IPreProcessor> Preprocessors
         {
             get { return _preprocessors; }
         }
