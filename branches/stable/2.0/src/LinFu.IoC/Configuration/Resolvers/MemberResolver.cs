@@ -16,6 +16,26 @@ namespace LinFu.IoC.Configuration
     public abstract class MemberResolver<TMember> : IMemberResolver<TMember>
         where TMember : MethodBase
     {
+        private readonly Func<IServiceContainer, IMethodFinder<TMember>> _getFinder;
+
+        /// <summary>
+        /// The default constructor for the <see cref="MemberResolver{TMember}"/> class.
+        /// </summary>
+        protected MemberResolver()
+        {
+            _getFinder = container=>container.GetService<IMethodFinder<TMember>>();
+        }
+
+        /// <summary>
+        /// Initializes the class with a <paramref name="getFinder">functor</paramref>
+        /// that will be used to instantiate the method finder that will be used in the search.
+        /// </summary>
+        /// <param name="getFinder">The functor that will be used to instantiate the method finder.</param>
+        protected MemberResolver(Func<IServiceContainer, IMethodFinder<TMember>> getFinder)
+        {
+            _getFinder = getFinder;
+        }
+
         /// <summary>
         /// Uses the <paramref name="container"/> to determine which member to use from
         /// the <paramref name="concreteType">concrete type</paramref>.
@@ -31,7 +51,7 @@ namespace LinFu.IoC.Configuration
             if (constructors == null)
                 return null;
 
-            var resolver = container.GetService<IMethodFinder<TMember>>();
+            var resolver = GetMethodFinder(container);
             TMember bestMatch = resolver.GetBestMatch(constructors, additionalArguments);
 
             // If all else fails, find the
@@ -45,6 +65,17 @@ namespace LinFu.IoC.Configuration
             }
 
             return bestMatch;
+        }
+
+        /// <summary>
+        /// Determines the <see cref="IMethodFinder{T}"/> that will be used
+        /// in the method search.
+        /// </summary>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        protected virtual IMethodFinder<TMember> GetMethodFinder(IServiceContainer container)
+        {
+            return _getFinder(container);
         }
 
         /// <summary>

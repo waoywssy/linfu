@@ -167,7 +167,6 @@ namespace LinFu.UnitTests.IOC
 
             // Add an ISampleService instance
             container.AddService(mockSampleService.Object);
-            container.AddService<IMemberResolver<ConstructorInfo>>(new ConstructorResolver());
 
             var resolver = container.GetService<IMemberResolver<ConstructorInfo>>();
             Assert.IsNotNull(resolver);

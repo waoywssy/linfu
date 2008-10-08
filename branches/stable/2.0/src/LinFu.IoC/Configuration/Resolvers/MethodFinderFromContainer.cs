@@ -16,10 +16,14 @@ namespace LinFu.IoC.Configuration.Resolvers
     /// instance to find a method with the most resolvable parameters.
     /// </summary>
     /// <typeparam name="TMethod">The method type that will be searched.</typeparam>
-    public class MethodFinderFromContainer<TMethod> : MethodFinder<TMethod>, IInitialize
+    public class MethodFinderFromContainer<TMethod> : MethodFinder<TMethod>, IMethodFinderWithContainer<TMethod>, IInitialize
         where TMethod : MethodBase
     {
-        private IServiceContainer _container;
+        /// <summary>
+        /// Gets the value indicating the service container that will be used in the
+        /// method search.
+        /// </summary>
+        public IServiceContainer Container { get; private set; }
 
         /// <summary>
         /// Examines a <see cref="ConstructorInfo"/> instance
@@ -79,7 +83,7 @@ namespace LinFu.IoC.Configuration.Resolvers
                 var parameterCount = parameters.Length;
                 var maxRelativeIndex = parameterCount - argumentCount;
 
-                CheckParameters(fuzzyItem, _container, maxRelativeIndex);
+                CheckParameters(fuzzyItem, Container, maxRelativeIndex);
             }
         }
         
@@ -89,7 +93,7 @@ namespace LinFu.IoC.Configuration.Resolvers
         /// <param name="container">The host <see cref="IServiceContainer"/> instance.</param>
         public void Initialize(IServiceContainer container)
         {
-            _container = container;
+            Container = container;
         }
     }
 }
