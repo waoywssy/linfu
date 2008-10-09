@@ -11,7 +11,7 @@ namespace LinFu.IoC
     /// </summary>
     public abstract class BaseContainer : IContainer
     {
-        private readonly Dictionary<Type, IFactory> _factories = new Dictionary<Type, IFactory>();
+        private readonly IFactoryStorage _factoryStorage = new FactoryStorage();
 
         /// <summary>
         /// Gets or sets a <see cref="bool">System.Boolean</see> value
@@ -29,7 +29,8 @@ namespace LinFu.IoC
         /// <param name="factory">The <see cref="IFactory"/> instance that will be responsible for creating the service instance</param>
         public virtual void AddFactory(Type serviceType, IFactory factory)
         {
-            _factories[serviceType] = factory;
+            //_factories[serviceType] = factory;
+            FactoryStorage.AddFactory(null, serviceType, factory);
         }
 
         /// <summary>
@@ -40,7 +41,9 @@ namespace LinFu.IoC
         /// <returns>A <see cref="bool">boolean</see> value that indicates whether or not the service exists.</returns>
         public virtual bool Contains(Type serviceType)
         {
-            return _factories.ContainsKey(serviceType);
+            //return _factories.ContainsKey(serviceType);
+
+            return FactoryStorage.ContainsFactory(null, serviceType);
         }
 
         /// <summary>
@@ -56,10 +59,11 @@ namespace LinFu.IoC
         public virtual object GetService(Type serviceType, params object[] additionalArguments)
         {
             object result = null;
-            if (!_factories.ContainsKey(serviceType) && !SuppressErrors)
+            var hasFactory = FactoryStorage.ContainsFactory(null, serviceType);
+            if (!hasFactory && !SuppressErrors)
                 throw new ServiceNotFoundException(serviceType);
 
-            if (!_factories.ContainsKey(serviceType) && SuppressErrors)
+            if (!hasFactory && SuppressErrors)
                 return null;
 
             var factoryRequest = new FactoryRequest()
@@ -72,7 +76,7 @@ namespace LinFu.IoC
 
             // Use the corresponding factory 
             // and create the service instance
-            IFactory factory = GetFactory(serviceType, additionalArguments);
+            IFactory factory = FactoryStorage.GetFactory(null, serviceType);
             if (factory != null)
                 result = factory.CreateInstance(factoryRequest);
 
@@ -80,20 +84,17 @@ namespace LinFu.IoC
         }
 
         /// <summary>
-        /// Allows subclasses to determine which factories should be used
-        /// for a particular service request.
+        /// Gets the value indicating the <see cref="IFactoryStorage"/> instance
+        /// that will be used to store each <see cref="IFactory"/> instance.
         /// </summary>
-        /// <param name="serviceType">The type of service being requested.</param>
-        /// <param name="additionalArguments">The additional arguments that will be used to instantiate the service type.</param>
-        /// <returns>A factory instance.</returns>
-        protected virtual IFactory GetFactory(Type serviceType, object[] additionalArguments)
+        protected IFactoryStorage FactoryStorage
         {
-            if (_factories.ContainsKey(serviceType))
-                return _factories[serviceType];
-
-            return null;
+            get
+            {
+                return _factoryStorage;
+            }
         }
-
+       
         /// <summary>
         /// The list of services currently available inside the container.
         /// </summary>
@@ -101,11 +102,7 @@ namespace LinFu.IoC
         {
             get
             {
-                var results = (from type in _factories.Keys
-                               let info = new ServiceInfo(null, type)
-                               select info as IServiceInfo).AsEnumerable();
-
-                return results;
+                return FactoryStorage.AvailableFactories;
             }
         }
     }

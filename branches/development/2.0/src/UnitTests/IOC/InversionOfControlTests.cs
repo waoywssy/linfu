@@ -17,6 +17,25 @@ namespace LinFu.UnitTests.IOC
     public class InversionOfControlTests
     {
         [Test]
+        public void ContainerShouldCallPreProcessor()
+        {
+            var mockPreprocessor = new Mock<IPreProcessor>();
+            var mockService = new Mock<ISampleService>();
+
+            mockPreprocessor.Expect(p => p.Preprocess(It.IsAny<IServiceRequest>()));
+
+            var container = new ServiceContainer();
+            container.AddService("SomeService", mockService.Object);
+            container.Preprocessors.Add(mockPreprocessor.Object);
+
+            // The preprocessors should be called
+            var result = container.GetService<ISampleService>("SomeService");
+            Assert.IsNotNull(result);
+
+            mockPreprocessor.VerifyAll();
+        }
+
+        [Test]
         public void InterceptorClassesMarkedWithInterceptorAttributeMustGetActualTargetInstance()
         {
             var container = new ServiceContainer();

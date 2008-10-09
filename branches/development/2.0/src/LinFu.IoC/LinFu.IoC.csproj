@@ -109,6 +109,9 @@
     <Compile Include="Factories\SingletonFactory.cs" />
     <Compile Include="FactoryExtensions.cs" />
     <Compile Include="FactoryRequest.cs" />
+    <Compile Include="FactoryStorage.cs" />
+    <Compile Include="FactoryStorageExtensions.cs" />
+    <Compile Include="Interfaces\IFactoryStorage.cs" />
     <Compile Include="Interceptors\AroundInvokeAdapter.cs" />
     <Compile Include="Interceptors\BaseInterceptor.cs" />
     <Compile Include="Interceptors\InterceptorAttributeLoader.cs" />
