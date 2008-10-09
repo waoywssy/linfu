@@ -11,9 +11,6 @@ namespace LinFu.IoC
     /// </summary>
     public abstract class ServiceContainerBase : BaseContainer, IServiceContainer
     {
-        private readonly Dictionary<string, Dictionary<Type, IFactory>> _namedFactories =
-            new Dictionary<string, Dictionary<Type, IFactory>>();
-
         private readonly List<IPostProcessor> _postProcessors = new List<IPostProcessor>();
         private readonly List<IPreProcessor> _preprocessors = new List<IPreProcessor>();
 
@@ -33,17 +30,8 @@ namespace LinFu.IoC
         /// <param name="serviceType">The type of service that the factory will be able to create.</param>
         /// <param name="factory">The <see cref="IFactory"/> instance that will create the object instance.</param>
         public virtual void AddFactory(string serviceName, Type serviceType, IFactory factory)
-        {
-            if (serviceName == null)
-            {
-                AddFactory(serviceType, factory);
-                return;
-            }
-            // Create the entry, if necessary
-            if (!_namedFactories.ContainsKey(serviceName))
-                _namedFactories[serviceName] = new Dictionary<Type, IFactory>();
-
-            _namedFactories[serviceName][serviceType] = factory;
+        {            
+            FactoryStorage.AddFactory(serviceName, serviceType, factory);
         }
 
         /// <summary>
@@ -56,13 +44,7 @@ namespace LinFu.IoC
         /// <returns>Returns <c>true</c> if the service exists; otherwise, it will return <c>false</c>.</returns>
         public virtual bool Contains(string serviceName, Type serviceType)
         {
-            // Use the standard IContainer.Contains(Type)
-            // if the service name is blank
-            if (serviceName == null)
-                return Contains(serviceType);
-
-            return _namedFactories.ContainsKey(serviceName) &&
-                   _namedFactories[serviceName].ContainsKey(serviceType);
+            return FactoryStorage.ContainsFactory(serviceName, serviceType);
         }
 
         /// <summary>
@@ -94,9 +76,8 @@ namespace LinFu.IoC
 
             // Use the named factory if it exists
             IFactory factory = null;
-            if (_namedFactories.ContainsKey(serviceName) &&
-                _namedFactories[serviceName].ContainsKey(serviceType))
-                factory = GetFactory(serviceName, serviceType, additionalArguments);
+            if (FactoryStorage.ContainsFactory(serviceName, serviceType))
+                factory = FactoryStorage.GetFactory(serviceName, serviceType);
 
             object result = null;
 
@@ -114,25 +95,7 @@ namespace LinFu.IoC
 
             return result;
         }
-
-        /// <summary>
-        /// Allows subclasses to determine which factories should be used
-        /// for a particular service request.
-        /// </summary>
-        /// <param name="serviceName">The name of the service to instantiate.</param>
-        /// <param name="serviceType">The type of service being requested.</param>
-        /// <param name="additionalArguments">The additional arguments that will be used to instantiate the service type.</param>
-        /// <returns>A factory instance.</returns>
-        protected virtual IFactory GetFactory(string serviceName, Type serviceType, object[] additionalArguments)
-        {
-            if (serviceName == null)
-                return GetFactory(serviceType, additionalArguments);
-
-            if (_namedFactories.ContainsKey(serviceName) && _namedFactories[serviceName].ContainsKey(serviceType))
-                return _namedFactories[serviceName][serviceType];
-
-            return null;
-        }
+        
         /// <summary>
         /// The list of postprocessors that will handle every
         /// service request result.
@@ -149,29 +112,6 @@ namespace LinFu.IoC
         public IList<IPreProcessor> Preprocessors
         {
             get { return _preprocessors; }
-        }
-
-        /// <summary>
-        /// Lists all the services available in the container,
-        /// including the named services.
-        /// </summary>
-        public override IEnumerable<IServiceInfo> AvailableServices
-        {
-            get
-            {
-                var results = new List<IServiceInfo>(base.AvailableServices);
-
-                // Append the named factory entries
-                var additionalResults = from name in _namedFactories.Keys
-                                        let dictionary = _namedFactories[name]
-                                        from type in dictionary.Keys
-                                        let info = new ServiceInfo(name, type) as IServiceInfo
-                                        select info;
-
-
-                results.AddRange(additionalResults);
-                return results;
-            }
         }
     }
 }
