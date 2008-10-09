@@ -107,6 +107,8 @@
     <Compile Include="Factories\OncePerRequestFactory.cs" />
     <Compile Include="Factories\OncePerThreadFactory.cs" />
     <Compile Include="Factories\SingletonFactory.cs" />
+    <Compile Include="FactoryExtensions.cs" />
+    <Compile Include="FactoryRequest.cs" />
     <Compile Include="Interceptors\AroundInvokeAdapter.cs" />
     <Compile Include="Interceptors\BaseInterceptor.cs" />
     <Compile Include="Interceptors\InterceptorAttributeLoader.cs" />
@@ -132,6 +134,7 @@
     <Compile Include="Interfaces\IContainer.cs" />
     <Compile Include="Interfaces\IFactory.cs" />
     <Compile Include="Interfaces\IFactoryOfT.cs" />
+    <Compile Include="Interfaces\IFactoryRequest.cs" />
     <Compile Include="Interfaces\IPostProcessor.cs" />
     <Compile Include="Interfaces\IPreprocessor.cs" />
     <Compile Include="Interfaces\IServiceContainer.cs" />

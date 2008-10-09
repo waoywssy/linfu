@@ -10,23 +10,15 @@ namespace LinFu.IoC.Factories
     /// <typeparam name="T"></typeparam>
     public abstract class BaseFactory<T> : IFactory<T>, IFactory
     {
-        #region IFactory Members
-
         /// <summary>
         /// Creates a service instance using the given container.
         /// </summary>
-        /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
-        /// <param name="serviceType">The service type to be instantiated.</param>
-        /// /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
+        /// <param name="request">The <see cref="IFactoryRequest"/> instance that describes the requested service.</param>
         /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
-        object IFactory.CreateInstance(Type serviceType, IContainer container, params object[] additionalArguments)
+        object IFactory.CreateInstance(IFactoryRequest request)
         {
-            return CreateInstance(container, additionalArguments);
+            return CreateInstance(request);
         }
-
-        #endregion
-
-        #region IFactory<T> Members
 
         /// <summary>
         /// Creates a service instance using the given container.
@@ -37,11 +29,8 @@ namespace LinFu.IoC.Factories
         /// from scratch. This should cut down on some of the boilerplate
         /// code necessary to get a factory class up and running.
         /// </remarks>
-        /// /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
-        /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
+        /// <param name="request">The <see cref="IFactoryRequest"/> instance that describes the requested service.</param>
         /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
-        public abstract T CreateInstance(IContainer container, params object[] additionalArguments);
-
-        #endregion
+        public abstract T CreateInstance(IFactoryRequest request);
     }
 }
