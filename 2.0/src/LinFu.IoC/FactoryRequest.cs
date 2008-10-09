@@ -14,7 +14,7 @@ namespace LinFu.IoC
         /// <summary>
         /// Gets the value indicating the service container that made the service request.
         /// </summary>
-        public IContainer Container { get; set; }
+        public IServiceContainer Container { get; set; }
 
         /// <summary>
         /// Gets the value indicating the service name.
