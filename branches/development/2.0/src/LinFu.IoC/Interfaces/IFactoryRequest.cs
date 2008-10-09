@@ -14,7 +14,7 @@ namespace LinFu.IoC.Interfaces
         /// <summary>
         /// Gets the value indicating the service container that made the service request.
         /// </summary>
-        IContainer Container { get; }
+        IServiceContainer Container { get; }
 
         /// <summary>
         /// Gets the value indicating the service name.

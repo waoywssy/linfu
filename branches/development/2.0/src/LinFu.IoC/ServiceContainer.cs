@@ -9,24 +9,96 @@ namespace LinFu.IoC
     /// Represents a service container with additional
     /// extension points for customizing service instances
     /// </summary>
-    public class ServiceContainer : ServiceContainerBase
+    public class ServiceContainer : IServiceContainer
     {
-        private readonly Dictionary<string, Dictionary<Type, IFactory>> _namedGenericFactories =
-            new Dictionary<string, Dictionary<Type, IFactory>>();
+        private readonly IFactoryStorage _factoryStorage = new FactoryStorage();
+        private readonly List<IPostProcessor> _postProcessors = new List<IPostProcessor>();
+        private readonly List<IPreProcessor> _preprocessors = new List<IPreProcessor>();
 
-        private readonly Dictionary<Type, IFactory> _genericFactories = new Dictionary<Type, IFactory>();
         /// <summary>
-        /// Overridden. This method modifies the original
-        /// <see cref="BaseContainer.GetService"/> method
-        /// so that its results can be handled by the 
-        /// postprocessors.
+        /// Initializes the container with the default services.
+        /// </summary>
+        public ServiceContainer()
+        {
+            this.AddDefaultServices();
+        }
+
+        /// <summary>
+        /// Gets or sets a <see cref="bool">System.Boolean</see> value
+        /// that determines whether or not the container should throw
+        /// a <see cref="ServiceNotFoundException"/> if a requested service
+        /// cannot be found or created.
+        /// </summary>
+        public virtual bool SuppressErrors { get; set; }
+
+        /// <summary>
+        /// Adds an <see cref="IFactory"/> instance and associates it
+        /// with the given <paramref name="serviceType">service type</paramref> and
+        /// <paramref name="serviceName">service name</paramref>.
+        /// </summary>
+        /// <param name="serviceName">The name of the service to associate with the given <see cref="IFactory"/> instance.</param>
+        /// <param name="serviceType">The type of service that the factory will be able to create.</param>
+        /// <param name="factory">The <see cref="IFactory"/> instance that will create the object instance.</param>
+        public virtual void AddFactory(string serviceName, Type serviceType, IFactory factory)
+        {
+            FactoryStorage.AddFactory(serviceName, serviceType, factory);
+        }
+
+        /// <summary>
+        /// Adds an <see cref="IFactory"/> instance and associates it
+        /// with the given <paramref name="serviceType">service type</paramref>.
+        /// </summary>
+        /// <param name="serviceType">The service type to associate with the factory</param>
+        /// <param name="factory">The <see cref="IFactory"/> instance that will be responsible for creating the service instance</param>
+        public virtual void AddFactory(Type serviceType, IFactory factory)
+        {
+            //_factories[serviceType] = factory;
+            FactoryStorage.AddFactory(null, serviceType, factory);
+        }
+
+        /// <summary>
+        /// Determines whether or not the given <paramref name="serviceType"/>
+        /// can be instantiated by the container.
+        /// </summary>
+        /// <param name="serviceType">The type of service to instantiate.</param>
+        /// <returns>Returns <c>true</c> if the service exists; otherwise, it will return <c>false</c>.</returns>
+        public virtual bool Contains(Type serviceType)
+        {
+            return Contains(null, serviceType);
+        }
+
+        /// <summary>
+        /// Overridden. Causes the container to instantiate the service with the given
+        /// <paramref name="serviceType">service type</paramref>. If the service type cannot be created, then an
+        /// exception will be thrown if the <see cref="IContainer.SuppressErrors"/> property
+        /// is set to false. Otherwise, it will simply return null.
+        /// </summary>
+        /// <remarks>
+        /// This overload of the <c>GetService</c> method has been overridden
+        /// so that its results can be handled by the postprocessors.
+        /// </remarks>
+        /// <seealso cref="IPostProcessor"/>
+        /// <param name="serviceType">The service type to instantiate.</param>
+        /// <param name="additionalArguments">The additional arguments that will be used to instantiate the service type.</param>
+        /// <returns>If successful, it will return a service instance that is compatible with the given type;
+        /// otherwise, it will just return a null value.</returns>
+        public object GetService(Type serviceType, params object[] additionalArguments)
+        {
+            return GetService(null, serviceType, additionalArguments);
+        }
+
+        /// <summary>
+        /// Causes the container to instantiate the service with the given
+        /// <paramref name="serviceType">service type</paramref>. If the service type cannot be created, then an
+        /// exception will be thrown if the <see cref="IContainer.SuppressErrors"/> property
+        /// is set to false. Otherwise, it will simply return null.
         /// </summary>
         /// <param name="serviceName">The name of the service to instantiate.</param>
         /// <param name="serviceType">The service type to instantiate.</param>        
         /// <param name="additionalArguments">The additional arguments that will be used to instantiate the service type.</param>
         /// <returns>If successful, it will return a service instance that is compatible with the given type;
         /// otherwise, it will just return a <c>null</c> value.</returns>
-        public override object GetService(string serviceName, Type serviceType, params object[] additionalArguments)
+        public virtual object GetService(string serviceName, Type serviceType, params object[] additionalArguments)
         {
             object instance = null;
             var suppressErrors = SuppressErrors;
@@ -50,7 +122,7 @@ namespace LinFu.IoC
             var actualArguments = serviceRequest.ActualArguments;
 
 
-            var factoryRequest = new FactoryRequest()
+            var factoryRequest = new FactoryRequest
             {
                 ServiceType = serviceType,
                 ServiceName = serviceName,
@@ -77,56 +149,26 @@ namespace LinFu.IoC
             return instance;
         }
 
-        private IServiceRequest Preprocess(string serviceName, Type serviceType, object[] additionalArguments, IFactory proposedFactory)
-        {
-            var serviceRequest = new ServiceRequest(serviceName, serviceType, additionalArguments, proposedFactory, this);
-            foreach (var preprocessor in Preprocessors)
-            {
-                preprocessor.Preprocess(serviceRequest);
-            }
-            return serviceRequest;
-        }        
-
         /// <summary>
-        /// Overridden. Causes the container to instantiate the service with the given
-        /// <paramref name="serviceType">service type</paramref>. If the service type cannot be created, then an
-        /// exception will be thrown if the <see cref="IContainer.SuppressErrors"/> property
-        /// is set to false. Otherwise, it will simply return null.
-        /// </summary>
-        /// <remarks>
-        /// This overload of the <c>GetService</c> method has been overridden
-        /// so that its results can be handled by the postprocessors.
-        /// </remarks>
-        /// <seealso cref="IPostProcessor"/>
-        /// <param name="serviceType">The service type to instantiate.</param>
-        /// <param name="additionalArguments">The additional arguments that will be used to instantiate the service type.</param>
-        /// <returns>If successful, it will return a service instance that is compatible with the given type;
-        /// otherwise, it will just return a null value.</returns>
-        public override object GetService(Type serviceType, params object[] additionalArguments)
-        {
-            return GetService(null, serviceType, additionalArguments);
-        }
-        
-        /// <summary>
-        /// Overrides the <see cref="ServiceContainerBase.Contains(string,Type)"/> method to allow
-        /// users to determine whether or not a specific generic service type can be created
-        /// using the open generic factories that currently reside in the container itself.
+        /// Determines whether or not a service can be created using
+        /// the given <paramref name="serviceName">service name</paramref>
+        /// and <paramref name="serviceType">service type</paramref>.
         /// </summary>
         /// <param name="serviceName">The name of the service to associate with the given <see cref="IFactory"/> instance.</param>
         /// <param name="serviceType">The type of service that the factory will be able to create.</param>
         /// <returns>Returns <c>true</c> if the service exists; otherwise, it will return <c>false</c>.</returns>
-        public override bool Contains(string serviceName, Type serviceType)
+        public virtual bool Contains(string serviceName, Type serviceType)
         {
             // Use the default implementation for
             // non-generic types
             if (!serviceType.IsGenericType && !serviceType.IsGenericTypeDefinition)
-                return base.Contains(serviceName, serviceType);
+                return FactoryStorage.ContainsFactory(serviceName, serviceType);
 
             // If the service type is a generic type, determine
             // if the service type can be created by a 
             // standard factory that can create an instance
             // of that generic type (e.g., IFactory<IGeneric<T>>            
-            var result = base.Contains(serviceName, serviceType);
+            var result = FactoryStorage.ContainsFactory(serviceName, serviceType);
 
             // Immediately return a positive match, if possible
             if (result)
@@ -147,34 +189,22 @@ namespace LinFu.IoC
         }
 
         /// <summary>
-        /// Overrides the <see cref="ServiceContainerBase.AddFactory(string,Type,IFactory)"/> method to support
-        /// factories that create services based on open generic types.
+        /// A method that searches the container for <see cref="IPreProcessor"/> instances
+        /// and passes the service request to each one of those preprocessors.
         /// </summary>
-        /// <param name="serviceType">The type of service that the factory will be able to create.</param>
-        /// <param name="factory">The <see cref="IFactory"/> instance that will create the object instance.</param>
-        public override void AddFactory(Type serviceType, IFactory factory)
+        /// <param name="serviceName">The name of the service being requested. By default, this is usually blank.</param>
+        /// <param name="serviceType">The type of service being requested.</param>        
+        /// <param name="additionalArguments">The list of additional arguments that will be used for the service request.</param>
+        /// <param name="proposedFactory">The <see cref="IFactory"/> instance that will be used to create the service instance.</param>
+        /// <returns>A <see cref="IServiceRequest"/> object that describes which factory should be used to handle the service request.</returns>
+        private IServiceRequest Preprocess(string serviceName, Type serviceType, object[] additionalArguments, IFactory proposedFactory)
         {
-            // If the service type is not a generic type definition (such as IList<>)
-            // let the base class handle the factory instance
-            if (!serviceType.IsGenericTypeDefinition || !serviceType.ContainsGenericParameters)
+            var serviceRequest = new ServiceRequest(serviceName, serviceType, additionalArguments, proposedFactory, this);
+            foreach (var preprocessor in Preprocessors)
             {
-                base.AddFactory(serviceType, factory);
-                return;
+                preprocessor.Preprocess(serviceRequest);
             }
-
-            FactoryStorage.AddFactory(null, serviceType, factory);
-        }
-
-        /// <summary>
-        /// Overrides the <see cref="ServiceContainerBase.Contains(string,Type)"/> method to allow
-        /// users to determine whether or not a specific generic service type can be created
-        /// using the open generic factories that currently reside in the container itself.
-        /// </summary>
-        /// <param name="serviceType">The type of service that the factory will be able to create.</param>
-        /// <returns>Returns <c>true</c> if the service exists; otherwise, it will return <c>false</c>.</returns>
-        public override bool Contains(Type serviceType)
-        {
-            return Contains(null, serviceType);
+            return serviceRequest;
         }
 
         /// <summary>
@@ -191,14 +221,14 @@ namespace LinFu.IoC
         {
             // Initialize the results
             var result = new ServiceRequestResult
-                             {
-                                 ServiceName = serviceName,
-                                 ActualResult = instance,
-                                 Container = this,
-                                 OriginalResult = instance,
-                                 ServiceType = serviceType,
-                                 AdditionalArguments = additionalArguments
-                             };
+            {
+                ServiceName = serviceName,
+                ActualResult = instance,
+                Container = this,
+                OriginalResult = instance,
+                ServiceType = serviceType,
+                AdditionalArguments = additionalArguments
+            };
 
             // Let each postprocessor inspect 
             // the results and/or modify the 
@@ -212,6 +242,47 @@ namespace LinFu.IoC
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Gets the value indicating the <see cref="IFactoryStorage"/> instance
+        /// that will be used to store each <see cref="IFactory"/> instance.
+        /// </summary>
+        protected IFactoryStorage FactoryStorage
+        {
+            get
+            {
+                return _factoryStorage;
+            }
+        }
+
+        /// <summary>
+        /// The list of postprocessors that will handle every
+        /// service request result.
+        /// </summary>
+        public IList<IPostProcessor> PostProcessors
+        {
+            get { return _postProcessors; }
+        }
+
+        /// <summary>
+        /// The list of preprocessors that will handle
+        /// every service request before each actual service is created.
+        /// </summary>
+        public IList<IPreProcessor> Preprocessors
+        {
+            get { return _preprocessors; }
+        }
+
+        /// <summary>
+        /// The list of services currently available inside the container.
+        /// </summary>
+        public virtual IEnumerable<IServiceInfo> AvailableServices
+        {
+            get
+            {
+                return FactoryStorage.AvailableFactories;
+            }
         }
     }
 }
