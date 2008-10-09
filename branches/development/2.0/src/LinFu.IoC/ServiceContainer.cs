@@ -40,7 +40,7 @@ namespace LinFu.IoC
 
             // Attempt to create the service type using
             // the generic factories, if possible
-            IFactory proposedFactory = serviceName == null ? GetFactory(serviceType, additionalArguments) : 
+            IFactory proposedFactory = serviceName == null ? GetFactory(serviceType, additionalArguments) :
                 GetFactory(serviceName, serviceType, additionalArguments);
 
             // Allow users to intercept the instantiation process
@@ -48,9 +48,17 @@ namespace LinFu.IoC
 
             var actualFactory = serviceRequest.ActualFactory;
 
+            var factoryRequest = new FactoryRequest()
+                                     {
+                                         ServiceType = serviceType,
+                                         ServiceName = serviceName,
+                                         Arguments = additionalArguments,
+                                         Container = this
+                                     };
+
             // Generate the service instance
             if (actualFactory != null)
-                instance = actualFactory.CreateInstance(serviceType, this, additionalArguments);
+                instance = actualFactory.CreateInstance(factoryRequest);
 
             IServiceRequestResult result = PostProcess(serviceName, serviceType, instance, additionalArguments);
 
@@ -67,7 +75,7 @@ namespace LinFu.IoC
         private IServiceRequest Preprocess(string serviceName, Type serviceType, object[] additionalArguments, IFactory proposedFactory)
         {
             var serviceRequest = new ServiceRequest(serviceName, serviceType, additionalArguments, proposedFactory, this);
-            foreach(var preprocessor in Preprocessors)
+            foreach (var preprocessor in Preprocessors)
             {
                 preprocessor.Preprocess(serviceRequest);
             }
@@ -121,7 +129,7 @@ namespace LinFu.IoC
             // The definition type must exist
             var hasDefinition = _genericFactories.ContainsKey(definitionType);
             if (hasDefinition)
-                return _genericFactories[definitionType];            
+                return _genericFactories[definitionType];
 
             return base.GetFactory(serviceType, additionalArguments);
         }
@@ -150,9 +158,17 @@ namespace LinFu.IoC
             // the generic factories, if possible
             var factory = GetFactory(serviceType, additionalArguments);
 
+            var factoryRequest = new FactoryRequest()
+            {
+                ServiceType = serviceType,
+                ServiceName = null,
+                Arguments = additionalArguments,
+                Container = this
+            };
+
             // Generate the service instance
             if (factory != null)
-                instance = factory.CreateInstance(serviceType, this, additionalArguments);
+                instance = factory.CreateInstance(factoryRequest);
 
             IServiceRequestResult result = PostProcess(null, serviceType, instance, additionalArguments);
 

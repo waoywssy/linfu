@@ -10,7 +10,7 @@ namespace LinFu.IoC.Factories
     /// <typeparam name="T">The type of service to instantiate.</typeparam>
     public class OncePerRequestFactory<T> : BaseFactory<T>
     {
-        private readonly Func<Type, IContainer, object[], T> _createInstance;
+        private readonly Func<IFactoryRequest, T> _createInstance;
         private readonly Type _serviceType;
         /// <summary>
         /// Initializes the factory class using the <paramref name="createInstance"/>
@@ -21,7 +21,7 @@ namespace LinFu.IoC.Factories
         /// type:
         /// <code>
         ///     // Define the factory delegate
-        ///     Func&lt;IContainer, ISomeService&gt; createService = container=>new SomeServiceImplementation();
+        ///     Func&lt;IFactoryRequest, ISomeService&gt; createService = container=>new SomeServiceImplementation();
         /// 
         ///     // Create the factory
         ///     var factory = new OncePerRequestFactory&lt;ISomeService&gt;(createService);
@@ -33,7 +33,7 @@ namespace LinFu.IoC.Factories
         /// </code>
         /// </example>
         /// <param name="createInstance">The delegate that will be used to create each new service instance.</param>
-        public OncePerRequestFactory(Func<Type, IContainer, object[], T> createInstance)
+        public OncePerRequestFactory(Func<IFactoryRequest, T> createInstance)
         {
             _createInstance = createInstance;
             _serviceType = typeof(T);
@@ -43,12 +43,11 @@ namespace LinFu.IoC.Factories
         /// This method creates a new service instance every time
         /// it is invoked. 
         /// </summary>
-        /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
-        /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
+        /// <param name="request">The <see cref="IFactoryRequest"/> instance that describes the requested service.</param>
         /// <returns>A non-null object reference.</returns>
-        public override T CreateInstance(IContainer container, params object[] additionalArguments)
+        public override T CreateInstance(IFactoryRequest request)
         {
-            return _createInstance(_serviceType, container, additionalArguments);
+            return _createInstance(request);
         }
     }
 }

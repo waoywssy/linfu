@@ -100,9 +100,17 @@ namespace LinFu.IoC
 
             object result = null;
 
+            var factoryRequest = new FactoryRequest()
+            {
+                ServiceType = serviceType,
+                ServiceName = null,
+                Arguments = additionalArguments,
+                Container = this
+            };
+
             // Make sure that the factory exists
             if (factory != null)
-                result = factory.CreateInstance(serviceType, this, additionalArguments);
+                result = factory.CreateInstance(factoryRequest);
 
             return result;
         }

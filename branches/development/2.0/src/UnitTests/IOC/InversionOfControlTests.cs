@@ -257,7 +257,9 @@ namespace LinFu.UnitTests.IOC
             Assert.IsTrue(container.Contains("MyService", serviceType), "The container is supposed to contain a service named 'MyService'");
 
             var instance = new object();
-            mockFactory.Expect(f => f.CreateInstance(serviceType, container, It.IsAny<object[]>())).Returns(instance);
+            mockFactory.Expect(f => f.CreateInstance(
+                It.Is<IFactoryRequest>(request=>request.ServiceName == "MyService" && request.ServiceType == serviceType)))
+                .Returns(instance);
 
             Assert.AreSame(instance, container.GetService("MyService", serviceType));
         }
@@ -274,7 +276,8 @@ namespace LinFu.UnitTests.IOC
             container.AddFactory(serviceType, mockFactory.Object);
 
             // The container must call the IFactory.CreateInstance method
-            mockFactory.Expect(f => f.CreateInstance(serviceType, container, It.IsAny<object[]>())).Returns(instance);
+            mockFactory.Expect(f => f.CreateInstance(It.Is<IFactoryRequest>(request=>request.ServiceType == serviceType 
+                && request.Container == container))).Returns(instance);
 
             object result = container.GetService(serviceType);
             Assert.IsNotNull(result, "The container failed to return the given service instance");
@@ -291,7 +294,7 @@ namespace LinFu.UnitTests.IOC
             var mockService = new Mock<ISerializable>();
 
             container.AddFactory(mockFactory.Object);
-            mockFactory.Expect(f => f.CreateInstance(container, It.IsAny<object[]>())).Returns(mockService.Object);
+            mockFactory.Expect(f => f.CreateInstance(It.Is<IFactoryRequest>(request => request.Container == container))).Returns(mockService.Object);
 
             Assert.IsNotNull(container.GetService<ISerializable>());
         }
@@ -307,7 +310,9 @@ namespace LinFu.UnitTests.IOC
             container.AddFactory("MyService", typeof(ISerializable), mockFactory.Object);
 
             // Return the mock ISerializable instance
-            mockFactory.Expect(f => f.CreateInstance(typeof(ISerializable), container, It.IsAny<object[]>())).Returns(mockService.Object);
+            mockFactory.Expect(f => f.CreateInstance(
+                It.Is<IFactoryRequest>(request => request.Container == container && 
+                    request.ServiceType == typeof(ISerializable)))).Returns(mockService.Object);
 
             // Test the syntax
             var result = container.GetService<ISerializable>();
@@ -325,7 +330,8 @@ namespace LinFu.UnitTests.IOC
             var mockService = new Mock<ISerializable>();
 
             container.AddFactory("MyService", mockFactory.Object);
-            mockFactory.Expect(f => f.CreateInstance(container, It.IsAny<object[]>())).Returns(mockService.Object);
+            mockFactory.Expect(f => f.CreateInstance(It.Is<IFactoryRequest>(request=>request.Container == container)))
+                .Returns(mockService.Object);
 
             Assert.IsNotNull(container.GetService<ISerializable>("MyService"));
         }
@@ -353,7 +359,9 @@ namespace LinFu.UnitTests.IOC
             // the container should register this factory
             // as if it had no name
             container.AddFactory(null, serviceType, mockFactory.Object);
-            mockFactory.Expect(f => f.CreateInstance(serviceType, container, It.IsAny<object[]>())).Returns(mockService.Object);
+            mockFactory.Expect(f => f.CreateInstance(
+                It.Is<IFactoryRequest>(request=>request.Container == container && 
+                    request.ServiceType == serviceType))).Returns(mockService.Object);
 
             // Verify the result
             var result = container.GetService<ISerializable>();
@@ -388,7 +396,8 @@ namespace LinFu.UnitTests.IOC
 
 
             Type serviceType = typeof(ISerializable);
-            mockFactory.Expect(f => f.CreateInstance(It.IsAny<Type>(), container, It.IsAny<object[]>())).Returns(mockService.Object);
+            mockFactory.Expect(f => f.CreateInstance(It.Is<IFactoryRequest>(request=>request.ServiceType == serviceType)))
+                .Returns(mockService.Object);
             container.AddFactory(serviceType, mockFactory.Object);
 
             object result = container.GetService(null, serviceType);
@@ -472,7 +481,7 @@ namespace LinFu.UnitTests.IOC
             var mockFactory = new Mock<IFactory>();
             var mockInitialize = new Mock<IInitialize>();
 
-            mockFactory.Expect(f => f.CreateInstance(It.IsAny<Type>(), It.IsAny<IServiceContainer>(), It.IsAny<object[]>()))
+            mockFactory.Expect(f => f.CreateInstance(It.IsAny<IFactoryRequest>()))
                 .Returns(mockInitialize.Object);
 
             // The IInitialize instance must be called once it
@@ -503,9 +512,9 @@ namespace LinFu.UnitTests.IOC
             }
 
             var instances = container.GetServices<ISampleService>();
-            foreach(var serviceInstance in instances)
+            foreach (var serviceInstance in instances)
             {
-                Assert.IsInstanceOfType(typeof (ISampleService), serviceInstance);
+                Assert.IsInstanceOfType(typeof(ISampleService), serviceInstance);
                 Assert.IsNotNull(serviceInstance);
             }
         }
@@ -519,7 +528,7 @@ namespace LinFu.UnitTests.IOC
             var serviceName = "SpecificGenericService";
 
             // The container must be able to create both registered service types
-            Assert.IsTrue(container.Contains(serviceName, typeof (ISampleGenericService<int>)));
+            Assert.IsTrue(container.Contains(serviceName, typeof(ISampleGenericService<int>)));
             Assert.IsTrue(container.Contains(serviceName, typeof(ISampleGenericService<double>)));
 
             // Both service types must be valid services
