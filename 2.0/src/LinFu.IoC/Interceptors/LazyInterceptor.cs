@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using LinFu.AOP.Interfaces;
 
@@ -35,6 +36,31 @@ namespace LinFu.IoC.Interceptors
         protected override object GetTarget(IInvocationInfo info)
         {
             return _getInstance();
+        }
+
+        /// <summary>
+        /// Intercepts the method and initializes the target instance before the 
+        /// actual object is invoked.
+        /// </summary>
+        /// <param name="info">The <see cref="IInvocationInfo"/> that describes the execution context.</param>
+        /// <returns>The return value of the target method.</returns>
+        public override object Intercept(IInvocationInfo info)
+        {
+            var target = _getInstance();
+            var arguments = info.Arguments;
+            var method = info.TargetMethod;
+
+            object result = null;
+            try
+            {
+                result = method.Invoke(target, arguments);
+            }
+            catch (TargetInvocationException ex)
+            {
+                throw ex.InnerException;
+            }
+            
+            return result;
         }
     }
 }

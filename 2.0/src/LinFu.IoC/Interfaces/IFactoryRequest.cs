@@ -12,9 +12,9 @@ namespace LinFu.IoC.Interfaces
     public interface IFactoryRequest
     {
         /// <summary>
-        /// Gets the value indicating the service container that made the service request.
+        /// Gets or sets the value indicating the service container that made the service request.
         /// </summary>
-        IServiceContainer Container { get; }
+        IServiceContainer Container { get; set; }
 
         /// <summary>
         /// Gets the value indicating the service name.
