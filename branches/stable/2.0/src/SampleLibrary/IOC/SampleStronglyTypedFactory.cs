@@ -8,7 +8,7 @@ namespace SampleLibrary
     {
         #region IFactory<ISampleService> Members
 
-        public ISampleService CreateInstance(IContainer container, params object[] additionalArguments)
+        public ISampleService CreateInstance(IFactoryRequest request)
         {
             return new SampleClass();
         }

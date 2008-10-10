@@ -70,6 +70,7 @@
     <Compile Include="IOC\PropertyInjectionTests.cs" />
     <Compile Include="IOC\ResolutionTests.cs" />
     <Compile Include="Proxy\InterfaceExtractorTests.cs" />
+    <Compile Include="Proxy\LazyObjectTests.cs" />
     <Compile Include="Proxy\MockInterceptor.cs" />
     <Compile Include="Proxy\ProxyFactoryTests.cs" />
     <Compile Include="Finders\FinderTests.cs" />

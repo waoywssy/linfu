@@ -39,16 +39,14 @@ namespace LinFu.IoC
         /// the <see cref="IFactory.CreateInstance"/> method 
         /// is called.
         /// </summary>
-        /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
-        /// <param name="serviceType">The type of service to create.</param>
-        /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
+        /// <param name="request">The <see cref="IFactoryRequest"/> instance that describes the requested service.</param>
         /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
-        public object CreateInstance(Type serviceType, IContainer container, params object[] additionalArguments)
+        public object CreateInstance(IFactoryRequest request)
         {
             if (_factory == null)
                 return default(T);
 
-            return _factory.CreateInstance(container, additionalArguments);
+            return _factory.CreateInstance(request);
         }
 
         #endregion

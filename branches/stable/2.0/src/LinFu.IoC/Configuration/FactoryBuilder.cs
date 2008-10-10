@@ -51,9 +51,14 @@ namespace LinFu.IoC.Configuration
                 return CreateFactory(serviceType, actualType, factoryType);
             }
 
-            Func<Type, IContainer, object[], object> factoryMethod =
-                (type, currentContainer, arguments) =>
+            Func<IFactoryRequest, object> factoryMethod =
+                request =>
                 {
+                    var serviceName = request.ServiceName;
+                    var type = request.ServiceType;
+                    var currentContainer = request.Container;
+                    var arguments = request.Arguments;
+
                     // Determine the implementing type
                     var concreteType = GetActualType(type, implementingType);
 
@@ -61,15 +66,20 @@ namespace LinFu.IoC.Configuration
                     if (concreteType == null)
                         return null;
 
-                    var serviceContainer = (IServiceContainer)currentContainer;
-
-                    //Type actualFactoryType = factoryTypeDefinition.MakeGenericType(serviceType);
                     // Generate the concrete factory instance 
                     // at runtime
                     Type factoryType = factoryTypeDefinition.MakeGenericType(type);
                     var factory = CreateFactory(type, concreteType, factoryType);
 
-                    return factory.CreateInstance(type, serviceContainer, arguments);
+                    var factoryRequest = new FactoryRequest()
+                    {
+                        ServiceType = serviceType,
+                        ServiceName = serviceName,
+                        Arguments = arguments,
+                        Container = currentContainer
+                    };
+
+                    return factory.CreateInstance(factoryRequest);
                 };
 
             return new FunctorFactory(factoryMethod);
@@ -88,7 +98,7 @@ namespace LinFu.IoC.Configuration
         {
             // Create the factory itself
             MulticastDelegate factoryMethod = CreateFactoryMethod(serviceType, actualType);
-            //object factoryInstance = Activator.CreateInstance(factoryType, new object[] { factoryMethod });
+            
             object factoryInstance = factoryType.AutoCreateFrom(_dummyContainer, factoryMethod);
             var result = factoryInstance as IFactory;
 
@@ -150,7 +160,7 @@ namespace LinFu.IoC.Configuration
             MethodInfo factoryMethodDefinition = typeof(FactoryBuilder).GetMethod("CreateFactoryMethodInternal", flags);
             MethodInfo factoryMethod = factoryMethodDefinition.MakeGenericMethod(serviceType, implementingType);
 
-            // Create the Func<Type, IContainer, object[], TService> factory delegate
+            // Create the Func<IFactoryRequest, TService> factory delegate
             var result = factoryMethod.Invoke(null, new object[0]) as MulticastDelegate;
 
             return result;
@@ -163,12 +173,14 @@ namespace LinFu.IoC.Configuration
         /// <typeparam name="TService">The service type being instantiated.</typeparam>
         /// <typeparam name="TImplementation">The type that will provide the implementation for the actual service.</typeparam>
         /// <returns>A strongly-typed factory method delegate that can create the given service.</returns>
-        internal static Func<Type, IContainer, object[], TService> CreateFactoryMethodInternal<TService, TImplementation>()
+        internal static Func<IFactoryRequest, TService> CreateFactoryMethodInternal<TService, TImplementation>()
             where TImplementation : TService
         {
-            return (type, container, arguments) =>
+            return request =>
             {
-                var serviceContainer = container as IServiceContainer;
+                var container = request.Container;
+                var arguments = request.Arguments;
+                var serviceContainer = (IServiceContainer)container;
 
                 // Attempt to autoresolve the constructor
                 if (serviceContainer != null)

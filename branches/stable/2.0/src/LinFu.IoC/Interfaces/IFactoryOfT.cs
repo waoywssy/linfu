@@ -10,11 +10,10 @@ namespace LinFu.IoC.Interfaces
     public interface IFactory<T>
     {
         /// <summary>
-        /// Creates a service instance using the given <paramref name="container"/>.
+        /// Creates a service instance using the given <see cref="IFactoryRequest"/> instance.
         /// </summary>
-        /// <param name="container">The container that will ultimately hold the given service instance.</param>
-        /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
+        /// <param name="request">The <see cref="IFactoryRequest"/> instance that describes the requested service.</param>
         /// <returns>An object instance that represents the service to be created. This cannot be <c>null</c>.</returns>
-        T CreateInstance(IContainer container, params object[] additionalArguments);
+        T CreateInstance(IFactoryRequest request);
     }
 }

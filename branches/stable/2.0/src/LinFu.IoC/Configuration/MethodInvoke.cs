@@ -20,6 +20,19 @@ namespace LinFu.IoC.Configuration
         private IMethodBuilder<TMethod> _builder;
 
         /// <summary>
+        /// Initializes the class with the default values.
+        /// </summary>
+        public MethodInvoke()
+        {
+            // HACK: Set the MethodBuilder as the default builder
+            if (typeof(TMethod) == typeof(MethodInfo))
+                _builder = new MethodBuilder() as IMethodBuilder<TMethod>;
+
+            if (typeof(TMethod) == typeof(ConstructorInfo))
+                _builder = new ConstructorMethodBuilder() as IMethodBuilder<TMethod>;
+        }
+
+        /// <summary>
         /// Instantiates an object instance with the <paramref name="targetMethod"/>
         /// and <paramref name="arguments"/>.
         /// </summary>

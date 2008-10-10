@@ -38,14 +38,17 @@ namespace LinFu.IoC.Configuration
         public IGenerateFactory<TService> Using<TConcrete>() where TConcrete : TService
         {
             // Let the container decide which constructor should be used at runtime
-            Func<Type, IServiceContainer, object[], TService> factoryMethod = (type, container, arguments)=> 
-                (TService)container.AutoCreate(typeof(TConcrete), arguments);
-                                                                        
+            Func<IFactoryRequest, TService> factoryMethod = request =>
+                {
+                    var container = (IServiceContainer)request.Container;
+                    return (TService)container.AutoCreate(typeof(TConcrete), request.Arguments);
+                };
+
             var context = new InjectionContext<TService>
                               {
                                   ServiceName = _context.ServiceName,
                                   Container = _context.Container,
-                                  FactoryMethod = factoryMethod 
+                                  FactoryMethod = factoryMethod
                               };
 
 
@@ -63,8 +66,8 @@ namespace LinFu.IoC.Configuration
         /// <returns>A non-null <see cref="IGenerateFactory{T}"/> instance that will be used to create a factory and add it to a specific container.</returns>
         public IGenerateFactory<TService> Using(Func<IServiceContainer, object[], TService> factoryMethod)
         {
-            Func<Type, IServiceContainer, object[], TService> adapter = 
-                (type, container, arguments) => factoryMethod(container, arguments);
+            Func<IFactoryRequest, TService> adapter =
+                (request) => factoryMethod((IServiceContainer)request.Container, request.Arguments);
 
             var context = new InjectionContext<TService>
             {
@@ -87,8 +90,8 @@ namespace LinFu.IoC.Configuration
         /// <returns>A non-null <see cref="IGenerateFactory{T}"/> instance that will be used to create a factory and add it to a specific container.</returns>
         public IGenerateFactory<TService> Using(Func<IServiceContainer, TService> factoryMethod)
         {
-            Func<Type, IServiceContainer, object[], TService> adapter =
-                (type, container, arguments) => factoryMethod(container);
+            Func<IFactoryRequest, TService> adapter =
+                request => factoryMethod((IServiceContainer)request.Container);
 
             var context = new InjectionContext<TService>
             {

@@ -177,8 +177,11 @@ namespace LinFu.Proxy
         /// <param name="source">The <see cref="IServiceContainer"/> instance that will hold the ProxyFactory.</param>
         public void Initialize(IServiceContainer source)
         {
-            ProxyBuilder = source.GetService<IProxyBuilder>();
-            InterfaceExtractor = source.GetService<IExtractInterfaces>();
+            if (source.Contains(typeof(IProxyBuilder)))
+                ProxyBuilder = source.GetService<IProxyBuilder>();
+
+            if (source.Contains(typeof(IExtractInterfaces)))
+                InterfaceExtractor = source.GetService<IExtractInterfaces>();
 
             if (source.Contains(typeof(IVerifier)))
                 Verifier = source.GetService<IVerifier>();

@@ -11,13 +11,13 @@ namespace LinFu.IoC.Factories
     /// </summary>
     public class FunctorFactory : IFactory
     {
-        private readonly Func<Type, IContainer, object[], object> _factoryMethod;
+        private readonly Func<IFactoryRequest, object> _factoryMethod;
 
         /// <summary>
         /// Initializes the class with the given <paramref name="factoryMethod"/>.
         /// </summary>
         /// <param name="factoryMethod">The delegate that will be used to instantiate a type.</param>
-        public FunctorFactory(Func<Type, IContainer, object[], object> factoryMethod)
+        public FunctorFactory(Func<IFactoryRequest, object> factoryMethod)
         {
             _factoryMethod = factoryMethod;
         }
@@ -25,13 +25,11 @@ namespace LinFu.IoC.Factories
         /// <summary>
         /// Instantiates an object reference using the given factory method.
         /// </summary>
-        /// <param name="serviceType">The requested service type.</param>
-        /// <param name="container">The container processing the request.</param>
-        /// /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
+        /// <param name="request">The <see cref="IFactoryRequest"/> instance that describes the requested service.</param>
         /// <returns>A non-null object reference that represents the service type.</returns>
-        public object CreateInstance(Type serviceType, IContainer container, params object[] additionalArguments)
+        public object CreateInstance(IFactoryRequest request)
         {
-            return _factoryMethod(serviceType, container, additionalArguments);
+            return _factoryMethod(request);
         }
     }
 }
