@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
 using LinFu.IoC.Interfaces;
+using LinFu.Proxy;
 using LinFu.Proxy.Interfaces;
 using Moq;
 using NUnit.Framework;
@@ -277,7 +278,7 @@ namespace LinFu.UnitTests.IOC
 
             var instance = new object();
             mockFactory.Expect(f => f.CreateInstance(
-                It.Is<IFactoryRequest>(request=>request.ServiceName == "MyService" && request.ServiceType == serviceType)))
+                It.Is<IFactoryRequest>(request => request.ServiceName == "MyService" && request.ServiceType == serviceType)))
                 .Returns(instance);
 
             Assert.AreSame(instance, container.GetService("MyService", serviceType));
@@ -295,7 +296,7 @@ namespace LinFu.UnitTests.IOC
             container.AddFactory(serviceType, mockFactory.Object);
 
             // The container must call the IFactory.CreateInstance method
-            mockFactory.Expect(f => f.CreateInstance(It.Is<IFactoryRequest>(request=>request.ServiceType == serviceType 
+            mockFactory.Expect(f => f.CreateInstance(It.Is<IFactoryRequest>(request => request.ServiceType == serviceType
                 && request.Container == container))).Returns(instance);
 
             object result = container.GetService(serviceType);
@@ -330,7 +331,7 @@ namespace LinFu.UnitTests.IOC
 
             // Return the mock ISerializable instance
             mockFactory.Expect(f => f.CreateInstance(
-                It.Is<IFactoryRequest>(request => request.Container == container && 
+                It.Is<IFactoryRequest>(request => request.Container == container &&
                     request.ServiceType == typeof(ISerializable)))).Returns(mockService.Object);
 
             // Test the syntax
@@ -342,6 +343,22 @@ namespace LinFu.UnitTests.IOC
         }
 
         [Test]
+        [Ignore("TODO: Implement this")]
+        public void ContainerServicesShouldBeLazyIfProxyFactoryExists()
+        {
+            var container = new ServiceContainer();
+            container.AddService<IProxyFactory>(new ProxyFactory());
+            Assert.IsTrue(container.Contains(typeof(IProxyFactory)));
+
+            // The instance should never be created
+            container.AddService(typeof (ISampleService), typeof (SampleLazyService));
+
+            var result = container.GetService<ISampleService>();
+            Assert.IsFalse(SampleLazyService.IsInitialized);
+        }
+
+
+        [Test]
         public void ContainerMustSupportNamedGenericAddFactoryMethod()
         {
             var container = new ServiceContainer();
@@ -349,7 +366,7 @@ namespace LinFu.UnitTests.IOC
             var mockService = new Mock<ISerializable>();
 
             container.AddFactory("MyService", mockFactory.Object);
-            mockFactory.Expect(f => f.CreateInstance(It.Is<IFactoryRequest>(request=>request.Container == container)))
+            mockFactory.Expect(f => f.CreateInstance(It.Is<IFactoryRequest>(request => request.Container == container)))
                 .Returns(mockService.Object);
 
             Assert.IsNotNull(container.GetService<ISerializable>("MyService"));
@@ -379,7 +396,7 @@ namespace LinFu.UnitTests.IOC
             // as if it had no name
             container.AddFactory(null, serviceType, mockFactory.Object);
             mockFactory.Expect(f => f.CreateInstance(
-                It.Is<IFactoryRequest>(request=>request.Container == container && 
+                It.Is<IFactoryRequest>(request => request.Container == container &&
                     request.ServiceType == serviceType))).Returns(mockService.Object);
 
             // Verify the result
@@ -415,7 +432,7 @@ namespace LinFu.UnitTests.IOC
 
 
             Type serviceType = typeof(ISerializable);
-            mockFactory.Expect(f => f.CreateInstance(It.Is<IFactoryRequest>(request=>request.ServiceType == serviceType)))
+            mockFactory.Expect(f => f.CreateInstance(It.Is<IFactoryRequest>(request => request.ServiceType == serviceType)))
                 .Returns(mockService.Object);
             container.AddFactory(serviceType, mockFactory.Object);
 

@@ -2,5 +2,6 @@
 {
     public interface ISampleService
     {
+        void DoSomething();
     }
 }

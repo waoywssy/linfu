@@ -111,6 +111,7 @@
     <Compile Include="FactoryRequest.cs" />
     <Compile Include="FactoryStorage.cs" />
     <Compile Include="FactoryStorageExtensions.cs" />
+    <Compile Include="Interceptors\LazyInterceptor.cs" />
     <Compile Include="Interfaces\IFactoryStorage.cs" />
     <Compile Include="Interceptors\AroundInvokeAdapter.cs" />
     <Compile Include="Interceptors\BaseInterceptor.cs" />

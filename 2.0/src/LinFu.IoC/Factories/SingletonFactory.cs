@@ -10,11 +10,11 @@ namespace LinFu.IoC.Factories
     /// <typeparam name="T">The type of service to instantiate.</typeparam>
     public class SingletonFactory<T> : BaseFactory<T>
     {
-        private static readonly Dictionary<Type, T> _concreteInstances = new Dictionary<Type, T>();
+        private static readonly Dictionary<object, T> _instances = new Dictionary<object, T>();
         private readonly Func<IFactoryRequest, T> _createInstance;
-        private T _instance;
-        private Type _concreteType;
+
         private readonly object _lock = new object();
+
         /// <summary>
         /// Initializes the factory class using the <paramref name="createInstance"/>
         /// parameter as a factory delegate.
@@ -48,21 +48,22 @@ namespace LinFu.IoC.Factories
         /// <returns>A service instance as a singleton.</returns>
         public override T CreateInstance(IFactoryRequest request)
         {
-            if (!ReferenceEquals(_instance, null))
-                return _instance;
-            
+            var key = new { request.ServiceName, request.ServiceType, request.Container };
+
+            if (_instances.ContainsKey(key))
+                return _instances[key];
+                        
             lock (_lock)
             {
                 T result = _createInstance(request);
                 if (result != null)
-                {
-                    _concreteType = result.GetType();
-                    _concreteInstances[_concreteType] = result;
-                    _instance = _concreteInstances[_concreteType];
+                {                    
+                    _instances[key] = result;
+                    //_instance = _instances[_concreteType];
                 }
             }
 
-            return _instance;
+            return _instances[key];
         }
     }
 }

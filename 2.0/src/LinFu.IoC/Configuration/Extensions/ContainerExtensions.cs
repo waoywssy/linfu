@@ -20,6 +20,7 @@ namespace LinFu.IoC
     {
         private static readonly TypeCounter _counter = new TypeCounter();
         private static readonly Stack<Type> _requests = new Stack<Type>();
+
         /// <summary>
         /// Loads a set of <paramref name="searchPattern">files</paramref> from the <paramref name="directory">target directory</paramref>.
         /// </summary>
@@ -288,7 +289,7 @@ namespace LinFu.IoC
         /// <param name="additionalArguments">The additional arguments that will be used to construct the service type.</param>
         /// <returns>If successful, it will return a service instance that is compatible with the given type;
         /// otherwise, it will just return a <c>null</c> value.</returns>
-        public static T GetService<T>(this IContainer container, params object[] additionalArguments)
+        public static T GetService<T>(this IServiceContainer container, params object[] additionalArguments)
             where T : class
         {
             Type serviceType = typeof(T);
@@ -334,6 +335,30 @@ namespace LinFu.IoC
         public static void AddService(this IServiceContainer container, Type serviceType, Type implementingType)
         {
             container.AddService(null, serviceType, implementingType, LifecycleType.OncePerRequest);
+        }
+
+        /// <summary>
+        /// Registers the <paramref name="serviceTypeToRegisterAsSelf">service type</paramref>
+        /// as both the implementing type and the service type using the given <paramref name="lifecycle"/>.
+        /// </summary>
+        /// <param name="container">The container that will hold the service type.</param>
+        /// <param name="serviceTypeToRegisterAsSelf">The service type that will be registered as both the service type and the implementing type.</param>
+        /// <param name="lifecycle">The service <see cref="LifecycleType"/>.</param>
+        public static void AddService(this IServiceContainer container, Type serviceTypeToRegisterAsSelf, 
+            LifecycleType lifecycle)
+        {
+            container.AddService(serviceTypeToRegisterAsSelf, serviceTypeToRegisterAsSelf, lifecycle);
+        }
+
+        /// <summary>
+        /// Registers the <paramref name="serviceTypeToRegisterAsSelf">service type</paramref>
+        /// as both the implementing type and the service type.
+        /// </summary>
+        /// <param name="container">The container that will hold the service type.</param>
+        /// <param name="serviceTypeToRegisterAsSelf">The service type that will be registered as both the service type and the implementing type.</param>
+        public static void AddService(this IServiceContainer container, Type serviceTypeToRegisterAsSelf)
+        {
+            container.AddService(serviceTypeToRegisterAsSelf, serviceTypeToRegisterAsSelf, LifecycleType.OncePerRequest);
         }
 
         /// <summary>
@@ -411,7 +436,6 @@ namespace LinFu.IoC
                 throw new ArgumentException(message);
             }
 
-
             container.AddFactory(serviceName, serviceType, factoryInstance);
         }
 
@@ -435,7 +459,7 @@ namespace LinFu.IoC
         /// </summary>        
         /// <param name="container">The container that will hold the factory instance.</param>
         /// <param name="factory">The <see cref="IFactory{T}"/> instance that will create the object instance.</param>
-        public static void AddFactory<T>(this IContainer container, IFactory<T> factory)
+        public static void AddFactory<T>(this IServiceContainer container, IFactory<T> factory)
         {
             IFactory adapter = new FactoryAdapter<T>(factory);
             container.AddFactory(typeof(T), adapter);
@@ -447,7 +471,7 @@ namespace LinFu.IoC
         /// <typeparam name="T">The type of service being added.</typeparam>
         /// <param name="container">The container that will hold the service instance.</param>
         /// <param name="instance">The service instance itself.</param>
-        public static void AddService<T>(this IContainer container, T instance)
+        public static void AddService<T>(this IServiceContainer container, T instance)
         {
             container.AddFactory(typeof(T), new InstanceFactory(instance));
         }
@@ -504,6 +528,7 @@ namespace LinFu.IoC
 
             return results;
         }
+
         /// <summary>
         /// Determines whether or not a container contains services that match
         /// the given <paramref name="condition"/>.

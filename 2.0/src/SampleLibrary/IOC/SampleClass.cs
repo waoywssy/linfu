@@ -6,5 +6,10 @@
         {
             get; set;
         }
+
+        public void DoSomething()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

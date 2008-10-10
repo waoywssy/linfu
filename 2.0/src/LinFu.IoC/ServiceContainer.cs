@@ -52,7 +52,6 @@ namespace LinFu.IoC
         /// <param name="factory">The <see cref="IFactory"/> instance that will be responsible for creating the service instance</param>
         public virtual void AddFactory(Type serviceType, IFactory factory)
         {
-            //_factories[serviceType] = factory;
             FactoryStorage.AddFactory(null, serviceType, factory);
         }
 
