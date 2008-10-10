@@ -10,5 +10,10 @@ namespace SampleLibrary.IOC
     {
         [Inject] 
         public ISampleService SomeProperty { get; set; }
+
+        public void DoSomething()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

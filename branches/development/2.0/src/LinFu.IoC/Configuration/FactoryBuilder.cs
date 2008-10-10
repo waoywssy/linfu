@@ -54,6 +54,7 @@ namespace LinFu.IoC.Configuration
             Func<IFactoryRequest, object> factoryMethod =
                 request =>
                 {
+                    var serviceName = request.ServiceName;
                     var type = request.ServiceType;
                     var currentContainer = request.Container;
                     var arguments = request.Arguments;
@@ -65,9 +66,6 @@ namespace LinFu.IoC.Configuration
                     if (concreteType == null)
                         return null;
 
-                    var serviceContainer = (IServiceContainer)currentContainer;
-
-                    //Type actualFactoryType = factoryTypeDefinition.MakeGenericType(serviceType);
                     // Generate the concrete factory instance 
                     // at runtime
                     Type factoryType = factoryTypeDefinition.MakeGenericType(type);
@@ -76,7 +74,7 @@ namespace LinFu.IoC.Configuration
                     var factoryRequest = new FactoryRequest()
                     {
                         ServiceType = serviceType,
-                        ServiceName = null,
+                        ServiceName = serviceName,
                         Arguments = arguments,
                         Container = currentContainer
                     };
@@ -100,7 +98,7 @@ namespace LinFu.IoC.Configuration
         {
             // Create the factory itself
             MulticastDelegate factoryMethod = CreateFactoryMethod(serviceType, actualType);
-            //object factoryInstance = Activator.CreateInstance(factoryType, new object[] { factoryMethod });
+            
             object factoryInstance = factoryType.AutoCreateFrom(_dummyContainer, factoryMethod);
             var result = factoryInstance as IFactory;
 

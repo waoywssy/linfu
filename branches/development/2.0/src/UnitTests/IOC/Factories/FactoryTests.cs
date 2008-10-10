@@ -129,9 +129,18 @@ namespace LinFu.UnitTests.IOC.Factories
         public void SingletonFactoryShouldCreateTheSameInstanceOnce()
         {
             var factory = new SingletonFactory<ISerializable>(createInstance);
+            var container = new ServiceContainer();
 
-            ISerializable first = factory.CreateInstance(null);
-            ISerializable second = factory.CreateInstance(null);
+            var request = new FactoryRequest()
+                              {
+                                  ServiceName = null,
+                                  Arguments = new object[0],
+                                  Container = container,
+                                  ServiceType = typeof(ISerializable)
+                              };
+
+            ISerializable first = factory.CreateInstance(request);
+            ISerializable second = factory.CreateInstance(request);
 
             // Both instances must be the same
             Assert.AreSame(first, second);

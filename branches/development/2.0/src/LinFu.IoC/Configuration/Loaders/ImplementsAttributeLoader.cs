@@ -93,7 +93,7 @@ namespace LinFu.IoC.Configuration.Loaders
                         var factoryRequest = new FactoryRequest()
                         {
                             ServiceType = serviceType,
-                            ServiceName = null,
+                            ServiceName = request.ServiceName,
                             Arguments = arguments,
                             Container = currentContainer
                         };
