@@ -67,12 +67,24 @@ namespace LinFu.IoC.Configuration
         /// <returns>A list of <see cref="PropertyInfo"/> objects that pass the filter description.</returns>
         protected override IEnumerable<PropertyInfo> GetMembers(Type targetType, IServiceContainer container)
         {
-            var results = from p in targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                          let propertyType = p.PropertyType
-                          let isServiceArray = propertyType.ExistsAsServiceArray()
-                          let isCompatible = isServiceArray(container) || container.Contains(propertyType)
-                          where p.CanWrite && isCompatible
-                          select p;
+            IEnumerable<PropertyInfo> results;
+            try
+            {
+                var items = from p in targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                            let propertyType = p == null ? typeof(void) : p.PropertyType
+                            let isServiceArray = propertyType != null ? propertyType.ExistsAsServiceArray() : ioc=>false
+                            let isCompatible = isServiceArray(container) || container.Contains(propertyType)
+                            where p != null && p.CanWrite && isCompatible
+                            select p;
+                
+                results = items;
+            }
+            catch (Exception ex)
+            {
+                
+                throw ex;
+            }
+            
 
             return results;
         }

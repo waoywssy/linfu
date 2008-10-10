@@ -36,11 +36,7 @@ namespace LinFu.IoC.Configuration
             // Push the method arguments onto the stack
             for (var index = 0; index < parameterTypes.Length; index++)
             {
-                var parameterType = parameterTypes[index];
                 IL.Emit(OpCodes.Ldarg, index);
-
-                //if (parameterType.IsValueType)
-                //    IL.Emit(OpCodes.Box, parameterType);
             }
 
             EmitCall(IL, existingMethod);
