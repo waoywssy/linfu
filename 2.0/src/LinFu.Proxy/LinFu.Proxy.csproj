@@ -54,7 +54,6 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CallAdapter.cs" />
     <Compile Include="MethodBodyEmitter.cs" />
     <Compile Include="ProxyBuilder.cs" />
     <Compile Include="InterfaceExtractor.cs" />
@@ -62,7 +61,6 @@
     <Compile Include="ProxyCache.cs" />
     <Compile Include="ProxyCacheEntry.cs" />
     <Compile Include="ProxyFactory.cs" />
-    <Compile Include="ProxyFactoryExtensions.cs" />
     <Compile Include="ProxyImplementor.cs" />
     <Compile Include="ProxyMethodBuilder.cs" />
   </ItemGroup>

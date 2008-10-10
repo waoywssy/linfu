@@ -9,8 +9,9 @@ namespace SampleLibrary
     {
         #region IFactory Members
 
-        public object CreateInstance(Type serviceType, IContainer container, params object[] additionalArguments)
+        public object CreateInstance(IFactoryRequest request)
         {
+            var serviceType = request.ServiceType;
             Type typeArgument = serviceType.GetGenericArguments()[0];
             var resultType = typeof (SampleGenericImplementation<>).MakeGenericType(typeArgument);
 

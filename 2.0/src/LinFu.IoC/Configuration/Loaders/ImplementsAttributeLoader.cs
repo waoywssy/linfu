@@ -82,13 +82,23 @@ namespace LinFu.IoC.Configuration.Loaders
         {
             // HACK: Use a lazy factory since the actualy IFactoryBuilder instance won't
             // be available until runtime
-            Func<Type, IContainer, object[], object> factoryMethod =
-                (type, currentContainer, arguments) =>
+            Func<IFactoryRequest, object> factoryMethod =
+                request =>
                     {
+                        var currentContainer = (IServiceContainer)request.Container;
+                        var arguments = request.Arguments;
                         var builder = currentContainer.GetService<IFactoryBuilder>();
                         var actualFactory = builder.CreateFactory(serviceType, implementingType, lifecycle);
 
-                        return actualFactory.CreateInstance(serviceType, currentContainer, arguments);
+                        var factoryRequest = new FactoryRequest()
+                        {
+                            ServiceType = serviceType,
+                            ServiceName = request.ServiceName,
+                            Arguments = arguments,
+                            Container = currentContainer
+                        };
+
+                        return actualFactory.CreateInstance(factoryRequest);
                     };
 
             return new FunctorFactory(factoryMethod);

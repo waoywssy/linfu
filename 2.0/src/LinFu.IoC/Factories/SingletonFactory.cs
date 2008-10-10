@@ -10,11 +10,11 @@ namespace LinFu.IoC.Factories
     /// <typeparam name="T">The type of service to instantiate.</typeparam>
     public class SingletonFactory<T> : BaseFactory<T>
     {
-        private static readonly Dictionary<Type, T> _concreteInstances = new Dictionary<Type, T>();
-        private readonly Func<Type, IContainer, object[], T> _createInstance;
-        private T _instance;
-        private Type _concreteType;
+        private static readonly Dictionary<object, T> _instances = new Dictionary<object, T>();
+        private readonly Func<IFactoryRequest, T> _createInstance;
+
         private readonly object _lock = new object();
+
         /// <summary>
         /// Initializes the factory class using the <paramref name="createInstance"/>
         /// parameter as a factory delegate.
@@ -24,7 +24,7 @@ namespace LinFu.IoC.Factories
         /// type:
         /// <code>
         ///     // Define the factory delegate
-        ///     Func&lt;IContainer, ISomeService&gt; createService = container=>new SomeServiceImplementation();
+        ///     Func&lt;IFactoryRequest, ISomeService&gt; createService = container=>new SomeServiceImplementation();
         /// 
         ///     // Create the factory
         ///     var factory = new SingletonFactory&lt;ISomeService&gt;(createService);
@@ -36,7 +36,7 @@ namespace LinFu.IoC.Factories
         /// </code>
         /// </example>
         /// <param name="createInstance">The delegate that will be used to create each new service instance.</param>
-        public SingletonFactory(Func<Type, IContainer, object[], T> createInstance)
+        public SingletonFactory(Func<IFactoryRequest, T> createInstance)
         {
             _createInstance = createInstance;
         }
@@ -44,26 +44,26 @@ namespace LinFu.IoC.Factories
         /// <summary>
         /// A method that creates a service instance as a singleton.
         /// </summary>
-        /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
-        /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
+        /// <param name="request">The <see cref="IFactoryRequest"/> instance that describes the requested service.</param>
         /// <returns>A service instance as a singleton.</returns>
-        public override T CreateInstance(IContainer container, params object[] additionalArguments)
+        public override T CreateInstance(IFactoryRequest request)
         {
-            if (!ReferenceEquals(_instance, null))
-                return _instance;
-            
+            var key = new { request.ServiceName, request.ServiceType, request.Container };
+
+            if (_instances.ContainsKey(key))
+                return _instances[key];
+                        
             lock (_lock)
             {
-                T result = _createInstance(typeof(T), container, additionalArguments);
+                T result = _createInstance(request);
                 if (result != null)
-                {
-                    _concreteType = result.GetType();
-                    _concreteInstances[_concreteType] = result;
-                    _instance = _concreteInstances[_concreteType];
+                {                    
+                    _instances[key] = result;
+                    //_instance = _instances[_concreteType];
                 }
             }
 
-            return _instance;
+            return _instances[key];
         }
     }
 }

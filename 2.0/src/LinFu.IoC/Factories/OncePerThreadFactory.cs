@@ -13,7 +13,7 @@ namespace LinFu.IoC.Factories
     public class OncePerThreadFactory<T> : BaseFactory<T>
     {
         private static readonly Dictionary<int, T> _storage = new Dictionary<int, T>();
-        private readonly Func<Type, IContainer, object[], T> _createInstance;
+        private readonly Func<IFactoryRequest, T> _createInstance;
 
         /// <summary>
         /// Initializes the factory class using the <paramref name="createInstance"/>
@@ -24,7 +24,7 @@ namespace LinFu.IoC.Factories
         /// type:
         /// <code>
         ///     // Define the factory delegate
-        ///     Func&lt;IContainer, ISomeService&gt; createService = container=>new SomeServiceImplementation();
+        ///     Func&lt;IFactoryRequest, ISomeService&gt; createService = container=>new SomeServiceImplementation();
         /// 
         ///     // Create the factory
         ///     var factory = new OncePerThreadFactory&lt;ISomeService&gt;(createService);
@@ -36,20 +36,19 @@ namespace LinFu.IoC.Factories
         /// </code>
         /// </example>
         /// <param name="createInstance">The delegate that will be used to create each new service instance.</param>
-        public OncePerThreadFactory(Func<Type, IContainer, object[], T> createInstance)
+        public OncePerThreadFactory(Func<IFactoryRequest, T> createInstance)
         {
             _createInstance = createInstance;
         }
 
         /// <summary>
-        /// Creates the service instance using the given <paramref name="container"/>
+        /// Creates the service instance using the given <see cref="IFactoryRequest"/>
         /// instance. Every service instance created from this factory will
         /// only be created once per thread.
         /// </summary>
-        /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
-        /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
+        /// <param name="request">The <see cref="IFactoryRequest"/> instance that describes the requested service.</param>
         /// <returns>A a service instance as thread-wide singleton.</returns>
-        public override T CreateInstance(IContainer container, params object[] additionalArguments)
+        public override T CreateInstance(IFactoryRequest request)
         {
             int threadId = Thread.CurrentThread.ManagedThreadId;
 
@@ -58,7 +57,7 @@ namespace LinFu.IoC.Factories
             {
                 // Create the service instance only once
                 if (!_storage.ContainsKey(threadId))
-                    _storage[threadId] = _createInstance(typeof(T), container, additionalArguments);
+                    _storage[threadId] = _createInstance(request);
 
                 result = _storage[threadId];
             }

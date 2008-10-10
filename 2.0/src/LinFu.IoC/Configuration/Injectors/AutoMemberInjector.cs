@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Interfaces;
+using LinFu.Proxy.Interfaces;
 
 namespace LinFu.IoC.Configuration
 {
@@ -79,6 +80,14 @@ namespace LinFu.IoC.Configuration
 
             // Determine which members can be injected
             var targetType = result.ActualResult.GetType();
+
+            // Use the base class if the
+            // target type is a proxy type
+            if (typeof(IProxy).IsAssignableFrom(targetType) && targetType.BaseType != typeof(object))
+            {
+                targetType = targetType.BaseType;
+            }
+
             var members = filter.GetInjectableMembers(targetType).ToList();
             if (members.Count == 0)
                 return;

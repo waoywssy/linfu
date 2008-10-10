@@ -87,15 +87,11 @@ namespace LinFu.IoC
         /// </summary>
         /// <typeparam name="TService">The type of service to create.</typeparam>
         /// <param name="func">The lambda function to be converted.</param>
-        /// <returns>The equivalent <see cref="Func{Type, IContainer, TArgs, TService}"/>
+        /// <returns>The equivalent <see cref="Func{IFactoryRequest, TService}"/>
         /// that delegates its calls back to the <paramref name="func"/> lambda function.</returns>
-        internal static Func<Type, IContainer, object[], TService> CreateAdapter<TService>(this Func<Type, IServiceContainer, object[], TService> func)
+        internal static Func<IFactoryRequest, TService> CreateAdapter<TService>(this Func<IFactoryRequest, TService> func)
         {
-            Func<Type, IContainer, object[], TService> adapter = (type, container, arguments) =>
-            {
-                var serviceContainer = container as IServiceContainer;
-                return func(type, serviceContainer, arguments);
-            };
+            Func<IFactoryRequest, TService> adapter = func;
 
             return adapter;
         }

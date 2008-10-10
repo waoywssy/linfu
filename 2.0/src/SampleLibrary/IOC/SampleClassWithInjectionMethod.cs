@@ -18,5 +18,10 @@ namespace SampleLibrary.IOC
         {
             Property = sample;    
         }
+
+        public void DoSomething()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

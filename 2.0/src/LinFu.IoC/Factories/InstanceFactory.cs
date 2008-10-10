@@ -26,11 +26,9 @@ namespace LinFu.IoC
         /// A method that returns the existing object reference associated with
         /// this factory. 
         /// </summary>
-        /// <param name="container">The <see cref="IContainer"/> instance that will ultimately instantiate the service.</param>
-        /// <param name="serviceType">The service type to be instantiated.</param>
-        /// <param name="additionalArguments">The list of arguments to use with the current factory instance.</param>
+        /// <param name="request">The <see cref="IFactoryRequest"/> instance that describes the requested service.</param>
         /// <returns>A non-null object reference.</returns>
-        public object CreateInstance(Type serviceType, IContainer container, params object[] additionalArguments)
+        public object CreateInstance(IFactoryRequest request)
         {
             return _instance;
         }

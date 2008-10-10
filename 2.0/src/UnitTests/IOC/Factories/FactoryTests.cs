@@ -19,8 +19,7 @@ namespace LinFu.UnitTests.IOC.Factories
         {
             // Create a new mock service instance on each
             // factory method call
-            createInstance =
-                (type, container, arguments) => (new Mock<ISerializable>()).Object;
+            createInstance = request => (new Mock<ISerializable>()).Object;
         }
 
         [TearDown]
@@ -31,7 +30,7 @@ namespace LinFu.UnitTests.IOC.Factories
 
         #endregion
 
-        private Func<Type, IContainer, object[], ISerializable> createInstance;
+        private Func<IFactoryRequest, ISerializable> createInstance;
 
         [Test]
         public void GenericFactoryAdapterShouldCallUntypedFactoryInstance()
@@ -42,11 +41,19 @@ namespace LinFu.UnitTests.IOC.Factories
             var adapter = new FactoryAdapter<ISerializable>(mockFactory.Object);
 
             // The adapter itself should call the container on creation
-            mockFactory.Expect(f => f.CreateInstance(container, It.IsAny<object[]>())).Returns(mockService.Object);
+            mockFactory.Expect(f => f.CreateInstance(It.Is<IFactoryRequest>(request => request.Container == container)))
+                .Returns(mockService.Object);
 
             Assert.IsInstanceOfType(typeof(IFactory), adapter);
 
-            adapter.CreateInstance(typeof(ISerializable), container);
+            var factoryRequest = new FactoryRequest()
+                              {
+                                  ServiceName = null,
+                                  ServiceType = typeof(ISerializable),
+                                  Container = container
+                              };
+
+            adapter.CreateInstance(factoryRequest);
 
             mockFactory.VerifyAll();
         }
@@ -122,9 +129,18 @@ namespace LinFu.UnitTests.IOC.Factories
         public void SingletonFactoryShouldCreateTheSameInstanceOnce()
         {
             var factory = new SingletonFactory<ISerializable>(createInstance);
+            var container = new ServiceContainer();
 
-            ISerializable first = factory.CreateInstance(null);
-            ISerializable second = factory.CreateInstance(null);
+            var request = new FactoryRequest()
+                              {
+                                  ServiceName = null,
+                                  Arguments = new object[0],
+                                  Container = container,
+                                  ServiceType = typeof(ISerializable)
+                              };
+
+            ISerializable first = factory.CreateInstance(request);
+            ISerializable second = factory.CreateInstance(request);
 
             // Both instances must be the same
             Assert.AreSame(first, second);
