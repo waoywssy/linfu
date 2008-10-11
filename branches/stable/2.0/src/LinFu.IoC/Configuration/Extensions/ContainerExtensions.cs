@@ -225,8 +225,8 @@ namespace LinFu.IoC
             container.AddService<IMemberResolver<ConstructorInfo>>(new ConstructorResolver(ioc => ioc.GetService<IMethodFinderWithContainer<ConstructorInfo>>()));
             container.AddService<IArgumentResolver>(new ArgumentResolver());
 
-            container.AddService<IMethodInvoke<MethodInfo>>(new MethodInvoke<MethodInfo>());
-            container.AddService<IMethodInvoke<ConstructorInfo>>(new MethodInvoke<ConstructorInfo>());
+            container.AddService<IMethodInvoke<MethodInfo>>(new MethodInvoke());
+            container.AddService<IMethodInvoke<ConstructorInfo>>(new ConstructorInvoke());
 
             container.AddService<IMethodFinder<ConstructorInfo>>(new MethodFinderFromContainer<ConstructorInfo>());
             container.AddService<IMethodFinderWithContainer<ConstructorInfo>>(new MethodFinderFromContainer<ConstructorInfo>());

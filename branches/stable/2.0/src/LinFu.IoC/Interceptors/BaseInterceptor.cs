@@ -21,7 +21,7 @@ namespace LinFu.IoC.Interceptors
         /// </summary>
         protected BaseInterceptor()
         {
-            _methodInvoke = new MethodInvoke<MethodInfo>();
+            _methodInvoke = new MethodInvoke();
         }
 
         /// <summary>
