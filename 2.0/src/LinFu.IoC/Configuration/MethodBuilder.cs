@@ -44,10 +44,12 @@ namespace LinFu.IoC.Configuration
         /// <remarks>This override will add an additional parameter type to accomodate the method target.</remarks>
         protected override IList<Type> GetParameterList(MethodInfo existingMethod, Type[] parameterTypes)
         {
-            var parameterList = new List<Type>(parameterTypes);
+            var parameterList = new List<Type>();
 
             if (!existingMethod.IsStatic)
                 parameterList.Add(existingMethod.DeclaringType);
+
+            parameterList.AddRange(parameterTypes);
 
             return parameterList;
         }
