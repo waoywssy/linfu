@@ -29,7 +29,9 @@ namespace LinFu.IoC.Configuration
             // Determine the method signature
             IList<Type> parameterList = GetParameterList(existingMethod, parameterTypes);
 
-            var dynamicMethod = new DynamicMethod(string.Empty, returnType, parameterList.ToArray());
+            var declaringType = existingMethod.DeclaringType;
+            var module = declaringType.Module;
+            var dynamicMethod = new DynamicMethod(string.Empty, returnType, parameterList.ToArray(), module);
             var IL = dynamicMethod.GetILGenerator();
 
             // Push the target instance, if necessary
