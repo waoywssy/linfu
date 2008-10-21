@@ -27,7 +27,7 @@ namespace LinFu.UnitTests.IOC
 
             var container = new ServiceContainer();
             container.AddService("SomeService", mockService.Object);
-            container.Preprocessors.Add(mockPreprocessor.Object);
+            container.PreProcessors.Add(mockPreprocessor.Object);
 
             // The preprocessors should be called
             var result = container.GetService<ISampleService>("SomeService");

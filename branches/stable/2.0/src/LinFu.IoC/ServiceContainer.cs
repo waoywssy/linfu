@@ -199,7 +199,7 @@ namespace LinFu.IoC
         private IServiceRequest Preprocess(string serviceName, Type serviceType, object[] additionalArguments, IFactory proposedFactory)
         {
             var serviceRequest = new ServiceRequest(serviceName, serviceType, additionalArguments, proposedFactory, this);
-            foreach (var preprocessor in Preprocessors)
+            foreach (var preprocessor in PreProcessors)
             {
                 preprocessor.Preprocess(serviceRequest);
             }
@@ -268,7 +268,7 @@ namespace LinFu.IoC
         /// The list of preprocessors that will handle
         /// every service request before each actual service is created.
         /// </summary>
-        public IList<IPreProcessor> Preprocessors
+        public IList<IPreProcessor> PreProcessors
         {
             get { return _preprocessors; }
         }
