@@ -55,7 +55,7 @@ namespace LinFu.IoC.Configuration.Loaders
             // Inject the postprocessor into any service containers
             // that will be configured by the current loader instance
             Action<IServiceContainer> assignPreprocessor =
-                container => container.Preprocessors.Add(instance);
+                container => container.PreProcessors.Add(instance);
 
             return new[] { assignPreprocessor };
         }

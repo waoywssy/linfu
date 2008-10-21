@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using LinFu.IoC.Configuration.Injectors;
 using LinFu.IoC.Interfaces;
 
 namespace LinFu.IoC.Configuration
@@ -115,7 +116,13 @@ namespace LinFu.IoC.Configuration
                 Type serviceType = currentService.ServiceType;
                 IFactory factory = currentService.FactoryInstance;
 
-
+                // HACK: Unnamed custom factories should be able to
+                // intercept every request for the given service type
+                if (serviceName == null)
+                {
+                    var injector = new CustomFactoryInjector(serviceType, factory);
+                    results.Add(container => container.PreProcessors.Add(injector));
+                }
                 // Add each service to the container on initialization
                 results.Add(container => container.AddFactory(serviceName, serviceType, factory));
             }
