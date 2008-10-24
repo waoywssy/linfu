@@ -128,7 +128,7 @@ namespace LinFu.DesignByContract2.Attributes
                 AddInterface(current, interfaceList);
             }
             
-            if (!interfaceList.Contains(type))
+            if (!interfaceList.Contains(type) && type.IsInterface)
                 interfaceList.Add(type);
         }
         #endregion
