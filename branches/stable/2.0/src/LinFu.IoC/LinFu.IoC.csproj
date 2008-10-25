@@ -144,11 +144,13 @@
     <Compile Include="Interfaces\IFactoryRequest.cs" />
     <Compile Include="Interfaces\IPostProcessor.cs" />
     <Compile Include="Interfaces\IPreprocessor.cs" />
+    <Compile Include="Interfaces\IScope.cs" />
     <Compile Include="Interfaces\IServiceContainer.cs" />
     <Compile Include="Interfaces\IServiceInfo.cs" />
     <Compile Include="Interfaces\IServiceInstance.cs" />
     <Compile Include="Interfaces\IServiceRequest.cs" />
     <Compile Include="Interfaces\IServiceRequestResult.cs" />
+    <Compile Include="Scope.cs" />
     <Compile Include="ServiceContainer.cs" />
     <Compile Include="NamedServiceNotFoundException.cs" />
     <Compile Include="ServiceInfo.cs" />
