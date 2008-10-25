@@ -69,6 +69,7 @@
     <Compile Include="IOC\MethodInjectionTests.cs" />
     <Compile Include="IOC\PropertyInjectionTests.cs" />
     <Compile Include="IOC\ResolutionTests.cs" />
+    <Compile Include="IOC\ScopeTests.cs" />
     <Compile Include="Proxy\InterfaceExtractorTests.cs" />
     <Compile Include="Proxy\LazyObjectTests.cs" />
     <Compile Include="Proxy\MockInterceptor.cs" />

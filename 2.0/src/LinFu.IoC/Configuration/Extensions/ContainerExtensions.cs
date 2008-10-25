@@ -237,12 +237,14 @@ namespace LinFu.IoC
 
             container.AddService<IMemberInjectionFilter<MethodInfo>>(new AttributedMethodInjectionFilter());
             container.AddService<IMemberInjectionFilter<FieldInfo>>(new AttributedFieldInjectionFilter());
-
-            //if (!container.Preprocessors.HasElementWith(p=>p is LazyServiceInjector))
-            //    container.Preprocessors.Add(new LazyServiceInjector());
-
+           
             if (!container.PostProcessors.HasElementWith(p => p is Initializer))
                 container.PostProcessors.Add(new Initializer());
+
+            container.AddFactory(null, typeof (IScope), new FunctorFactory(f => new Scope()));
+
+            //// Add the scope object by default
+            //container.AddService(typeof(IScope), typeof(Scope), LifecycleType.OncePerRequest);
         }
 
         /// <summary>
