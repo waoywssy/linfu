@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using LinFu.IoC.Configuration;
+using LinFu.IoC.Configuration.Injectors;
 using LinFu.IoC.Configuration.Interfaces;
 using LinFu.IoC.Configuration.Resolvers;
 using LinFu.IoC.Factories;
@@ -237,11 +238,11 @@ namespace LinFu.IoC
 
             container.AddService<IMemberInjectionFilter<MethodInfo>>(new AttributedMethodInjectionFilter());
             container.AddService<IMemberInjectionFilter<FieldInfo>>(new AttributedFieldInjectionFilter());
-           
+
             if (!container.PostProcessors.HasElementWith(p => p is Initializer))
                 container.PostProcessors.Add(new Initializer());
 
-            container.AddFactory(null, typeof (IScope), new FunctorFactory(f => new Scope()));
+            container.AddFactory(null, typeof(IScope), new FunctorFactory(f => new Scope()));
 
             //// Add the scope object by default
             //container.AddService(typeof(IScope), typeof(Scope), LifecycleType.OncePerRequest);
@@ -349,7 +350,7 @@ namespace LinFu.IoC
         /// <param name="container">The container that will hold the service type.</param>
         /// <param name="serviceTypeToRegisterAsSelf">The service type that will be registered as both the service type and the implementing type.</param>
         /// <param name="lifecycle">The service <see cref="LifecycleType"/>.</param>
-        public static void AddService(this IServiceContainer container, Type serviceTypeToRegisterAsSelf, 
+        public static void AddService(this IServiceContainer container, Type serviceTypeToRegisterAsSelf,
             LifecycleType lifecycle)
         {
             container.AddService(serviceTypeToRegisterAsSelf, serviceTypeToRegisterAsSelf, lifecycle);
@@ -468,6 +469,60 @@ namespace LinFu.IoC
         {
             IFactory adapter = new FactoryAdapter<T>(factory);
             container.AddFactory(typeof(T), adapter);
+        }
+
+        /// <summary>
+        /// Registers the <paramref name="factory"/> as the default factory instance
+        /// that will be used if no other factory can be found for the current <paramref name="serviceType"/>.
+        /// </summary>
+        /// <param name="container">The host container.</param>
+        /// <param name="serviceType">The service type that will be created by the default factory.</param>
+        /// <param name="factory">The <see cref="IFactory"/> instance that will be used if no other factories can create the given service type.</param>
+        public static void AddDefaultFactory(this IServiceContainer container, Type serviceType, IFactory factory)
+        {
+            var injector = new CustomFactoryInjector(serviceType, factory);
+            container.PreProcessors.Add(injector);
+        }
+
+        /// <summary>
+        /// Adds a service to the container by using the given <paramref name="factoryMethod"/> and <paramref name="lifecycleType"/>
+        /// to instantiate the service instance.
+        /// </summary>
+        /// <typeparam name="T">The service type itself.</typeparam>
+        /// <param name="serviceName">The name that will be associated with the service instance.</param>
+        /// <param name="container">The host container that will instantiate the service type.</param>
+        /// <param name="factoryMethod">The factory method that will be used to create the actual service instance.</param>
+        /// <param name="lifecycleType">The service <see cref="LifecycleType"/> type.</param>
+        public static void AddService<T>(this IServiceContainer container, string serviceName,
+            Func<IFactoryRequest, T> factoryMethod, LifecycleType lifecycleType)
+        {
+            IFactory factory = null;
+
+            // Determine which factory type should be used
+            if (lifecycleType == LifecycleType.Singleton)
+                factory = new SingletonFactory<T>(factoryMethod);
+
+            if (lifecycleType == LifecycleType.OncePerThread)
+                factory = new OncePerThreadFactory<T>(factoryMethod);
+
+            if (lifecycleType == LifecycleType.OncePerRequest)
+                factory = new OncePerRequestFactory<T>(factoryMethod);
+
+            container.AddFactory(serviceName, typeof(T), factory);
+        }
+
+        /// <summary>
+        /// Adds a service to the container by using the given <paramref name="factoryMethod"/> and <paramref name="lifecycleType"/>
+        /// to instantiate the service instance.
+        /// </summary>
+        /// <typeparam name="T">The service type itself.</typeparam>
+        /// <param name="container">The host container that will instantiate the service type.</param>
+        /// <param name="factoryMethod">The factory method that will be used to create the actual service instance.</param>
+        /// <param name="lifecycleType">The service <see cref="LifecycleType"/> type.</param>
+        public static void AddService<T>(this IServiceContainer container,
+            Func<IFactoryRequest, T> factoryMethod, LifecycleType lifecycleType)
+        {
+            container.AddService<T>(null, factoryMethod, lifecycleType);
         }
 
         /// <summary>
