@@ -26,7 +26,7 @@ namespace LinFu.IoC.Configuration
             _containerLoader = new AssemblyContainerLoader();
             _containerLoader.TypeLoaders.Add(new FactoryAttributeLoader());
             _containerLoader.TypeLoaders.Add(new ImplementsAttributeLoader());
-            _containerLoader.TypeLoaders.Add(new PreprocessorLoader());
+            _containerLoader.TypeLoaders.Add(new PreProcessorLoader());
             _containerLoader.TypeLoaders.Add(new PostProcessorLoader());
             _containerLoader.TypeLoaders.Add(new InterceptorAttributeLoader(this));
 
