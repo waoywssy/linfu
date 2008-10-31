@@ -59,7 +59,6 @@ namespace LinFu.IoC.Factories
                 if (result != null)
                 {                    
                     _instances[key] = result;
-                    //_instance = _instances[_concreteType];
                 }
             }
 

@@ -88,7 +88,22 @@ namespace LinFu.IoC.Configuration.Loaders
                         var currentContainer = (IServiceContainer)request.Container;
                         var arguments = request.Arguments;
                         var builder = currentContainer.GetService<IFactoryBuilder>();
-                        var actualFactory = builder.CreateFactory(serviceType, implementingType, lifecycle);
+
+                        // HACK: If the service type is a type definition and
+                        // the implementing type is a type definition,
+                        // assume that the service type has the same number of
+                        // generic arguments as the implementing type
+                        var actualServiceType = serviceType;
+                        var actualImplementingType = implementingType;
+                        if (serviceType.IsGenericTypeDefinition && implementingType.IsGenericTypeDefinition &&
+                            serviceType.GetGenericArguments().Count() == implementingType.GetGenericArguments().Count())
+                        {
+                            var typeArguments = request.ServiceType.GetGenericArguments();
+                            actualServiceType = serviceType.MakeGenericType(typeArguments);
+                            actualImplementingType = implementingType.MakeGenericType(typeArguments);
+                        }
+
+                        var actualFactory = builder.CreateFactory(actualServiceType, actualImplementingType, lifecycle);
 
                         var factoryRequest = new FactoryRequest()
                         {

@@ -56,6 +56,7 @@
     <Compile Include="Configuration\Attributes\PostProcessorAttribute.cs" />
     <Compile Include="Configuration\Attributes\PreprocessorAttribute.cs" />
     <Compile Include="Configuration\BaseMethodBuilder.cs" />
+    <Compile Include="Configuration\ConstructorInvoke.cs" />
     <Compile Include="Configuration\ConstructorMethodBuilder.cs" />
     <Compile Include="Configuration\Extensions\ContainerExtensions.cs" />
     <Compile Include="Configuration\Extensions\FluentExtensions.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Configuration\Injectors\AutoMethodInjector.cs" />
     <Compile Include="Configuration\Injectors\AutoPropertyInjector.cs" />
     <Compile Include="Configuration\Injectors\BaseMemberInjectionFilter.cs" />
+    <Compile Include="Configuration\Injectors\CustomFactoryInjector.cs" />
     <Compile Include="Configuration\Injectors\PropertyInjectionFilter.cs" />
     <Compile Include="Configuration\InMemoryAssemblyLoader.cs" />
     <Compile Include="Configuration\Interfaces\IFactoryBuilder.cs" />
@@ -90,6 +92,7 @@
     <Compile Include="Configuration\Loaders\PostProcessorLoader.cs" />
     <Compile Include="Configuration\Loaders\PreprocessorLoader.cs" />
     <Compile Include="Configuration\MethodBuilder.cs" />
+    <Compile Include="Configuration\BaseMethodInvoke.cs" />
     <Compile Include="Configuration\MethodInvoke.cs" />
     <Compile Include="Configuration\PropertySetter.cs" />
     <Compile Include="Configuration\RecursiveDependencyException.cs" />
@@ -141,11 +144,13 @@
     <Compile Include="Interfaces\IFactoryRequest.cs" />
     <Compile Include="Interfaces\IPostProcessor.cs" />
     <Compile Include="Interfaces\IPreprocessor.cs" />
+    <Compile Include="Interfaces\IScope.cs" />
     <Compile Include="Interfaces\IServiceContainer.cs" />
     <Compile Include="Interfaces\IServiceInfo.cs" />
     <Compile Include="Interfaces\IServiceInstance.cs" />
     <Compile Include="Interfaces\IServiceRequest.cs" />
     <Compile Include="Interfaces\IServiceRequestResult.cs" />
+    <Compile Include="Scope.cs" />
     <Compile Include="ServiceContainer.cs" />
     <Compile Include="NamedServiceNotFoundException.cs" />
     <Compile Include="ServiceInfo.cs" />
