@@ -35,7 +35,7 @@ namespace LinFu.Reflection
 
         /// <summary>
         /// Gets or sets the value indicating the action loader 
-        /// responsible for reading an assembly and converting it to 
+        /// responsible for reading an assembly and converts it to 
         /// a list of actions to be performed against the target type.
         /// </summary>
         public IActionLoader<IList<Action<TTarget>>, Assembly> AssemblyActionLoader
