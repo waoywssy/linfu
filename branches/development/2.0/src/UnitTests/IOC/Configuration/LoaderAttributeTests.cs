@@ -46,20 +46,28 @@ namespace LinFu.UnitTests.IOC.Configuration
             var mockContainer = new Mock<IServiceContainer>();
             Type serviceType = typeof(ISampleGenericService<>);
             var mockPostProcessors = new Mock<IList<IPostProcessor>>();
+            var mockPreProcessors = new Mock<IList<IPreProcessor>>();
 
             ITypeLoader loader = new FactoryAttributeLoader();
             IEnumerable<Action<IServiceContainer>> actions = loader.Load(typeof(SampleOpenGenericFactory));
 
+            
             // The loader should load the mock container
             // using the generic open type as the service type
             mockContainer.Expect(container => container.PostProcessors)
                 .Returns(mockPostProcessors.Object);
+
+            mockContainer.Expect(container => container.PreProcessors)
+                .Returns(mockPreProcessors.Object);
 
             mockContainer.Expect(container => container.AddFactory(null,
                                                                    serviceType, It.IsAny<SampleOpenGenericFactory>()));
 
             // The postprocessor list should have an additional element added
             mockPostProcessors.Expect(p => p.Add(It.IsAny<IPostProcessor>()));
+
+            // The preprocessor list should have an additional element added as well
+            mockPreProcessors.Expect(p => p.Add(It.IsAny<IPreProcessor>()));
 
             Action<IServiceContainer> applyActions =
                 container =>
@@ -101,6 +109,7 @@ namespace LinFu.UnitTests.IOC.Configuration
         public void FactoryAttributeLoaderMustInjectUnnamedCustomFactoryIntoContainer()
         {
             var mockContainer = new Mock<IServiceContainer>();
+            var mockPreProcessors = new Mock<IList<IPreProcessor>>();
             Type serviceType = typeof(ISampleService);
             string serviceName = null;
 
@@ -108,6 +117,13 @@ namespace LinFu.UnitTests.IOC.Configuration
             // factory type
             mockContainer.Expect(container => container.AddFactory(serviceName, serviceType,
                                                                    It.IsAny<SampleFactory>()));
+
+            // The factory attribute loader will add the custom
+            // factory to the preprocessors collection
+            mockContainer.Expect(container => container.PreProcessors)
+                .Returns(mockPreProcessors.Object);
+
+            mockPreProcessors.Expect(p => p.Add(It.IsAny<IPreProcessor>()));
 
             ITypeLoader loader = new FactoryAttributeLoader();
             IEnumerable<Action<IServiceContainer>> actions = loader.Load(typeof(SampleFactory));

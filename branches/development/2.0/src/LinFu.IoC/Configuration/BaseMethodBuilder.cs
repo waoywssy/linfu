@@ -26,28 +26,45 @@ namespace LinFu.IoC.Configuration
             var parameterTypes = (from p in existingMethod.GetParameters()
                                   select p.ParameterType).ToArray();
 
+            // Determine the method signature
             IList<Type> parameterList = GetParameterList(existingMethod, parameterTypes);
 
-            var dynamicMethod = new DynamicMethod(string.Empty, returnType, parameterList.ToArray());
+            var declaringType = existingMethod.DeclaringType;
+            var module = declaringType.Module;
+            var dynamicMethod = new DynamicMethod(string.Empty, returnType, parameterList.ToArray(), module);
             var IL = dynamicMethod.GetILGenerator();
 
+            // Push the target instance, if necessary
             PushInstance(IL, existingMethod);
 
-            // Push the method arguments onto the stack
-            for (var index = 0; index < parameterTypes.Length; index++)
-            {
-                IL.Emit(OpCodes.Ldarg, index);
-            }
+            // Push the method arguments
+            PushMethodArguments(IL, existingMethod);
 
+            // Call the target method
             EmitCall(IL, existingMethod);
 
             // Unbox the return type
-            //if (returnType.IsValueType)
-            //    IL.Emit(OpCodes.Box, returnType);
-
             IL.Emit(OpCodes.Ret);
 
             return dynamicMethod;
+        }
+
+        /// <summary>
+        /// Pushes the method arguments onto the stack.
+        /// </summary>
+        /// <param name="IL">The <see cref="ILGenerator"/> of the target method body.</param>
+        /// <param name="targetMethod">The target method that will be invoked.</param>
+        protected virtual void PushMethodArguments(ILGenerator IL, MethodBase targetMethod)
+        {
+            var parameterTypes = (from p in targetMethod.GetParameters()
+                                  select p.ParameterType).ToArray();
+
+            // Push the method arguments onto the stack
+            var parameterCount = parameterTypes.Length;
+            for (var index = 0; index < parameterCount; index++)
+            {
+                IL.Emit(OpCodes.Ldarg, index);
+            }
         }
 
         /// <summary>
