@@ -7,8 +7,8 @@ using LinFu.AOP.Interfaces;
 namespace LinFu.AOP
 {
     /// <summary>
-    /// Extends <see cref="IInvocationInfo"/> interface
-    /// to make it easier to use.
+    /// Adds helper methods classes that implement the <see cref="IInvocationInfo"/> 
+    /// interface.
     /// </summary>
     public static class InvocationInfoExtensions
     {
@@ -56,10 +56,10 @@ namespace LinFu.AOP
         /// <param name="target">The target instance that will handle the method call.</param>
         /// <param name="arguments">The arguments that will be used for the actual method call.</param>
         /// <returns>The return value of the method call.</returns>
-        public static object Proceed(this IInvocationInfo info, object target, 
+        public static object Proceed(this IInvocationInfo info, object target,
             params object[] arguments)
         {
-            var targetMethod = info.TargetMethod;        
+            var targetMethod = info.TargetMethod;
             return targetMethod.Invoke(target, arguments);
         }
     }
