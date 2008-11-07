@@ -10,7 +10,7 @@ using LinFu.IoC.Factories;
 using LinFu.IoC.Interfaces;
 using LinFu.Reflection;
 
-namespace LinFu.IoC
+namespace LinFu.IoC.Configuration
 {
     /// <summary>
     /// A class that adds generics support to existing 
@@ -38,6 +38,16 @@ namespace LinFu.IoC
 
             // Configure the container
             loader.LoadInto(container);
+        }
+
+        /// <summary>
+        /// Loads the container from the application's base directory.
+        /// </summary>
+        /// <param name="container">The target container.</param>
+        /// <param name="searchPattern">The search pattern that describes the list of files to be loaded.</param>
+        public static void LoadFromApplicationDirectory(this IServiceContainer container, string searchPattern)
+        {
+            container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, searchPattern);
         }
 
         /// <summary>
