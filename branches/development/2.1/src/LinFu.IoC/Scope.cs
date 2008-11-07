@@ -13,7 +13,7 @@ namespace LinFu.IoC
     /// created within a service container and disposes them when 
     /// the scope itself has been disposed.
     /// </summary>
-    public class Scope : IScope, IPostProcessor, IInitialize
+    internal class Scope : IScope, IPostProcessor, IInitialize
     {
         private IServiceContainer _container;
         private int _threadId;

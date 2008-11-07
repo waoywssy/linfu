@@ -4,13 +4,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using LinFu.AOP.Cecil;
+using LinFu.AOP.Cecil.Interfaces;
 using LinFu.AOP.Interfaces;
 using LinFu.IoC.Configuration;
 using LinFu.Reflection.Emit;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace LinFu.AOP
+namespace LinFu.AOP.Cecil
 {
     /// <summary>
     /// Represents the default implementation for the
@@ -24,12 +26,12 @@ namespace LinFu.AOP
         static InvocationInfoEmitter()
         {
             var types = new [] { typeof(object), 
-                                        typeof(MethodInfo), 
-                                        typeof(StackTrace), 
-                                        typeof(Type[]), 
-                                        typeof(Type[]), 
-                                        typeof(Type), 
-                                        typeof(object[]) };
+                                 typeof(MethodInfo), 
+                                 typeof(StackTrace), 
+                                 typeof(Type[]), 
+                                 typeof(Type[]), 
+                                 typeof(Type), 
+                                 typeof(object[]) };
 
             _invocationInfoConstructor = typeof (InvocationInfo).GetConstructor(types);
 

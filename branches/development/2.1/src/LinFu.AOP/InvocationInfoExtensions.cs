@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using LinFu.AOP.Interfaces;
 
-namespace LinFu.AOP
+namespace LinFu.AOP.Cecil
 {
     /// <summary>
     /// Adds helper methods classes that implement the <see cref="IInvocationInfo"/> 
@@ -57,7 +57,7 @@ namespace LinFu.AOP
         /// <param name="arguments">The arguments that will be used for the actual method call.</param>
         /// <returns>The return value of the method call.</returns>
         public static object Proceed(this IInvocationInfo info, object target,
-            params object[] arguments)
+                                     params object[] arguments)
         {
             var targetMethod = info.TargetMethod;
             return targetMethod.Invoke(target, arguments);
