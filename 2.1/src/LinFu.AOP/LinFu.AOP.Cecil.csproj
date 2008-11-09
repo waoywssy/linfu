@@ -69,6 +69,7 @@
     <Compile Include="InvocationInfoEmitter.cs" />
     <Compile Include="InvocationInfoExtensions.cs" />
     <Compile Include="Interfaces\IVerifier.cs" />
+    <Compile Include="Loaders\JITWeaver.cs" />
     <Compile Include="ModuleDefinitionExtensions.cs" />
     <Compile Include="TypeDefinitionExtensions.cs" />
   </ItemGroup>

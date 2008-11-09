@@ -23,6 +23,26 @@ namespace LinFu.IoC.Configuration
         private static readonly Stack<Type> _requests = new Stack<Type>();
 
         /// <summary>
+        /// Loads a set of <paramref name="searchPattern">files</paramref> from the <paramref name="directory">target directory</paramref>
+        /// using a custom <see cref="IAssemblyLoader"/> instance.
+        /// </summary>
+        /// <param name="container">The container to be loaded.</param>
+        /// <param name="assemblyLoader">The custom <see cref="IAssemblyLoader"/> that will be used to load the target assemblies from disk.</param>
+        /// <param name="directory">The target directory.</param>
+        /// <param name="searchPattern">The search pattern that describes the list of files to be loaded.</param>
+        public static void LoadFrom(this IServiceContainer container, IAssemblyLoader assemblyLoader, string directory,
+            string searchPattern)
+        {
+            var loader = new Loader() { AssemblyLoader = assemblyLoader };
+
+            // Load the target directory
+            loader.LoadDirectory(directory, searchPattern);
+
+            // Configure the container
+            loader.LoadInto(container);
+        }
+
+        /// <summary>
         /// Loads a set of <paramref name="searchPattern">files</paramref> from the <paramref name="directory">target directory</paramref>.
         /// </summary>
         /// <param name="container">The container to be loaded.</param>
