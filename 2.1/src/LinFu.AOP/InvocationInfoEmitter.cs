@@ -38,15 +38,16 @@ namespace LinFu.AOP.Cecil
             _getTypeFromHandle = typeof (Type).GetMethod("GetTypeFromHandle",
                                                          BindingFlags.Static | BindingFlags.Public);
         }
-        
+
         /// <summary>
-        /// Emits the IL instructions that will store information about the method <paramref name="targetMethod">currently being executed</paramref>
-        /// and stores the results into the <paramref name="invocationInfo">variable.</paramref>
+        /// Emits the IL to save information about
+        /// the method currently being executed.
         /// </summary>
-        /// <param name="method">The method whose implementation will be intercepted.</param>
-        /// <param name="targetMethod">The actual method that will contain the resulting instructions.</param>
-        /// <param name="invocationInfo">The <see cref="VariableDefinition">local variable</see> that will store the current <see cref="IInvocationInfo"/> instance.</param>
-        public void Emit(MethodInfo method, MethodDefinition targetMethod, VariableDefinition invocationInfo)
+        /// <seealso cref="IInvocationInfo"/>
+        /// <param name="targetMethod">The target method currently being executed.</param>
+        /// <param name="interceptedMethod">The method that will be passed to the <paramref name="invocationInfo"/> as the currently executing method.</param>
+        /// <param name="invocationInfo">The local variable that will store the resulting <see cref="IInvocationInfo"/> instance.</param>
+        public void Emit(MethodDefinition targetMethod, MethodReference interceptedMethod, VariableDefinition invocationInfo)
         {
             var module = targetMethod.DeclaringType.Module;
             var currentMethod = targetMethod.AddLocal(typeof(MethodBase));
@@ -67,7 +68,6 @@ namespace LinFu.AOP.Cecil
             // object[] arguments = new object[argumentCount];            
             IL.PushArguments(targetMethod, module, arguments);
 
-            var interceptedMethod = module.Import(method);
             // object target = this;
             IL.Emit(OpCodes.Ldarg_0);
             IL.PushMethod(interceptedMethod, module);
@@ -85,11 +85,22 @@ namespace LinFu.AOP.Cecil
 
             // Make sure that the generic methodinfo is instantiated with the
             // proper type arguments
-            if (method.IsGenericMethodDefinition && targetMethod.GenericParameters.Count > 0)
+            if (targetMethod.GenericParameters.Count > 0)
             {
+                var getIsGenericMethodDef = module.ImportMethod<MethodInfo>("get_IsGenericMethodDefinition");
+                IL.Emit(OpCodes.Dup);
+                IL.Emit(OpCodes.Callvirt, getIsGenericMethodDef);
+
+                // Determine if the current method is a generic method
+                // definition
+                var skipMakeGenericMethod = IL.Create(OpCodes.Nop);
+                IL.Emit(OpCodes.Brfalse, skipMakeGenericMethod);
+
+                // Instantiate the specific generic method instance
                 var makeGenericMethod = module.ImportMethod<MethodInfo>("MakeGenericMethod", typeof (Type[]));
                 IL.Emit(OpCodes.Ldloc, typeArguments);
                 IL.Emit(OpCodes.Callvirt, makeGenericMethod);
+                IL.Append(skipMakeGenericMethod);
             }
 
             // Get the current stack trace
