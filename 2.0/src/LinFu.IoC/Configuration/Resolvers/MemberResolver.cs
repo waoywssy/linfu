@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -64,6 +65,7 @@ namespace LinFu.IoC.Configuration
                 bestMatch = defaultResult;
             }
 
+            Debug.Assert(bestMatch != null);
             return bestMatch;
         }
 

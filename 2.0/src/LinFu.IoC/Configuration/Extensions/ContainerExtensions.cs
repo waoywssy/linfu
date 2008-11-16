@@ -242,10 +242,8 @@ namespace LinFu.IoC
             if (!container.PostProcessors.HasElementWith(p => p is Initializer))
                 container.PostProcessors.Add(new Initializer());
 
-            container.AddFactory(null, typeof(IScope), new FunctorFactory(f => new Scope()));
-
-            //// Add the scope object by default
-            //container.AddService(typeof(IScope), typeof(Scope), LifecycleType.OncePerRequest);
+            // Add the scope object by default
+            container.AddFactory(null, typeof(IScope), new FunctorFactory(f => new Scope()));           
         }
 
         /// <summary>
@@ -522,7 +520,7 @@ namespace LinFu.IoC
         public static void AddService<T>(this IServiceContainer container,
             Func<IFactoryRequest, T> factoryMethod, LifecycleType lifecycleType)
         {
-            container.AddService<T>(null, factoryMethod, lifecycleType);
+            container.AddService(null, factoryMethod, lifecycleType);
         }
 
         /// <summary>
