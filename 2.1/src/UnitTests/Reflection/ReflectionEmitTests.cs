@@ -75,7 +75,7 @@ namespace LinFu.UnitTests.Reflection
         [Test]
         public void CecilShouldExtractSampleClassFromSignedAssembly()
         {
-            var location = typeof (SampleHelloClass).Assembly.Location;
+            var location = typeof(SampleHelloClass).Assembly.Location;
 
             var sourceAssembly = AssemblyFactory.GetAssembly(location);
             Assert.IsNotNull(sourceAssembly);
@@ -98,7 +98,7 @@ namespace LinFu.UnitTests.Reflection
             // The imported type must match the original type
             var firstType = types.FirstOrDefault();
             Assert.IsNotNull(firstType);
-            Assert.AreEqual(firstType.Name, typeof (SampleHelloClass).Name);
+            Assert.AreEqual(firstType.Name, typeof(SampleHelloClass).Name);
 
             var instance = Activator.CreateInstance(firstType);
             Assert.IsNotNull(instance);
@@ -106,37 +106,36 @@ namespace LinFu.UnitTests.Reflection
             var speakMethod = firstType.GetMethod("Speak");
             Assert.IsNotNull(speakMethod);
 
-            speakMethod.Invoke(instance, new object[]{});    
+            speakMethod.Invoke(instance, new object[] { });
         }
 
         [Test]
-        [Ignore("TODO: Fix this")]
         public void CecilShouldRemoveStrongNameFromAssembly()
         {
             var location = typeof(SampleHelloClass).Assembly.Location;
 
             var sourceAssembly = AssemblyFactory.GetAssembly(location);
-            
+
 
             Assert.IsNotNull(sourceAssembly);
             var nameDef = sourceAssembly.Name;
 
             // Remove the strong name
-            nameDef.PublicKey = new byte[0];
-            nameDef.PublicKeyToken = new byte[0];
-            nameDef.Flags = AssemblyFlags.SideBySideCompatible;
+            nameDef.PublicKey = null;
+            nameDef.PublicKeyToken = null;
+            nameDef.HashAlgorithm = AssemblyHashAlgorithm.None;
+            nameDef.Flags = ~AssemblyFlags.PublicKey;
             nameDef.HasPublicKey = false;
-
-            // Remove any strong name references
-            var module = sourceAssembly.MainModule;
-            foreach(AssemblyNameReference reference in module.AssemblyReferences)
-            {
-                reference.PublicKeyToken = new byte[0];
-            }
-
 
             var assembly = sourceAssembly.ToAssembly();
             Assert.IsNotNull(assembly);
+
+            var assemblyName = assembly.GetName();
+            
+            // The public key should be empty
+            var bytes = assemblyName.GetPublicKey();
+            Assert.IsTrue(bytes.Length == 0);
+            return;
         }
     }
 }
