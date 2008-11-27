@@ -45,6 +45,7 @@ namespace LinFu.Proxy
         public void Emit(MethodInfo originalMethod, MethodDefinition targetMethod)
         {
             var invocationInfo = targetMethod.AddLocal<IInvocationInfo>();
+            invocationInfo.Name = "___invocationInfo___";
 
             // Emit the code to generate the IInvocationInfo instance
             // and save it into the invocationInfo local variable

@@ -47,5 +47,15 @@ namespace LinFu.IoC
                 return _serviceType;
             }
         }
+
+        /// <summary>
+        /// Displays the name of the current service and the current service type.
+        /// </summary>
+        /// <returns>The name of the current service and the current service type.</returns>
+        public override string ToString()
+        {
+            return string.Format("Service Name: '{0}', Service Type = '{1}'", ServiceName,
+                                 ServiceType.AssemblyQualifiedName);
+        }
     }
 }
