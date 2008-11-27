@@ -73,7 +73,12 @@ namespace LinFu.IoC.Configuration
                 if (baseDefinition == typeof(IMemberInjectionFilter<>))
                     return;
             }
+
             var container = result.Container;
+
+            if (!container.Contains(typeof(IMemberInjectionFilter<TMember>)))
+                return;
+
             var filter = container.GetService<IMemberInjectionFilter<TMember>>();
             if (filter == null || result.ActualResult == null)
                 return;

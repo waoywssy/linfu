@@ -238,7 +238,6 @@ namespace LinFu.IoC
 
             container.AddService<IMemberInjectionFilter<MethodInfo>>(new AttributedMethodInjectionFilter());
             container.AddService<IMemberInjectionFilter<FieldInfo>>(new AttributedFieldInjectionFilter());
-            container.AddService<IMemberInjectionFilter<PropertyInfo>>(new PropertyInjectionFilter());
 
             if (!container.PostProcessors.HasElementWith(p => p is Initializer))
                 container.PostProcessors.Add(new Initializer());
