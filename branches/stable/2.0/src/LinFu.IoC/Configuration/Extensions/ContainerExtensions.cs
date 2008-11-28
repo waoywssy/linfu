@@ -238,6 +238,7 @@ namespace LinFu.IoC
 
             container.AddService<IMemberInjectionFilter<MethodInfo>>(new AttributedMethodInjectionFilter());
             container.AddService<IMemberInjectionFilter<FieldInfo>>(new AttributedFieldInjectionFilter());
+            container.AddService<IMemberInjectionFilter<PropertyInfo>>(new AttributedPropertyInjectionFilter());
 
             if (!container.PostProcessors.HasElementWith(p => p is Initializer))
                 container.PostProcessors.Add(new Initializer());
@@ -602,6 +603,47 @@ namespace LinFu.IoC
                            select info).Count();
 
             return matches > 0;
+        }
+
+        /// <summary>
+        /// Disables automatic property injection for the <paramref name="container"/>.
+        /// </summary>
+        /// <param name="container">The target container.</param>
+        public static void DisableAutoPropertyInjection(this IServiceContainer container)
+        {
+            container.DisableAutoInjectionFor<PropertyInfo>();
+        }
+
+        /// <summary>
+        /// Disables automatic method injection for the <paramref name="container"/>.
+        /// </summary>
+        /// <param name="container">The target container.</param>
+        public static void DisableAutoMethodInjection(this IServiceContainer container)
+        {
+            container.DisableAutoInjectionFor<MethodInfo>();
+        }
+
+        /// <summary>
+        /// Disables automatic field injection for the <paramref name="container"/>.
+        /// </summary>
+        /// <param name="container">The target container.</param>
+        public static void DisableAutoFieldInjection(this IServiceContainer container)
+        {
+            container.DisableAutoInjectionFor<FieldInfo>();
+        }
+
+        /// <summary>
+        /// Disables automatic dependency injection for members that match the specific
+        /// <typeparamref name="TMember"/> type.
+        /// </summary>
+        /// <typeparam name="TMember">The member injection type to disable.</typeparam>
+        /// <param name="container">The target container.</param>
+        public static void DisableAutoInjectionFor<TMember>(this IServiceContainer container)
+            where TMember : MemberInfo
+        {
+            // Using the NullMemberInjectionFilter will make sure
+            // that no injections will be performed by the target container
+            container.AddService<IMemberInjectionFilter<TMember>>(new NullMemberInjectionFilter<TMember>());
         }
     }
 }
