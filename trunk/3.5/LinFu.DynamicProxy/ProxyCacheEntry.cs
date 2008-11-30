@@ -5,30 +5,38 @@ namespace LinFu.DynamicProxy
 {
     public struct ProxyCacheEntry
     {
-        private readonly int _hashCode;
+        private readonly int hashCode;
         public Type BaseType;
         public Type[] Interfaces;
 
         public ProxyCacheEntry(Type baseType, Type[] interfaces)
         {
             if (baseType == null)
+            {
                 throw new ArgumentNullException("baseType");
-
+            }
             BaseType = baseType;
             Interfaces = interfaces;
+
             if (interfaces == null || interfaces.Length == 0)
             {
-                _hashCode = baseType.GetHashCode();
+                hashCode = baseType.GetHashCode();
                 return;
             }
 
-            _hashCode = baseType.GetHashCode();
+            // duplicated type exclusion
+            Dictionary<Type, object> set = new Dictionary<Type, object>(interfaces.Length + 1);
+            set[baseType] = null;
             foreach (Type type in interfaces)
             {
-                if (type == null)
-                    continue;
+                if (type != null)
+                    set[type] = null;
+            }
 
-                _hashCode ^= type.GetHashCode();
+            hashCode = 0;
+            foreach (Type type in set.Keys)
+            {
+                hashCode ^= type.GetHashCode();
             }
         }
 
@@ -38,12 +46,12 @@ namespace LinFu.DynamicProxy
                 return false;
 
             ProxyCacheEntry other = (ProxyCacheEntry)obj;
-            return _hashCode == other.GetHashCode();
+            return hashCode == other.GetHashCode();
         }
 
         public override int GetHashCode()
         {
-            return _hashCode;
+            return hashCode;
         }
     }
 }
