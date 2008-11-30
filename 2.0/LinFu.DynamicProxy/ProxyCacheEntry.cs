@@ -12,22 +12,30 @@ namespace LinFu.DynamicProxy
         public ProxyCacheEntry(Type baseType, Type[] interfaces)
         {
             if (baseType == null)
+            {
                 throw new ArgumentNullException("baseType");
-
+            }
             BaseType = baseType;
             Interfaces = interfaces;
+
             if (interfaces == null || interfaces.Length == 0)
             {
                 hashCode = baseType.GetHashCode();
                 return;
             }
 
-            hashCode = baseType.GetHashCode();
+            // duplicated type exclusion
+            Dictionary<Type, object> set = new Dictionary<Type, object>(interfaces.Length + 1);
+            set[baseType] = null;
             foreach (Type type in interfaces)
             {
-                if (type == null)
-                    continue;
+                if (type != null)
+                    set[type] = null;
+            }
 
+            hashCode = 0;
+            foreach (Type type in set.Keys)
+            {
                 hashCode ^= type.GetHashCode();
             }
         }
