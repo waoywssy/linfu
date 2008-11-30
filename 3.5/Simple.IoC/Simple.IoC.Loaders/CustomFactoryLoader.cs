@@ -28,7 +28,7 @@ namespace Simple.IoC.Loaders
 
             instance = _factoryInstances[implementingType];
 
-            return result;
+            return instance;
         }
 
         protected override bool CanLoad(Type loadedType)
