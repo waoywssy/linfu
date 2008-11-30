@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LinFu.DynamicProxy
 {
-    internal class ProxyCache : IProxyCache
+    public class ProxyCache : IProxyCache
     {
         private static readonly Dictionary<ProxyCacheEntry, Type> _cache = new Dictionary<ProxyCacheEntry, Type>();
 
@@ -11,6 +11,9 @@ namespace LinFu.DynamicProxy
 
         public bool Contains(Type baseType, params Type[] baseInterfaces)
         {
+            if (baseType == null)
+                return false;
+
             ProxyCacheEntry entry = new ProxyCacheEntry(baseType, baseInterfaces);
             return _cache.ContainsKey(entry);
         }
