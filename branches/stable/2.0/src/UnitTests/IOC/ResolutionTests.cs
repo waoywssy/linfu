@@ -133,7 +133,8 @@ namespace LinFu.UnitTests.IOC
             var expectedConstructor = typeof(SampleClassWithMultipleConstructors).GetConstructor(new[] { typeof(ISampleService), typeof(ISampleService) });
             Assert.IsNotNull(expectedConstructor);
 
-            ConstructorInfo result = resolver.ResolveFrom(typeof(SampleClassWithMultipleConstructors), container);
+            var finderContext = new MethodFinderContext(new Type[0], new object[0], null);
+            ConstructorInfo result = resolver.ResolveFrom(typeof(SampleClassWithMultipleConstructors), container, finderContext);
             Assert.AreSame(expectedConstructor, result);
         }
 
@@ -155,8 +156,24 @@ namespace LinFu.UnitTests.IOC
             var expectedConstructor = typeof(SampleClassWithAdditionalArgument).GetConstructor(new Type[] { typeof(ISampleService), typeof(int) });
             Assert.IsNotNull(expectedConstructor);
 
-            var result = resolver.ResolveFrom(typeof(SampleClassWithAdditionalArgument), container, 42);
+
+            var context = new MethodFinderContext(42);
+            var result = resolver.ResolveFrom(typeof(SampleClassWithAdditionalArgument), container, context);
             Assert.AreSame(expectedConstructor, result);
+        }
+
+        [Test]
+        public void ShouldResolveClassWithMultipleNonServiceArgumentConstructors()
+        {
+            IServiceContainer container = new ServiceContainer();
+            container.AddDefaultServices();
+            container.AddService("ClassWithMultipleNonServiceArgumentConstructors",
+                                 typeof(ISampleService), typeof (SampleClassWithMultipleNonServiceArgumentConstructors),
+                                 LifecycleType.OncePerRequest);
+
+            // Match the correct constructor
+            var sampleService = container.GetService<ISampleService>("ClassWithMultipleNonServiceArgumentConstructors", "test", 42, SampleEnum.One, (decimal)3.14, 42);
+            Assert.IsNotNull(sampleService);         
         }
 
         [Test]
