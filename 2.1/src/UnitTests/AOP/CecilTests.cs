@@ -21,7 +21,7 @@ namespace LinFu.UnitTests.AOP
         public override void Init()
         {
             _container = new ServiceContainer();
-            _container.LoadFromApplicationDirectory("*.dll");
+            _container.LoadFromBaseDirectory("*.dll");
         }
 
         public override void Term()

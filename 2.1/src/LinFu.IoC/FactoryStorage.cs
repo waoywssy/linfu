@@ -7,113 +7,68 @@ using LinFu.IoC.Interfaces;
 namespace LinFu.IoC
 {
     /// <summary>
-    /// Represents the default implementation of the <see cref="IFactoryStorage"/> class.
+    /// Represents an <see cref="IFactoryStorage"/> instance that adds generics support to the <see cref="BaseFactoryStorage"/> implementation.
     /// </summary>
-    public class FactoryStorage : IFactoryStorage
+    public class FactoryStorage : BaseFactoryStorage
     {
-        private readonly Dictionary<string, Dictionary<Type, IFactory>> _namedStorage =
-            new Dictionary<string, Dictionary<Type, IFactory>>();
-
-        private readonly Dictionary<Type, IFactory> _anonymousStorage = new Dictionary<Type, IFactory>();
-        private readonly object _lock = new object();
-
-        /// <summary>
-        /// Determines which factories should be used
-        /// for a particular service request.
-        /// </summary>
-        /// <param name="serviceInfo">The <see cref="IServiceInfo"/> object that describes the target factory.</param>
-        /// <returns>A factory instance.</returns>
-        public IFactory GetFactory(IServiceInfo serviceInfo)
-        {
-            var serviceName = serviceInfo.ServiceName;
+        public override bool ContainsFactory(IServiceInfo serviceInfo)
+        {            
             var serviceType = serviceInfo.ServiceType;
-
-            if (serviceName == null && _anonymousStorage.ContainsKey(serviceType))
-                return _anonymousStorage[serviceType];
-
-            if (serviceName != null && _namedStorage.ContainsKey(serviceName) 
-                && _namedStorage[serviceName].ContainsKey(serviceType))
-                return _namedStorage[serviceName][serviceType];
-
-            return null;
-        }
-
-        /// <summary>
-        /// Adds a <see cref="IFactory"/> to the current <see cref="IFactoryStorage"/> object.
-        /// </summary>
-        /// <param name="serviceInfo">The <see cref="IServiceInfo"/> object that describes the target factory.</param>
-        /// <param name="factory">The <see cref="IFactory"/> instance that will create the object instance.</param>
-        public void AddFactory(IServiceInfo serviceInfo, IFactory factory)
-        {
             var serviceName = serviceInfo.ServiceName;
-            var serviceType = serviceInfo.ServiceType;
 
-            lock (_lock)
-            {
-                Dictionary<Type, IFactory> targetStorage = null;
+            // Use the default implementation for
+            // non-generic types
+            if (!serviceType.IsGenericType && !serviceType.IsGenericTypeDefinition)
+                return base.ContainsFactory(serviceInfo);
 
-                if (serviceName == null)
-                    targetStorage = _anonymousStorage;
+            // If the service type is a generic type, determine
+            // if the service type can be created by a 
+            // standard factory that can create an instance
+            // of that generic type (e.g., IFactory<IGeneric<T>>            
+            var result = base.ContainsFactory(serviceInfo);
 
-                if (serviceName != null)
-                {
-                    // If necessary, create a new entry
-                    if (!_namedStorage.ContainsKey(serviceName))
-                        _namedStorage[serviceName] = new Dictionary<Type, IFactory>();
-
-                    targetStorage = _namedStorage[serviceName];
-                }
-
-                // Store the factory
-                targetStorage[serviceType] = factory;
-            }
-        }
-
-        /// <summary>
-        /// Determines whether or not a factory exists in storage.
-        /// </summary>
-        /// <param name="serviceInfo">The <see cref="IServiceInfo"/> object that describes the target factory.</param>
-        /// <returns>Returns <c>true</c> if the factory exists; otherwise, it will return <c>false</c>.</returns>
-        public bool ContainsFactory(IServiceInfo serviceInfo)
-        {
-            var serviceName = serviceInfo.ServiceName;
-            var serviceType = serviceInfo.ServiceType;
-
-            if (serviceName == null)
-                return _anonymousStorage.ContainsKey(serviceType);
-
-            if (_namedStorage.ContainsKey(serviceName) && _namedStorage[serviceName].ContainsKey(serviceType))
+            // Immediately return a positive match, if possible
+            if (result)
                 return true;
 
-            return false;
+            if (serviceType.IsGenericType && !serviceType.IsGenericTypeDefinition)
+            {
+                // Determine the base type definition
+                var baseDefinition = serviceType.GetGenericTypeDefinition();
+
+                // Check if there are any generic factories that can create
+                // the entire family of services whose type definitions
+                // match the base type
+                var genericServiceInfo = new ServiceInfo(serviceName, baseDefinition, serviceInfo.ArgumentTypes);
+                result = base.ContainsFactory(genericServiceInfo);
+            }
+
+            return result;
         }
 
-        /// <summary>
-        /// Gets a value indicating the list of <see cref="IServiceInfo"/> objects
-        /// that describe each available factory in the current <see cref="IFactoryStorage"/>
-        /// instance.
-        /// </summary>
-        public IEnumerable<IServiceInfo> AvailableFactories
+        public override IFactory GetFactory(IServiceInfo serviceInfo)
         {
-            get
-            {
-                // Add the anonymous services
-                var unnamedServices = from serviceType in _anonymousStorage.Keys
-                                      where serviceType != null
-                                      select new ServiceInfo(null, serviceType) as IServiceInfo;
+            // Attempt to create the service type using
+            // the strongly-typed arguments
+            var factory = base.GetFactory(serviceInfo);
+            var serviceType = serviceInfo.ServiceType;
+            var serviceName = serviceInfo.ServiceName;
 
-                // Add the named services
-                var namedServices = from serviceName in _namedStorage.Keys
-                                    from serviceType in _namedStorage[serviceName].Keys
-                                    let serviceInfo = new ServiceInfo(serviceName, serviceType)
-                                    select serviceInfo as IServiceInfo;
+            // Use the default factory for this service type if no other factory exists
+            var defaultServiceInfo = new ServiceInfo(serviceInfo.ServiceName, serviceInfo.ServiceType);
+            if (factory == null && base.ContainsFactory(defaultServiceInfo))
+                factory = base.GetFactory(defaultServiceInfo);
 
-                var results = new List<IServiceInfo>();
-                results.AddRange(unnamedServices);
-                results.AddRange(namedServices);
-
-                return results;
+            // Attempt to create the service type using
+            // the generic factories, if possible
+            if (factory == null && serviceType.IsGenericType)
+            {                
+                var definitionType = serviceType.GetGenericTypeDefinition();
+                var genericServiceInfo = new ServiceInfo(serviceName, definitionType, serviceInfo.ArgumentTypes);
+                factory = base.GetFactory(genericServiceInfo);
             }
+
+            return factory;
         }
     }
 }
