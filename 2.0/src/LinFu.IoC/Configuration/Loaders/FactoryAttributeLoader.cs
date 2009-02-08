@@ -45,7 +45,7 @@ namespace LinFu.IoC.Configuration
             Func<IFactoryRequest, object> getFactoryInstance = request =>
             {
                 var container = request.Container;
-                return container.AutoCreate(sourceType);
+                return container.AutoCreateInternal(sourceType);
             };
 
             #endregion
