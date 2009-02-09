@@ -79,7 +79,7 @@ namespace LinFu.IoC.Configuration
         /// </summary>
         /// <remarks>
         /// This method only performs constructor injection on the target type. If you need any other form of injection (such as property injection), you'll need to 
-        /// register your type and instantiate it with the <see cref="GetService{T}(IServiceContainer,object[])<>GetService{T}"/> method.
+        /// register your type and instantiate it with the <see cref="GetService{T}(IServiceContainer,object[])"/> method.
         /// </remarks>
         /// <param name="container">The service container that contains the arguments that will automatically be injected into the constructor.</param>
         /// <param name="concreteType">The type to instantiate.</param>
@@ -255,7 +255,7 @@ namespace LinFu.IoC.Configuration
         /// </summary>
         /// <remarks>
         /// This method only performs constructor injection on the target type. If you need any other form of injection (such as property injection), you'll need to 
-        /// register your type and instantiate it with the <see cref="GetService{T}(IServiceContainer,object[])<>GetService{T}"/> method.
+        /// register your type and instantiate it with the <see cref="GetService{T}(IServiceContainer,object[])"/> method.
         /// </remarks>
         /// <param name="container">The service container that contains the arguments that will automatically be injected into the constructor.</param>
         /// <param name="concreteType">The type to instantiate.</param>
