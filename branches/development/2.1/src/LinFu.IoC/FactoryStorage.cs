@@ -11,6 +11,11 @@ namespace LinFu.IoC
     /// </summary>
     public class FactoryStorage : BaseFactoryStorage
     {
+        /// <summary>
+        /// Determines whether or not a factory exists in storage.
+        /// </summary>
+        /// <param name="serviceInfo">The <see cref="IServiceInfo"/> object that describes the target factory.</param>
+        /// <returns>Returns <c>true</c> if the factory exists; otherwise, it will return <c>false</c>.</returns>
         public override bool ContainsFactory(IServiceInfo serviceInfo)
         {            
             var serviceType = serviceInfo.ServiceType;
@@ -46,6 +51,12 @@ namespace LinFu.IoC
             return result;
         }
 
+        /// <summary>
+        /// Determines which factories should be used
+        /// for a particular service request.
+        /// </summary>
+        /// <param name="serviceInfo">The <see cref="IServiceInfo"/> object that describes the target factory.</param>
+        /// <returns>A factory instance.</returns>
         public override IFactory GetFactory(IServiceInfo serviceInfo)
         {
             // Attempt to create the service type using
