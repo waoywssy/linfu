@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -42,17 +43,17 @@ namespace LinFu.IoC.Configuration
         /// </summary>
         /// <param name="concreteType">The target type.</param>
         /// <param name="container">The container that contains the member values that will be used to invoke the members.</param>
-        /// <param name="additionalArguments">The additional arguments that will be used to evaluate the best match to use to invoke the target member.</param>
+        /// <param name="finderContext">The <see cref="IMethodFinderContext"/> that describes the target method.</param>        
         /// <returns>A member instance if a match is found; otherwise, it will return <c>null</c>.</returns>
         public TMember ResolveFrom(Type concreteType, IServiceContainer container,
-            params object[] additionalArguments)
+            IMethodFinderContext finderContext)
         {
             var constructors = GetMembers(concreteType);
             if (constructors == null)
                 return null;
 
             var resolver = GetMethodFinder(container);
-            TMember bestMatch = resolver.GetBestMatch(constructors, additionalArguments);
+            TMember bestMatch = resolver.GetBestMatch(constructors, finderContext);
 
             // If all else fails, find the
             // default constructor and use it as the
@@ -64,6 +65,7 @@ namespace LinFu.IoC.Configuration
                 bestMatch = defaultResult;
             }
 
+            Debug.Assert(bestMatch != null);
             return bestMatch;
         }
 

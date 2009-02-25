@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{DEFBEF97-B03C-448F-9518-394735439E2E}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -48,24 +48,32 @@
     <Compile Include="AOP\SampleClassWithByRefMethod.cs" />
     <Compile Include="AOP\SampleClassWithMethodHavingOutParameters.cs" />
     <Compile Include="IOC\ISampleInterceptedInterface.cs" />
+    <Compile Include="IOC\ISampleServiceWithGenericMethods.cs" />
     <Compile Include="IOC\ISampleWrappedInterface.cs" />
     <Compile Include="IOC\ITargetHolder.cs" />
     <Compile Include="IOC\SampleAroundInvokeInterceptorClass.cs" />
     <Compile Include="IOC\SampleClassWithAdditionalArgument.cs" />
     <Compile Include="IOC\SampleClassWithArrayPropertyDependency.cs" />
+    <Compile Include="IOC\SampleClassWithGenericMethod.cs" />
     <Compile Include="IOC\SampleClassWithInjectionField.cs" />
     <Compile Include="IOC\SampleClassWithInjectionMethod.cs" />
     <Compile Include="IOC\SampleClassWithInjectionProperties.cs" />
+    <Compile Include="IOC\SampleClassWithMultipleNonServiceArgumentConstructors.cs" />
     <Compile Include="IOC\SampleClassWithNonServiceArgument.cs" />
     <Compile Include="IOC\SampleClassWithServiceArrayAsConstructorArgument.cs" />
     <Compile Include="IOC\SampleClassWithUnmarkedInjectionProperties.cs" />
+    <Compile Include="IOC\SampleDuckTypeImplementation.cs" />
+    <Compile Include="IOC\SampleEnum.cs" />
+    <Compile Include="IOC\SampleFactoryWithConstructorArguments.cs" />
     <Compile Include="IOC\SampleGenericClassWithOpenGenericImplementation.cs" />
     <Compile Include="IOC\SampleGenericClassWithSpecificGenericTypeImplementation.cs" />
     <Compile Include="IOC\SampleInterceptorClass.cs" />
+    <Compile Include="IOC\SampleInternalService.cs" />
     <Compile Include="IOC\SampleLazyService.cs" />
     <Compile Include="IOC\SamplePreprocessor.cs" />
     <Compile Include="IOC\SampleRecursiveTestComponent1.cs" />
     <Compile Include="IOC\SampleRecursiveTestComponent2.cs" />
+    <Compile Include="IOC\SampleStronglyTypedFactoryWithNamedService.cs" />
     <Compile Include="Proxy\ClassWithGenericMethod.cs" />
     <Compile Include="Proxy\ClassWithMethodReturnTypeFromGenericTypeArguments.cs" />
     <Compile Include="Proxy\ClassWithMethodReturnValueFromTypeArgument.cs" />

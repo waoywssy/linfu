@@ -16,7 +16,7 @@ namespace LinFu.IoC.Configuration
         /// </summary>
         public ConstructorInvoke()
         {
-            MethodBuilder = new ConstructorMethodBuilder();
+            MethodBuilder = new ReflectionMethodBuilder<ConstructorInfo>();
         }
     }
 }

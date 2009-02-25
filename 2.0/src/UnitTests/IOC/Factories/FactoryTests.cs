@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using LinFu.IoC;
+using LinFu.IoC.Configuration;
 using LinFu.IoC.Factories;
 using LinFu.IoC.Interfaces;
 using Moq;
 using NUnit.Framework;
+using SampleLibrary;
 
 namespace LinFu.UnitTests.IOC.Factories
 {
@@ -146,6 +148,30 @@ namespace LinFu.UnitTests.IOC.Factories
             Assert.AreSame(first, second);
             Assert.IsNotNull(first);
             Assert.IsNotNull(second);
+        }
+
+        [Test]
+        public void ShouldBeAbleToInstantiateCustomFactoryWithServiceArgumentsInConstructor()
+        {
+            var mock = new Mock<ISampleService>();
+            var container = new ServiceContainer();
+            container.LoadFromBaseDirectory("*.dll");
+            
+            container.AddService(mock.Object);
+            var result = container.GetService<string>("SampleFactoryWithConstructorArguments");
+
+            Assert.IsNotNull(result);
+            Assert.IsNotEmpty(result);
+        }
+
+        [Test]
+        public void ShouldLoadStronglyTypedFactoryFromLoadFromExtensionMethod()
+        {
+            var container = new ServiceContainer();
+            container.LoadFrom(typeof(SampleClass).Assembly);
+
+            var serviceInstance = container.GetService<ISampleService>("Test");
+            Assert.IsNotNull(serviceInstance);
         }
     }
 }

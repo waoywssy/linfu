@@ -133,7 +133,8 @@ namespace LinFu.UnitTests.IOC
             var expectedConstructor = typeof(SampleClassWithMultipleConstructors).GetConstructor(new[] { typeof(ISampleService), typeof(ISampleService) });
             Assert.IsNotNull(expectedConstructor);
 
-            ConstructorInfo result = resolver.ResolveFrom(typeof(SampleClassWithMultipleConstructors), container);
+            var finderContext = new MethodFinderContext(new Type[0], new object[0], null);
+            ConstructorInfo result = resolver.ResolveFrom(typeof(SampleClassWithMultipleConstructors), container, finderContext);
             Assert.AreSame(expectedConstructor, result);
         }
 
@@ -152,11 +153,27 @@ namespace LinFu.UnitTests.IOC
 
             // The resolver should return the constructor
             // with the following signature: Constructor(ISampleService, int)
-            var expectedConstructor = typeof(SampleClassWithAdditionalArgument).GetConstructor(new Type[] {typeof(ISampleService), typeof(int)});
+            var expectedConstructor = typeof(SampleClassWithAdditionalArgument).GetConstructor(new Type[] { typeof(ISampleService), typeof(int) });
             Assert.IsNotNull(expectedConstructor);
 
-            var result = resolver.ResolveFrom(typeof(SampleClassWithAdditionalArgument), container, 42);
+
+            var context = new MethodFinderContext(42);
+            var result = resolver.ResolveFrom(typeof(SampleClassWithAdditionalArgument), container, context);
             Assert.AreSame(expectedConstructor, result);
+        }
+
+        [Test]
+        public void ShouldResolveClassWithMultipleNonServiceArgumentConstructors()
+        {
+            IServiceContainer container = new ServiceContainer();
+            container.AddDefaultServices();
+            container.AddService("ClassWithMultipleNonServiceArgumentConstructors",
+                                 typeof(ISampleService), typeof (SampleClassWithMultipleNonServiceArgumentConstructors),
+                                 LifecycleType.OncePerRequest);
+
+            // Match the correct constructor
+            var sampleService = container.GetService<ISampleService>("ClassWithMultipleNonServiceArgumentConstructors", "test", 42, SampleEnum.One, (decimal)3.14, 42);
+            Assert.IsNotNull(sampleService);         
         }
 
         [Test]
@@ -220,8 +237,8 @@ namespace LinFu.UnitTests.IOC
         {
             var container = new ServiceContainer();
             container.AddDefaultServices();
-            
-            container.AddService(typeof (SampleClassWithNonServiceArgument), typeof (SampleClassWithNonServiceArgument));
+
+            container.AddService(typeof(SampleClassWithNonServiceArgument), typeof(SampleClassWithNonServiceArgument));
 
             var text = "Hello, World!";
             string serviceName = null;
@@ -230,6 +247,38 @@ namespace LinFu.UnitTests.IOC
             Assert.IsNotNull(result);
             Assert.IsTrue(result.Value == text);
         }
+
+        [Test]
+        public void ShouldCallStronglyTypedFunctorInsteadOfActualFactory()
+        {
+            var container = new ServiceContainer();
+
+            Func<int, int, int> addOperation1 = (a, b) => a + b;
+            container.AddService("Add", addOperation1);
+
+            Func<int, int, int, int> addOperation2 = (a, b, c) => a + b + c;
+            container.AddService("Add", addOperation2);
+
+            Func<int, int, int, int, int> addOperation3 = (a, b, c, d) => a + b + c + d;
+            container.AddService("Add", addOperation3);
+
+            Assert.AreEqual(2, container.GetService<int>("Add", 1, 1));
+            Assert.AreEqual(3, container.GetService<int>("Add", 1, 1, 1));
+            Assert.AreEqual(4, container.GetService<int>("Add", 1, 1, 1, 1));
+        }
+
+        [Test]
+        public void ShouldReportThatServiceExistsForStronglyTypedFunctor()
+        {
+            var container = new ServiceContainer();
+
+            Func<int, int, int> addOperation1 = (a, b) => a + b;
+            container.AddService("Add", addOperation1);
+
+            Assert.IsTrue(container.Contains("Add", typeof(int), 1, 1));
+        }
+
+
         private static ServiceContainer GetContainerWithMockSampleServices()
         {
             var mockSampleService = new Mock<ISampleService>();
@@ -249,6 +298,7 @@ namespace LinFu.UnitTests.IOC
             {
                 Assert.AreSame(mockSampleService.Object, service);
             }
+
             return container;
         }
     }
