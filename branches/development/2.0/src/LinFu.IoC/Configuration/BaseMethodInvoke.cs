@@ -24,9 +24,9 @@ namespace LinFu.IoC.Configuration
         /// </summary>
         public BaseMethodInvoke()
         {
-            // HACK: Set the MethodBuilder as the default builder
+            // HACK: Set the ReflectionMethodBuilder as the default builder
             if (typeof(TMethod) == typeof(MethodInfo))
-                _builder = new MethodBuilder() as IMethodBuilder<TMethod>;
+                _builder = new ReflectionMethodBuilder<MethodInfo>() as IMethodBuilder<TMethod>;
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace LinFu.IoC.Configuration
         /// create the target method.
         /// </summary>
         protected IMethodBuilder<TMethod> MethodBuilder
-        { 
+        {
             get
             {
                 return _builder;
@@ -59,13 +59,18 @@ namespace LinFu.IoC.Configuration
 
             // Reuse the cached results, if possible
             if (!_cache.ContainsKey(targetMethod))
-            {
                 GenerateTargetMethod(targetMethod);
-            }
 
             var factoryMethod = _cache[targetMethod];
 
-            result = DoInvoke(target, targetMethod, factoryMethod, arguments);
+            try
+            {
+                result = DoInvoke(target, targetMethod, factoryMethod, arguments);
+            }
+            catch (TargetInvocationException ex)
+            {
+                throw ex.InnerException;
+            }
 
             return result;
         }
@@ -78,20 +83,11 @@ namespace LinFu.IoC.Configuration
         /// <param name="targetMethod">The actual method that will be invoked.</param>
         /// <param name="arguments">The method arguments.</param>
         /// <returns>The return value from the target method.</returns>
-        protected virtual object DoInvoke(object target, TMethod originalMethod, MethodBase targetMethod, 
+        protected virtual object DoInvoke(object target, TMethod originalMethod, MethodBase targetMethod,
             object[] arguments)
         {
-            object result = null;
+            object result = targetMethod.Invoke(target, arguments);
 
-            // Make sure the first parameter is the target instance
-            // itself
-            var actualArguments = new List<object>();
-
-            
-
-            actualArguments.AddRange(arguments);
-
-            result = targetMethod.Invoke(null, actualArguments.ToArray());
             return result;
         }
 
@@ -100,7 +96,7 @@ namespace LinFu.IoC.Configuration
         /// factory method and stores it in the method cache.
         /// </summary>
         /// <param name="targetMethod">The constructor that will be used to instantiate the target type.</param>
-        private void GenerateTargetMethod(TMethod targetMethod)
+        protected virtual void GenerateTargetMethod(TMethod targetMethod)
         {
             MethodBase result = null;
 

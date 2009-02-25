@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using LinFu.AOP.Interfaces;
+using LinFu.AOP.Cecil.Interfaces;
 using LinFu.Proxy.Interfaces;
 using LinFu.IoC;
 using LinFu.IoC.Configuration;
@@ -175,7 +175,7 @@ namespace LinFu.Proxy
         /// with the <paramref name="source"/> container.
         /// </summary>
         /// <param name="source">The <see cref="IServiceContainer"/> instance that will hold the ProxyFactory.</param>
-        public void Initialize(IServiceContainer source)
+        public virtual void Initialize(IServiceContainer source)
         {
             if (source.Contains(typeof(IProxyBuilder)))
                 ProxyBuilder = source.GetService<IProxyBuilder>();

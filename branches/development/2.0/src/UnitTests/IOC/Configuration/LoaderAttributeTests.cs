@@ -23,7 +23,7 @@ namespace LinFu.UnitTests.IOC.Configuration
             // the particular factory type
             var mockContainer = new Mock<IServiceContainer>();
             mockContainer.Expect(container =>
-                                 container.AddFactory(serviceName, serviceType, It.Is<IFactory>(f => f != null && f is TFactory || f is FunctorFactory)));
+                                 container.AddFactory(serviceName, serviceType, It.IsAny<IEnumerable<Type>>(), It.Is<IFactory>(f => f != null && f is TFactory || f is FunctorFactory)));
 
             IEnumerable<Action<IServiceContainer>> factoryActions = loader.Load(implementingType);
             Assert.IsNotNull(factoryActions, "The result cannot be null");
@@ -61,7 +61,7 @@ namespace LinFu.UnitTests.IOC.Configuration
                 .Returns(mockPreProcessors.Object);
 
             mockContainer.Expect(container => container.AddFactory(null,
-                                                                   serviceType, It.IsAny<SampleOpenGenericFactory>()));
+                                                                   serviceType, It.IsAny<IEnumerable<Type>>(), It.IsAny<SampleOpenGenericFactory>()));
 
             // The postprocessor list should have an additional element added
             mockPostProcessors.Expect(p => p.Add(It.IsAny<IPostProcessor>()));
@@ -71,12 +71,12 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             Action<IServiceContainer> applyActions =
                 container =>
+                {
+                    foreach (var action in actions)
                     {
-                        foreach (var action in actions)
-                        {
-                            action(container);
-                        }
-                    };
+                        action(container);
+                    }
+                };
 
             applyActions(mockContainer.Object);
 
@@ -115,7 +115,7 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             // The container should add the expected
             // factory type
-            mockContainer.Expect(container => container.AddFactory(serviceName, serviceType,
+            mockContainer.Expect(container => container.AddFactory(serviceName, serviceType, It.IsAny<IEnumerable<Type>>(),
                                                                    It.IsAny<SampleFactory>()));
 
             // The factory attribute loader will add the custom
@@ -142,8 +142,8 @@ namespace LinFu.UnitTests.IOC.Configuration
         [Test]
         public void LoaderMustLoadTheCorrectSingletonTypes()
         {
-            var location = typeof (SamplePostProcessor).Assembly.Location ?? string.Empty;
-            var loader = new Loader();            
+            var location = typeof(SamplePostProcessor).Assembly.Location ?? string.Empty;
+            var loader = new Loader();
             var directory = Path.GetDirectoryName(location);
 
             // Load the default plugins first
@@ -164,8 +164,8 @@ namespace LinFu.UnitTests.IOC.Configuration
 
             Assert.IsNotNull(first);
             Assert.IsNotNull(second);
-            Assert.IsTrue(first.GetType() == typeof (FirstSingletonService));
-            Assert.IsTrue(second.GetType() == typeof (SecondSingletonService));
+            Assert.IsTrue(first.GetType() == typeof(FirstSingletonService));
+            Assert.IsTrue(second.GetType() == typeof(SecondSingletonService));
         }
 
         [Test]
@@ -275,6 +275,16 @@ namespace LinFu.UnitTests.IOC.Configuration
         }
 
         [Test]
+        public void ShouldInjectInternallyVisibleServiceTypeMarkedWithImplementsAttribute()
+        {
+            var container = new ServiceContainer();
+            container.LoadFromBaseDirectory("*.dll");
+
+            var service = container.GetService<ISampleService>("internal");
+            Assert.IsNotNull(service);
+        }
+
+        [Test]
         public void ServicesCreatedFromCustomOpenGenericFactoryMustInvokeIInitialize()
         {
             var mockFactory = new Mock<IFactory>();
@@ -284,8 +294,8 @@ namespace LinFu.UnitTests.IOC.Configuration
                 .Returns(serviceInstance);
 
             var container = new ServiceContainer();
-            
-            
+
+
             container.LoadFrom(AppDomain.CurrentDomain.BaseDirectory, "LinFu*.dll");
             container.AddFactory("MyService", typeof(ISampleGenericService<>), mockFactory.Object);
 

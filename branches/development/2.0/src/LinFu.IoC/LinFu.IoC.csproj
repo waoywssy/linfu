@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FA3D5517-EFF4-4363-AFF2-EF67B981334E}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -50,6 +50,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CompositePostProcessor.cs" />
+    <Compile Include="CompositePreProcessor.cs" />
+    <Compile Include="Configuration\DefaultActivator.cs" />
     <Compile Include="Configuration\Attributes\FactoryAttribute.cs" />
     <Compile Include="Configuration\Attributes\ImplementsAttribute.cs" />
     <Compile Include="Configuration\Attributes\InjectAttribute.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="Configuration\FluentInterfaces\PropertyInjectionLambda.cs" />
     <Compile Include="Configuration\FluentInterfaces\UsingLambda.cs" />
     <Compile Include="Configuration\Initializer.cs" />
+    <Compile Include="Configuration\InitializerOfT.cs" />
     <Compile Include="Configuration\InitializerPlugin.cs" />
     <Compile Include="Configuration\Injectors\AttributedFieldInjectionFilter.cs" />
     <Compile Include="Configuration\Injectors\AttributedMethodInjectionFilter.cs" />
@@ -80,9 +84,12 @@
     <Compile Include="Configuration\Injectors\AutoPropertyInjector.cs" />
     <Compile Include="Configuration\Injectors\BaseMemberInjectionFilter.cs" />
     <Compile Include="Configuration\Injectors\CustomFactoryInjector.cs" />
+    <Compile Include="Configuration\Injectors\NullMemberInjectionFilter.cs" />
     <Compile Include="Configuration\Injectors\PropertyInjectionFilter.cs" />
     <Compile Include="Configuration\InMemoryAssemblyLoader.cs" />
+    <Compile Include="Configuration\Interfaces\IActivator.cs" />
     <Compile Include="Configuration\Interfaces\IFactoryBuilder.cs" />
+    <Compile Include="Configuration\Interfaces\IMethodFinderContext.cs" />
     <Compile Include="Configuration\Interfaces\IMethodFinderWithContainer.cs" />
     <Compile Include="Configuration\LifecycleType.cs" />
     <Compile Include="Configuration\Loaders\AssemblyContainerLoader.cs" />
@@ -93,9 +100,11 @@
     <Compile Include="Configuration\Loaders\PreprocessorLoader.cs" />
     <Compile Include="Configuration\MethodBuilder.cs" />
     <Compile Include="Configuration\BaseMethodInvoke.cs" />
+    <Compile Include="Configuration\MethodFinderContext.cs" />
     <Compile Include="Configuration\MethodInvoke.cs" />
     <Compile Include="Configuration\PropertySetter.cs" />
     <Compile Include="Configuration\RecursiveDependencyException.cs" />
+    <Compile Include="Configuration\ReflectionMethodBuilder.cs" />
     <Compile Include="Configuration\Resolvers\ArgumentResolver.cs" />
     <Compile Include="Configuration\Resolvers\ConstructorResolver.cs" />
     <Compile Include="Configuration\Resolvers\MemberResolver.cs" />
@@ -103,18 +112,26 @@
     <Compile Include="Configuration\Resolvers\MethodFinderFromContainer.cs" />
     <Compile Include="Configuration\ServiceInstance.cs" />
     <Compile Include="Configuration\TypeCounter.cs" />
+    <Compile Include="CreatorFromInstance.cs" />
+    <Compile Include="DefaultCreator.cs" />
+    <Compile Include="DefaultGetServiceBehavior.cs" />
     <Compile Include="Factories\BaseFactory.cs" />
+    <Compile Include="Factories\DelegateFactory.cs" />
     <Compile Include="Factories\FactoryAdapter.cs" />
     <Compile Include="Factories\FunctorFactory.cs" />
     <Compile Include="Factories\InstanceFactory.cs" />
+    <Compile Include="Factories\LazyFactory.cs" />
+    <Compile Include="Factories\LazyFactoryOfT.cs" />
     <Compile Include="Factories\OncePerRequestFactory.cs" />
     <Compile Include="Factories\OncePerThreadFactory.cs" />
     <Compile Include="Factories\SingletonFactory.cs" />
     <Compile Include="FactoryExtensions.cs" />
     <Compile Include="FactoryRequest.cs" />
+    <Compile Include="BaseFactoryStorage.cs" />
     <Compile Include="FactoryStorage.cs" />
     <Compile Include="FactoryStorageExtensions.cs" />
     <Compile Include="Interceptors\LazyInterceptor.cs" />
+    <Compile Include="Interfaces\ICreateInstance.cs" />
     <Compile Include="Interfaces\IFactoryStorage.cs" />
     <Compile Include="Interceptors\AroundInvokeAdapter.cs" />
     <Compile Include="Interceptors\BaseInterceptor.cs" />
@@ -142,6 +159,7 @@
     <Compile Include="Interfaces\IFactory.cs" />
     <Compile Include="Interfaces\IFactoryOfT.cs" />
     <Compile Include="Interfaces\IFactoryRequest.cs" />
+    <Compile Include="Interfaces\IGetService.cs" />
     <Compile Include="Interfaces\IPostProcessor.cs" />
     <Compile Include="Interfaces\IPreprocessor.cs" />
     <Compile Include="Interfaces\IScope.cs" />
@@ -150,6 +168,7 @@
     <Compile Include="Interfaces\IServiceInstance.cs" />
     <Compile Include="Interfaces\IServiceRequest.cs" />
     <Compile Include="Interfaces\IServiceRequestResult.cs" />
+    <Compile Include="Reflection\LateBoundExtensions.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="ServiceContainer.cs" />
     <Compile Include="NamedServiceNotFoundException.cs" />

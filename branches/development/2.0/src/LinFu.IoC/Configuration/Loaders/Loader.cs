@@ -23,18 +23,12 @@ namespace LinFu.IoC.Configuration
         /// </summary>
         public Loader()
         {
-            _containerLoader = new AssemblyContainerLoader();
-            _containerLoader.TypeLoaders.Add(new FactoryAttributeLoader());
-            _containerLoader.TypeLoaders.Add(new ImplementsAttributeLoader());
-            _containerLoader.TypeLoaders.Add(new PreProcessorLoader());
-            _containerLoader.TypeLoaders.Add(new PostProcessorLoader());
-            _containerLoader.TypeLoaders.Add(new InterceptorAttributeLoader(this));
+            _containerLoader = this.CreateDefaultContainerLoader();
 
             // Load everything else into the container
             var hostAssembly = typeof(Loader).Assembly;
             QueuedActions.Add(container => container.LoadFrom(hostAssembly));
             
-
             // Make sure that the plugins are only added once
             if (!Plugins.HasElementWith(p => p is AutoPropertyInjector))
                 Plugins.Add(new AutoPropertyInjector());
