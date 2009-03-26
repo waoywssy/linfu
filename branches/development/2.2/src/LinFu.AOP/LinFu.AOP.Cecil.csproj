@@ -56,9 +56,12 @@
     </Compile>
     <Compile Include="AssemblyDefinitionExtensions.cs" />
     <Compile Include="BaseReflectionVisitor.cs" />
+    <Compile Include="CecilVisitorExtensions.cs" />
     <Compile Include="Factories\AddInvocationInfoActionFactory.cs" />
     <Compile Include="Factories\AssemblyWeaverActionFactory.cs" />
     <Compile Include="Factories\TypeWeaverActionFactory.cs" />
+    <Compile Include="ImplementActivatorHostWeaver.cs" />
+    <Compile Include="InterceptNewCalls.cs" />
     <Compile Include="Interfaces\IAroundMethodWeaver.cs" />
     <Compile Include="Interfaces\IEmitInvocationInfo.cs" />
     <Compile Include="Interfaces\IHostWeaver.cs" />
@@ -73,8 +76,11 @@
     <Compile Include="InvocationInfoExtensions.cs" />
     <Compile Include="Interfaces\IVerifier.cs" />
     <Compile Include="Loaders\JITWeaver.cs" />
+    <Compile Include="MethodRewriterExtensions.cs" />
     <Compile Include="MethodWeaver.cs" />
     <Compile Include="MethodWeaverVisitor.cs" />
+    <Compile Include="NewOperatorInterceptionExtensions.cs" />
+    <Compile Include="RedirectNewInstancesToActivator.cs" />
     <Compile Include="TypeDefinitionExtensions.cs" />
     <Compile Include="TypeWeaverVisitor.cs" />
   </ItemGroup>

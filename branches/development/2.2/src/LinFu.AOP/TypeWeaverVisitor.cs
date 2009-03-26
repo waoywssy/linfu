@@ -14,6 +14,7 @@ namespace LinFu.AOP.Cecil
     public class TypeWeaverVisitor : LinFu.AOP.Cecil.BaseReflectionVisitor
     {
         private ITypeWeaver _weaver;
+        private HashSet<ModuleDefinition> _visitedModules = new HashSet<ModuleDefinition>();
 
         /// <summary>
         /// Initializes a new instance of the TypeWeaverVisitor class.
@@ -25,18 +26,6 @@ namespace LinFu.AOP.Cecil
         }
 
         /// <summary>
-        /// Visits a <see cref="ModuleDefinition"/> instance.
-        /// </summary>
-        /// <param name="module">A <see cref="ModuleDefinition"/> object.</param>
-        public override void VisitModuleDefinition(ModuleDefinition module)
-        {
-            _weaver.ImportReferences(module);
-            _weaver.AddAdditionalMembers(module);
-
-            base.VisitModuleDefinition(module);
-        }
-
-        /// <summary>
         /// Visits a <see cref="TypeDefinition"/> instance.
         /// </summary>
         /// <param name="type">A <see cref="TypeDefinition"/> object.</param>
@@ -44,6 +33,14 @@ namespace LinFu.AOP.Cecil
         {
             if (!_weaver.ShouldWeave(type))
                 return;
+
+            var module = type.Module;
+            if (!_visitedModules.Contains(module))
+            {
+                _weaver.ImportReferences(module);
+                _weaver.AddAdditionalMembers(module);
+                _visitedModules.Add(module);
+            }
 
             _weaver.Weave(type);
 

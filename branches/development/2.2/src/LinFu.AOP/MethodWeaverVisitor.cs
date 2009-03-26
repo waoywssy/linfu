@@ -34,6 +34,7 @@ namespace LinFu.AOP.Cecil
                 return;
 
             _methodWeaver.Weave(method);
+            base.VisitMethodDefinition(method);
         }
 
         /// <summary>
@@ -43,6 +44,7 @@ namespace LinFu.AOP.Cecil
         public override void VisitModuleDefinition(ModuleDefinition module)
         {
             _methodWeaver.ImportReferences(module);
+            base.VisitModuleDefinition(module);
         }
 
         /// <summary>
@@ -52,6 +54,7 @@ namespace LinFu.AOP.Cecil
         public override void VisitTypeDefinition(TypeDefinition type)
         {
             _methodWeaver.AddAdditionalMembers(type);
+            base.VisitTypeDefinition(type);
         }
     }
 }

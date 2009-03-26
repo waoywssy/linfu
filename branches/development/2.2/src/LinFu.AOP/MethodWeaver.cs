@@ -15,6 +15,7 @@ namespace LinFu.AOP.Cecil
     {
         private Func<MethodReference, bool> _filter;
         private IMethodRewriter _rewriter;
+        private HashSet<MethodReference> _visitedMethods = new HashSet<MethodReference>();
 
         /// <summary>
         /// Initializes a new instance of the MethodWeaver class.
@@ -34,6 +35,9 @@ namespace LinFu.AOP.Cecil
         /// <returns><c>true</c> if the method should be modified; otherwise, it returns <c>false</c>.</returns>
         public bool ShouldWeave(MethodDefinition item)
         {
+            if (_visitedMethods.Contains(item))
+                return false;
+
             if (_rewriter == null)
                 return false;
 
@@ -58,6 +62,8 @@ namespace LinFu.AOP.Cecil
                 return;
 
             Rewrite(method);
+
+            _visitedMethods.Add(method);
         }
 
         /// <summary>
