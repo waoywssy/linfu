@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace LinFu.AOP.Cecil
 {
-    internal class InterceptNewCalls : IMethodRewriter
+    internal class InterceptNewCalls : MethodRewriter
     {
         #region Private Fields
         private MethodReference _getCurrentMethod;
@@ -22,40 +22,18 @@ namespace LinFu.AOP.Cecil
             _emitter = emitter;
         }
 
-        public IEnumerable<Instruction> GetNewInstructions(MethodDefinition method, CilWorker IL, IEnumerable<Instruction> oldInstructions)
-        {
-            var newInstructions = new Queue<Instruction>();
-
-            _emitter.AddLocals(method);
-            #region Copy the old instructions
-            foreach (var instruction in oldInstructions)
-            {
-                // Intercept only the new operator
-                if (instruction.OpCode != OpCodes.Newobj)
-                {
-                    newInstructions.Enqueue(instruction);
-                    continue;
-                }
-
-                EmitNewObject(method, newInstructions, instruction);
-            }
-
-            return newInstructions;
-            #endregion
-        }
-
-        public void AddAdditionalMembers(TypeDefinition host)
+        public override void AddAdditionalMembers(TypeDefinition host)
         {
             _emitter.AddAdditionalMembers(host);
         }
 
-        public void ImportReferences(ModuleDefinition module)
+        public override void ImportReferences(ModuleDefinition module)
         {
             _getCurrentMethod = module.ImportMethod<MethodBase>("GetCurrentMethod", BindingFlags.Public | BindingFlags.Static);
             _emitter.ImportReferences(module);
         }
 
-        private void EmitNewObject(MethodDefinition method, Queue<Instruction> newInstructions, Instruction currentInstruction)
+        protected override void Replace(Instruction currentInstruction, MethodDefinition method, Queue<Instruction> newInstructions)
         {
             CilWorker IL = method.Body.CilWorker;
 
@@ -72,5 +50,17 @@ namespace LinFu.AOP.Cecil
 
             _emitter.EmitNewObject(method, newInstructions, constructor, concreteType);
         }
-    }    
+
+        public override void AddLocals(MethodDefinition hostMethod)
+        {
+            _emitter.AddLocals(hostMethod);
+        }
+
+        protected override bool ShouldReplace(Instruction oldInstruction, MethodDefinition hostMethod)
+        {
+            var constructor = (MethodReference)oldInstruction.Operand;
+            var declaringType = constructor.GetDeclaringType();
+            return _emitter.ShouldIntercept(constructor, declaringType, hostMethod);
+        }
+    }
 }

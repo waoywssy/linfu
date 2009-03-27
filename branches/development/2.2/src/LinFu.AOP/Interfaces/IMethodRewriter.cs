@@ -13,6 +13,12 @@ namespace LinFu.AOP.Cecil.Interfaces
     public interface IMethodRewriter : IHostWeaver<TypeDefinition>
     {
         /// <summary>
+        /// Adds local variables to the <paramref name="hostMethod"/>.
+        /// </summary>
+        /// <param name="hostMethod">The target method.</param>
+        void AddLocals(MethodDefinition hostMethod);
+
+        /// <summary>
         /// Obtains the new instructions for a particular method.
         /// </summary>
         /// <param name="method">The target method.</param>
