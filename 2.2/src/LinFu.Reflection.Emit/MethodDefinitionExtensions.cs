@@ -24,7 +24,7 @@ namespace LinFu.Reflection.Emit
         {
             return method.Body.CilWorker;
         }
-        
+
         /// <summary>
         /// Adds a <see cref="VariableDefinition">local variable</see>
         /// instance to the target <paramref name="methodDef">method definition</paramref>.
@@ -42,6 +42,43 @@ namespace LinFu.Reflection.Emit
             methodDef.Body.Variables.Add(result);
 
             return result;
+        }
+
+        /// <summary>
+        /// Adds a named <see cref="VariableDefinition">local variable</see>
+        /// instance to the target <paramref name="methodDef">method definition</paramref>.
+        /// </summary>
+        /// <param name="method">The <paramref name="methodDef"/> instance which will contain the local variable.</param>
+        /// <param name="variableName">The name of the local variable.</param>
+        /// <param name="variableType">The object <see cref="System.Type">type</see> that describes the type of objects that will be stored by the local variable.</param>
+        /// <returns></returns>
+        public static VariableDefinition AddLocal(this MethodDefinition method, string variableName, Type variableType)
+        {
+            var module = method.DeclaringType.Module;
+            var localType = module.Import(variableType);
+
+            VariableDefinition newLocal = null;
+            foreach (VariableDefinition local in method.Body.Variables)
+            {
+                // Match the variable name and type
+                if (local.Name != variableName || local.VariableType != localType)
+                    continue;
+
+                newLocal = local;
+            }
+
+            // If necessary, create the local variable
+            if (newLocal == null)
+            {
+                var body = method.Body;
+                var index = body.Variables.Count;
+
+                newLocal = new VariableDefinition(variableName, index, method, localType);
+
+                body.Variables.Add(newLocal);
+            }
+
+            return newLocal;
         }
 
         /// <summary>
@@ -87,6 +124,7 @@ namespace LinFu.Reflection.Emit
 
             method.ReturnType.ReturnType = actualReturnType;
         }
+
         /// <summary>
         /// Adds a generic parameter type to the <paramref name="method"/>.
         /// </summary>
@@ -98,8 +136,8 @@ namespace LinFu.Reflection.Emit
 
             // Check if the parameter type already exists
             var matches = (from GenericParameter p in method.GenericParameters
-                          where p.Name == parameterType.Name
-                          select p).ToList();
+                           where p.Name == parameterType.Name
+                           select p).ToList();
 
             // Reuse the existing parameter
             if (matches.Count > 0)
@@ -120,7 +158,20 @@ namespace LinFu.Reflection.Emit
         /// <returns>A <see cref="VariableDefinition"/> that represents the local variable itself.</returns>        
         public static VariableDefinition AddLocal<T>(this MethodDefinition methodDef)
         {
-            return methodDef.AddLocal(typeof (T));
+            return methodDef.AddLocal(typeof(T));
+        }
+
+        /// <summary>
+        /// Adds a named <see cref="VariableDefinition">local variable</see>
+        /// instance to the target <paramref name="methodDef">method definition</paramref>.
+        /// </summary>
+        /// <typeparam name="T">The object <see cref="System.Type">type</see> that describes the type of objects that will be stored by the local variable.</typeparam>
+        /// <param name="methodDef">The <paramref name="methodDef"/> instance which will contain the local variable.</param>
+        /// <param name="variableName">The name of the local variable.</param>
+        /// <returns>A <see cref="VariableDefinition"/> that represents the local variable itself.</returns>        
+        public static VariableDefinition AddLocal<T>(this MethodDefinition methodDef, string variableName)
+        {
+            return methodDef.AddLocal(variableName, typeof(T));
         }
     }
 }

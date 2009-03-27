@@ -20,7 +20,6 @@ namespace LinFu.AOP.Cecil
         private TypeReference _voidType;
         private TypeReference _objectListType;
 
-        private MethodReference _getCurrentMethod;
         private MethodReference _getTypeFromHandle;
         private MethodReference _methodActivationContextCtor;
         private MethodReference _getActivator;
@@ -75,7 +74,6 @@ namespace LinFu.AOP.Cecil
 
             // Static method imports
             _getStaticActivator = module.ImportMethod("GetActivator", typeof(MethodActivatorRegistry), BindingFlags.Public | BindingFlags.Static);
-            _getCurrentMethod = module.ImportMethod<MethodBase>("GetCurrentMethod", BindingFlags.Public | BindingFlags.Static);
             _getTypeFromHandle = module.ImportMethod<Type>("GetTypeFromHandle", BindingFlags.Public | BindingFlags.Static);
 
             // Constructor imports
@@ -164,8 +162,10 @@ namespace LinFu.AOP.Cecil
             // Push the 'this' pointer onto the stack
             newInstructions.Enqueue(pushThis);
 
+            var module = method.DeclaringType.Module;
+
             // Push the current method onto the stack
-            newInstructions.Enqueue(IL.Create(OpCodes.Call, _getCurrentMethod));
+            IL.PushMethod(method, module);
 
             // Push the concrete type onto the stack
             newInstructions.Enqueue(IL.Create(OpCodes.Ldtoken, concreteType));

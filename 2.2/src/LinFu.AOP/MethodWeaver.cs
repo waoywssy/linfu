@@ -73,7 +73,7 @@ namespace LinFu.AOP.Cecil
         private void Rewrite(MethodDefinition method)
         {
             var body = method.Body;
-            var IL = body.CilWorker;
+            var IL = body.CilWorker;            
 
             // Save the old instructions
             var oldInstructions = new LinkedList<Instruction>();
@@ -84,6 +84,7 @@ namespace LinFu.AOP.Cecil
 
             body.Instructions.Clear();
 
+            _rewriter.AddLocals(method);
             var newInstructions = _rewriter.GetNewInstructions(method, IL, oldInstructions);
 
             foreach (var instruction in newInstructions)
