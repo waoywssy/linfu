@@ -13,19 +13,32 @@ namespace LinFu.AOP.Cecil
     /// </summary>
     public class MethodWeaver : IMethodWeaver
     {
-        private Func<MethodReference, bool> _filter;
-        private IMethodRewriter _rewriter;
-        private HashSet<MethodReference> _visitedMethods = new HashSet<MethodReference>();
+        private readonly Func<MethodReference, bool> _filter;
+        private readonly IMethodRewriter _rewriter;
+        private readonly HashSet<MethodReference> _visitedMethods = new HashSet<MethodReference>();
+        private readonly IInstructionProvider _instructionProvider;
 
         /// <summary>
         /// Initializes a new instance of the MethodWeaver class.
         /// </summary>
         /// <param name="rewriter">The <see cref="IMethodRewriter"/> instance that will modify the existing method.</param>
-        /// <param name="filter">The filter that determines which methods should be modified.</param>
+        /// <param name="filter">The filter that determines which methods should be modified.</param>        
         public MethodWeaver(IMethodRewriter rewriter, Func<MethodReference, bool> filter)
+            : this(rewriter, new InstructionProvider(), filter)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the MethodWeaver class.
+        /// </summary>
+        /// <param name="rewriter">The <see cref="IMethodRewriter"/> instance that will modify the existing method.</param>
+        /// <param name="instructionProvider">The provider that will obtain the original instructions for the target method.</param>
+        /// <param name="filter">The filter that determines which methods should be modified.</param>        
+        public MethodWeaver(IMethodRewriter rewriter, IInstructionProvider instructionProvider, Func<MethodReference, bool> filter)
         {
             _filter = filter;
             _rewriter = rewriter;
+            _instructionProvider = instructionProvider;
         }
 
         /// <summary>
@@ -44,7 +57,7 @@ namespace LinFu.AOP.Cecil
             if (!_filter(item))
                 return false;
 
-            return !item.IsStatic && !item.IsAbstract;
+            return !item.IsAbstract;
         }
 
         /// <summary>
@@ -73,24 +86,14 @@ namespace LinFu.AOP.Cecil
         private void Rewrite(MethodDefinition method)
         {
             var body = method.Body;
-            var IL = body.CilWorker;            
+            var IL = body.CilWorker;
 
-            // Save the old instructions
-            var oldInstructions = new LinkedList<Instruction>();
-            foreach (Instruction instruction in body.Instructions)
-            {
-                oldInstructions.AddLast(instruction);
-            }
+            var oldInstructions = _instructionProvider.GetInstructions(method);
 
             body.Instructions.Clear();
 
             _rewriter.AddLocals(method);
-            var newInstructions = _rewriter.GetNewInstructions(method, IL, oldInstructions);
-
-            foreach (var instruction in newInstructions)
-            {
-                IL.Append(instruction);
-            }
+            _rewriter.Rewrite(method, IL, oldInstructions);
         }
 
         /// <summary>

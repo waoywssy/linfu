@@ -14,8 +14,11 @@ namespace LinFu.AOP.Interfaces
         {
             lock (_lock)
             {
-                return _interceptor;
+                if (_interceptor != null && _interceptor.CanIntercept(context))
+                    return _interceptor;
             }
+
+            return null;
         }
 
         public static void SetInterceptor(IFieldInterceptor interceptor)

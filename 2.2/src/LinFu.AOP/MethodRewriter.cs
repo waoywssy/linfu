@@ -17,15 +17,9 @@ namespace LinFu.AOP.Cecil
         /// Initializes a new instance of the MethodRewriter class.
         /// </summary>
         protected MethodRewriter() { }
+        
 
-        /// <summary>
-        /// Obtains the new instructions for a particular method.
-        /// </summary>
-        /// <param name="method">The target method.</param>
-        /// <param name="IL">The <see cref="CilWorker"/> responsible for modifying the method body.</param>
-        /// <param name="oldInstructions">The list of old instructions.</param>
-        /// <returns>The new instructions that will be used to replace the old instructions in the target method body.</returns>
-        public IEnumerable<Instruction> GetNewInstructions(MethodDefinition method, CilWorker IL, IEnumerable<Instruction> oldInstructions)
+        public void Rewrite(MethodDefinition method, CilWorker IL, IEnumerable<Instruction> oldInstructions)
         {
             var newInstructions = new Queue<Instruction>();
             foreach (var instruction in oldInstructions)
@@ -33,16 +27,13 @@ namespace LinFu.AOP.Cecil
                 // Intercept only the load field and the load static field instruction
                 if (!ShouldReplace(instruction, method))
                 {
-                    newInstructions.Enqueue(instruction);
+                    IL.Append(instruction);
                     continue;
                 }
 
-                Replace(instruction, method, newInstructions);
+                Replace(instruction, method, IL);
             }
-
-            return newInstructions;
         }
-
 
         /// <summary>
         /// Adds additional members to the host type.
@@ -78,11 +69,11 @@ namespace LinFu.AOP.Cecil
 
 
         /// <summary>
-        /// Replaces the <paramref name="oldInstruction"/> with a set of <paramref name="newInstructions"/>.
+        /// Replaces the <paramref name="oldInstruction"/> with a new set of <paramref name="IL"/> instructions..
         /// </summary>
         /// <param name="oldInstruction">The instruction currently being evaluated.</param>
         /// <param name="hostMethod">The method that contains the target instruction.</param>
-        /// <param name="newInstructions">The list of instructions that will replace the old instruction.</param>
-        protected abstract void Replace(Instruction oldInstruction, MethodDefinition hostMethod, Queue<Instruction> newInstructions);
+        /// <param name="IL">The CilWorker for the target method body.</param>
+        protected abstract void Replace(Instruction oldInstruction, MethodDefinition hostMethod, CilWorker IL);
     }
 }

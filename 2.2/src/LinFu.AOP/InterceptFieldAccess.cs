@@ -117,10 +117,8 @@ namespace LinFu.AOP.Cecil
         /// <param name="oldInstruction">The instruction currently being evaluated.</param>
         /// <param name="hostMethod">The method that contains the target instruction.</param>
         /// <param name="newInstructions">The list of instructions that will replace the old instruction.</param>
-        protected override void Replace(Instruction oldInstruction, MethodDefinition hostMethod, Queue<Instruction> newInstructions)
+        protected override void Replace(Instruction oldInstruction, MethodDefinition hostMethod, CilWorker IL)
         {
-            var IL = hostMethod.Body.CilWorker;
-            var skipInterception = IL.Create(OpCodes.Nop);
             var targetField = (FieldReference)oldInstruction.Operand;
             var fieldType = targetField.FieldType;
             var isSetter = oldInstruction.OpCode == OpCodes.Stsfld || oldInstruction.OpCode == OpCodes.Stfld;
@@ -130,60 +128,60 @@ namespace LinFu.AOP.Cecil
                 hostMethod.Body.InitLocals = true;
                 // Save the setter argument and box it if necessary
                 if (fieldType.IsValueType || fieldType is GenericParameter)
-                    newInstructions.Enqueue(IL.Create(OpCodes.Box, fieldType));
+                    IL.Emit(OpCodes.Box, fieldType);
 
-                newInstructions.Enqueue(IL.Create(OpCodes.Stloc, _currentArgument));
+                IL.Emit(OpCodes.Stloc, _currentArgument);
             }
 
             // There's no need to push the current object instance
             // since the this pointer is pushed prior to the field call
             if (hostMethod.IsStatic)
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldnull));
+                IL.Emit((OpCodes.Ldnull));
 
             // Push the current method
             var module = hostMethod.DeclaringType.Module;
 
             // Push the current method onto the stack
-            IL.PushMethod(hostMethod, module, newInstructions);
+            IL.PushMethod(hostMethod, module);
 
             // Push the current field onto the stack            
-            IL.PushField(targetField, module, newInstructions);
+            IL.PushField(targetField, module);
 
             // Push the host type onto the stack
-            IL.PushType(hostMethod.DeclaringType, module, newInstructions);
+            IL.PushType(hostMethod.DeclaringType, module);
 
             // Create the IFieldInterceptionContext instance
-            newInstructions.Enqueue(IL.Create(OpCodes.Newobj, _fieldContextCtor));
-            newInstructions.Enqueue(IL.Create(OpCodes.Stloc, _fieldContext));
+            IL.Emit(OpCodes.Newobj, _fieldContextCtor);
+            IL.Emit(OpCodes.Stloc, _fieldContext);
 
-
+            var skipInterception = IL.Create(OpCodes.Nop);
             // Obtain an interceptor instance
             if (hostMethod.IsStatic)
             {
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _fieldContext));
-                newInstructions.Enqueue(IL.Create(OpCodes.Call, _getInterceptor));
+                IL.Emit(OpCodes.Ldloc, _fieldContext);
+                IL.Emit(OpCodes.Call, _getInterceptor);
             }
             else
             {
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldarg_0));
-                newInstructions.Enqueue(IL.Create(OpCodes.Isinst, _fieldInterceptionHostType));
-                newInstructions.Enqueue(IL.Create(OpCodes.Brfalse, skipInterception));
+                IL.Emit(OpCodes.Ldarg_0);
+                IL.Emit(OpCodes.Isinst, _fieldInterceptionHostType);
+                IL.Emit(OpCodes.Brfalse, skipInterception);
 
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldarg_0));
-                newInstructions.Enqueue(IL.Create(OpCodes.Isinst, _fieldInterceptionHostType));
-                newInstructions.Enqueue(IL.Create(OpCodes.Callvirt, _getInstanceInterceptor));
+                IL.Emit(OpCodes.Ldarg_0);
+                IL.Emit(OpCodes.Isinst, _fieldInterceptionHostType);
+                IL.Emit(OpCodes.Callvirt, _getInstanceInterceptor);
             }
 
             // The field interceptor cannot be null
-            newInstructions.Enqueue(IL.Create(OpCodes.Stloc, _fieldInterceptor));
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _fieldInterceptor));
-            newInstructions.Enqueue(IL.Create(OpCodes.Brfalse, skipInterception));
+            IL.Emit(OpCodes.Stloc, _fieldInterceptor);
+            IL.Emit(OpCodes.Ldloc, _fieldInterceptor);
+            IL.Emit(OpCodes.Brfalse, skipInterception);
 
-            // if (FieldInterceptor.CanIntercept(context)) {
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _fieldInterceptor));
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _fieldContext));
-            newInstructions.Enqueue(IL.Create(OpCodes.Callvirt, _canIntercept));
-            newInstructions.Enqueue(IL.Create(OpCodes.Brfalse, skipInterception));
+            // if (FieldInterceptor.CanIntercept(context) {
+            IL.Emit(OpCodes.Ldloc, _fieldInterceptor);
+            IL.Emit(OpCodes.Ldloc, _fieldContext);
+            IL.Emit(OpCodes.Callvirt, _canIntercept);
+            IL.Emit(OpCodes.Brfalse, skipInterception);
 
             var isGetter = oldInstruction.OpCode == OpCodes.Ldsfld || oldInstruction.OpCode == OpCodes.Ldfld;
 
@@ -192,57 +190,57 @@ namespace LinFu.AOP.Cecil
             //Call the interceptor instead of the getter or setter
             if (isGetter)
             {
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _fieldInterceptor));
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _fieldContext));
-                newInstructions.Enqueue(IL.Create(OpCodes.Callvirt, _getValue));
-                newInstructions.Enqueue(IL.Create(OpCodes.Unbox_Any, fieldType));
+                IL.Emit(OpCodes.Ldloc, _fieldInterceptor);
+                IL.Emit(OpCodes.Ldloc, _fieldContext);
+                IL.Emit(OpCodes.Callvirt, _getValue);
+                IL.Emit(OpCodes.Unbox_Any, fieldType);
             }
 
             if (isSetter)
             {
                 // Push the 'this' pointer for instance field setters
                 if (!hostMethod.IsStatic)
-                    newInstructions.Enqueue(IL.Create(OpCodes.Ldarg_0));
+                    IL.Emit(OpCodes.Ldarg_0);
 
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _fieldInterceptor));
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _fieldContext));
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _currentArgument));
+                IL.Emit(OpCodes.Ldloc, _fieldInterceptor);
+                IL.Emit(OpCodes.Ldloc, _fieldContext);
+                IL.Emit(OpCodes.Ldloc, _currentArgument);
 
                 // Unbox the setter value
-                newInstructions.Enqueue(IL.Create(OpCodes.Unbox_Any, fieldType));
+                IL.Emit(OpCodes.Unbox_Any, fieldType);
 
-                newInstructions.Enqueue(IL.Create(OpCodes.Callvirt, _setValue));
+                IL.Emit(OpCodes.Callvirt, _setValue);
 
                 // Set the actual field value
-                newInstructions.Enqueue(IL.Create(OpCodes.Unbox_Any, fieldType));
-                newInstructions.Enqueue(IL.Create(oldInstruction.OpCode, targetField));
+                IL.Emit(OpCodes.Unbox_Any, fieldType);
+                IL.Emit(oldInstruction.OpCode, targetField);
             }
 
-            newInstructions.Enqueue(IL.Create(OpCodes.Br, endLabel));
+            IL.Emit(OpCodes.Br, endLabel);
 
             // }
-            newInstructions.Enqueue(skipInterception);
+            IL.Append(skipInterception);
 
             // else {
 
             // Load the original field
             if (!hostMethod.IsStatic)
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldarg_0));
+                IL.Emit(OpCodes.Ldarg_0);
 
 
             if (isSetter)
             {
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _currentArgument));
+                IL.Emit(OpCodes.Ldloc, _currentArgument);
 
                 // Unbox the setter value
-                newInstructions.Enqueue(IL.Create(OpCodes.Unbox_Any, fieldType));
+                IL.Emit(OpCodes.Unbox_Any, fieldType);
             }
 
-            newInstructions.Enqueue(IL.Create(oldInstruction.OpCode, targetField));
+            IL.Emit(oldInstruction.OpCode, targetField);
 
             // }
 
-            newInstructions.Enqueue(endLabel);
+            IL.Append(endLabel);
         }
     }
 }

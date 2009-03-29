@@ -93,37 +93,36 @@ namespace LinFu.AOP.Cecil
             _createInstance = module.Import(createInstanceMethod);
         }
 
-        public void EmitNewObject(MethodDefinition hostMethod, Queue<Instruction> newInstructions, MethodReference targetConstructor, TypeReference concreteType)
+        public void EmitNewObject(MethodDefinition hostMethod, CilWorker IL, MethodReference targetConstructor, TypeReference concreteType)
         {
-            var IL = hostMethod.Body.CilWorker;
             var parameters = targetConstructor.Parameters;
             Instruction skipInterception = IL.Create(OpCodes.Nop);
 
-            SaveConstructorArguments(newInstructions, IL, parameters);
-            EmitCreateMethodActivationContext(hostMethod, newInstructions, concreteType);
+            SaveConstructorArguments(IL, parameters);
+            EmitCreateMethodActivationContext(hostMethod, IL, concreteType);
 
             // Skip the interception if an activator cannot be found            
-            EmitGetActivator(hostMethod, newInstructions, skipInterception);
+            EmitGetActivator(hostMethod, IL, skipInterception);
 
-            newInstructions.Enqueue(IL.Create(OpCodes.Stloc, _currentActivator));
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _currentActivator));
-            newInstructions.Enqueue(IL.Create(OpCodes.Brfalse, skipInterception));
+            IL.Emit(OpCodes.Stloc, _currentActivator);
+            IL.Emit(OpCodes.Ldloc, _currentActivator);
+            IL.Emit(OpCodes.Brfalse, skipInterception);
 
             // Determine if the activator can instantiate the method from the
             // current context
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _currentActivator));
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _methodContext));
-            newInstructions.Enqueue(IL.Create(OpCodes.Callvirt, _canActivate));
-            newInstructions.Enqueue(IL.Create(OpCodes.Brfalse, skipInterception));
+            IL.Emit(OpCodes.Ldloc, _currentActivator);
+            IL.Emit(OpCodes.Ldloc, _methodContext);
+            IL.Emit(OpCodes.Callvirt, _canActivate);
+            IL.Emit(OpCodes.Brfalse, skipInterception);
 
             // Use the activator to create the object instance
-            EmitCreateInstance(newInstructions, IL, concreteType);
+            EmitCreateInstance(IL, concreteType);
 
             // }
             Instruction endCreate = IL.Create(OpCodes.Nop);
-            newInstructions.Enqueue(IL.Create(OpCodes.Br, endCreate));
+            IL.Emit(OpCodes.Br, endCreate);
             // else {
-            newInstructions.Enqueue(skipInterception);
+            IL.Append(skipInterception);
 
             // Restore the arguments that were popped off the stack
             // by the list of constructor arguments
@@ -132,35 +131,33 @@ namespace LinFu.AOP.Cecil
             {
                 var currentParameter = parameters[index];
 
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _constructorArguments));
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldc_I4, index));
-                newInstructions.Enqueue(IL.Create(OpCodes.Callvirt, _getItem));
-                newInstructions.Enqueue(IL.Create(OpCodes.Unbox_Any, currentParameter.ParameterType));
+                IL.Emit(OpCodes.Ldloc, _constructorArguments);
+                IL.Emit(OpCodes.Ldc_I4, index);
+                IL.Emit(OpCodes.Callvirt, _getItem);
+                IL.Emit(OpCodes.Unbox_Any, currentParameter.ParameterType);
             }
-            newInstructions.Enqueue(IL.Create(OpCodes.Newobj, targetConstructor));
+            IL.Emit(OpCodes.Newobj, targetConstructor);
             // }
 
-            newInstructions.Enqueue(endCreate);
+            IL.Append(endCreate);
         }
 
-        private void EmitCreateInstance(Queue<Instruction> newInstructions, CilWorker IL, TypeReference concreteType)
+        private void EmitCreateInstance(CilWorker IL, TypeReference concreteType)
         {
             // T instance = this.Activator.CreateInstance(context);
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _currentActivator));
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _methodContext));
-            newInstructions.Enqueue(IL.Create(OpCodes.Callvirt, _createInstance));
-            newInstructions.Enqueue(IL.Create(OpCodes.Isinst, concreteType));
+            IL.Emit(OpCodes.Ldloc, _currentActivator);
+            IL.Emit(OpCodes.Ldloc, _methodContext);
+            IL.Emit(OpCodes.Callvirt, _createInstance);
+            IL.Emit(OpCodes.Isinst, concreteType);
         }
 
-        private void EmitCreateMethodActivationContext(MethodDefinition method, Queue<Instruction> newInstructions, TypeReference concreteType)
+        private void EmitCreateMethodActivationContext(MethodDefinition method, CilWorker IL, TypeReference concreteType)
         {
-            CilWorker IL = method.Body.CilWorker;
-
             // TODO: Add static method support
             var pushThis = method.IsStatic ? IL.Create(OpCodes.Ldnull) : IL.Create(OpCodes.Ldarg_0);
 
             // Push the 'this' pointer onto the stack
-            newInstructions.Enqueue(pushThis);
+            IL.Append(pushThis);
 
             var module = method.DeclaringType.Module;
 
@@ -168,79 +165,77 @@ namespace LinFu.AOP.Cecil
             IL.PushMethod(method, module);
 
             // Push the concrete type onto the stack
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldtoken, concreteType));
-            newInstructions.Enqueue(IL.Create(OpCodes.Call, _getTypeFromHandle));
+            IL.Emit(OpCodes.Ldtoken, concreteType);
+            IL.Emit(OpCodes.Call, _getTypeFromHandle);
 
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _constructorArguments));
-            newInstructions.Enqueue(IL.Create(OpCodes.Callvirt, _toArrayMethod));
-            newInstructions.Enqueue(IL.Create(OpCodes.Newobj, _methodActivationContextCtor));
+            IL.Emit(OpCodes.Ldloc, _constructorArguments);
+            IL.Emit(OpCodes.Callvirt, _toArrayMethod);
+            IL.Emit(OpCodes.Newobj, _methodActivationContextCtor);
 
             // var context = new MethodActivationContext(this, currentMethod, concreteType, args);
-            newInstructions.Enqueue(IL.Create(OpCodes.Stloc, _methodContext));
+            IL.Emit(OpCodes.Stloc, _methodContext);
         }
 
-        private void SaveConstructorArguments(Queue<Instruction> newInstructions, CilWorker IL, ParameterDefinitionCollection parameters)
+        private void SaveConstructorArguments(CilWorker IL, ParameterDefinitionCollection parameters)
         {
             var parameterCount = parameters.Count;
 
-            newInstructions.Enqueue(IL.Create(OpCodes.Newobj, _objectListCtor));
-            newInstructions.Enqueue(IL.Create(OpCodes.Stloc, _constructorArguments));
+            IL.Emit(OpCodes.Newobj, _objectListCtor);
+            IL.Emit(OpCodes.Stloc, _constructorArguments);
 
             var index = parameterCount - 1;
             while (index >= 0)
             {
                 var param = parameters[index];
 
-                SaveConstructorArgument(newInstructions, IL, param);
+                SaveConstructorArgument(IL, param);
 
                 index--;
             }
 
             // Reverse the constructor arguments so that they appear in the correct order
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _constructorArguments));
-            newInstructions.Enqueue(IL.Create(OpCodes.Callvirt, _reverseMethod));
+            IL.Emit(OpCodes.Ldloc, _constructorArguments);
+            IL.Emit(OpCodes.Callvirt, _reverseMethod);
         }
 
-        private void SaveConstructorArgument(Queue<Instruction> newInstructions, CilWorker IL, ParameterDefinition param)
+        private void SaveConstructorArgument(CilWorker IL, ParameterDefinition param)
         {
             // Box the type if necessary
             var parameterType = param.ParameterType;
             if (parameterType.IsValueType || parameterType is GenericParameter)
-                newInstructions.Enqueue(IL.Create(OpCodes.Box, parameterType));
+                IL.Emit(OpCodes.Box, parameterType);
 
             // Save the current argument
-            newInstructions.Enqueue(IL.Create(OpCodes.Stloc, _currentArgument));
+            IL.Emit(OpCodes.Stloc, _currentArgument);
 
             // Add the item to the item to the collection
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _constructorArguments));
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _currentArgument));
-            newInstructions.Enqueue(IL.Create(OpCodes.Callvirt, _addMethod));
+            IL.Emit(OpCodes.Ldloc, _constructorArguments);
+            IL.Emit(OpCodes.Ldloc, _currentArgument);
+            IL.Emit(OpCodes.Callvirt, _addMethod);
         }
 
-        private void EmitGetActivator(MethodDefinition method, Queue<Instruction> newInstructions, Instruction skipInterception)
+        private void EmitGetActivator(MethodDefinition method, CilWorker IL, Instruction skipInterception)
         {
-            CilWorker IL = method.Body.CilWorker;
-
             if (method.IsStatic)
             {
                 // If this is a static method, get the static Activator for this
                 // particular type
-                newInstructions.Enqueue(IL.Create(OpCodes.Ldloc, _methodContext));
-                newInstructions.Enqueue(IL.Create(OpCodes.Call, _getStaticActivator));
+                IL.Emit(OpCodes.Ldloc, _methodContext);
+                IL.Emit(OpCodes.Call, _getStaticActivator);
 
                 return;
             }
 
             // Instance-specific code
             // if (this is IActivatorHost && this.Activator != null) {
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldarg_0));
-            newInstructions.Enqueue(IL.Create(OpCodes.Isinst, _hostInterfaceType));
-            newInstructions.Enqueue(IL.Create(OpCodes.Brfalse, skipInterception));
+            IL.Emit(OpCodes.Ldarg_0);
+            IL.Emit(OpCodes.Isinst, _hostInterfaceType);
+            IL.Emit(OpCodes.Brfalse, skipInterception);
 
             // var activator = this.Activator;
-            newInstructions.Enqueue(IL.Create(OpCodes.Ldarg_0));
-            newInstructions.Enqueue(IL.Create(OpCodes.Isinst, _hostInterfaceType));
-            newInstructions.Enqueue(IL.Create(OpCodes.Callvirt, _getActivator));
+            IL.Emit(OpCodes.Ldarg_0);
+            IL.Emit(OpCodes.Isinst, _hostInterfaceType);
+            IL.Emit(OpCodes.Callvirt, _getActivator);
         }
 
         public void AddLocals(MethodDefinition hostMethod)

@@ -24,7 +24,7 @@ namespace LinFu.AOP.Interfaces
             if (context == null)
                 throw new ArgumentNullException("context");
 
-            if (_activator == null)
+            if (_activator == null || !_activator.CanActivate(context))
                 return null;
 
             return _activator;
