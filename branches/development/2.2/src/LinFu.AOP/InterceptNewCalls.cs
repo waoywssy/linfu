@@ -16,7 +16,7 @@ namespace LinFu.AOP.Cecil
         private MethodReference _getCurrentMethod;
         #endregion
 
-        private INewObjectWeaver _emitter;
+        private readonly INewObjectWeaver _emitter;
         public InterceptNewCalls(INewObjectWeaver emitter)
         {
             _emitter = emitter;
@@ -33,9 +33,8 @@ namespace LinFu.AOP.Cecil
             _emitter.ImportReferences(module);
         }
 
-        protected override void Replace(Instruction currentInstruction, MethodDefinition method, Queue<Instruction> newInstructions)
+        protected override void Replace(Instruction currentInstruction, MethodDefinition method, CilWorker IL)
         {
-            CilWorker IL = method.Body.CilWorker;
 
             MethodReference constructor = (MethodReference)currentInstruction.Operand;
             TypeReference concreteType = constructor.DeclaringType;
@@ -44,11 +43,11 @@ namespace LinFu.AOP.Cecil
             if (!_emitter.ShouldIntercept(constructor, concreteType, method))
             {
                 // Reuse the old instruction instead of emitting a new one
-                newInstructions.Enqueue(currentInstruction);
+                IL.Append(currentInstruction);
                 return;
             }
 
-            _emitter.EmitNewObject(method, newInstructions, constructor, concreteType);
+            _emitter.EmitNewObject(method, IL, constructor, concreteType);
         }
 
         public override void AddLocals(MethodDefinition hostMethod)

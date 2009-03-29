@@ -68,26 +68,7 @@ namespace LinFu.Reflection.Emit
             IL.Emit(OpCodes.Ldtoken, declaringType);
             IL.Emit(OpCodes.Call, getMethodFromHandle);
         }
-
-        /// <summary>
-        /// Pushes the current <paramref name="method"/> onto the stack.
-        /// </summary>
-        /// <param name="IL">The <see cref="CilWorker"/> that will be used to create the instructions.</param>
-        /// <param name="method">The method that represents the <see cref="MethodInfo"/> that will be pushed onto the stack.</param>
-        /// <param name="module">The module that contains the host method.</param>
-        /// <param name="instructions">The list of new instructions.</param>
-        public static void PushMethod(this CilWorker IL, MethodReference method, ModuleDefinition module, Queue<Instruction> instructions)
-        {
-            var getMethodFromHandle = module.ImportMethod<MethodBase>("GetMethodFromHandle",
-                typeof(RuntimeMethodHandle), typeof(RuntimeTypeHandle));
-
-            var declaringType = method.GetDeclaringType();
-
-            instructions.Enqueue(IL.Create(OpCodes.Ldtoken, method));
-            instructions.Enqueue(IL.Create(OpCodes.Ldtoken, declaringType));
-            instructions.Enqueue(IL.Create(OpCodes.Call, getMethodFromHandle));
-        }
-
+   
         /// <summary>
         /// Gets the declaring type for the target method.
         /// </summary>
@@ -114,25 +95,7 @@ namespace LinFu.Reflection.Emit
 
             IL.Emit(OpCodes.Ldtoken, declaringType);
             IL.Emit(OpCodes.Call, getTypeFromHandle);
-        }
-
-        /// <summary>
-        /// Pushes a <paramref name="Type"/> instance onto the stack.
-        /// </summary>
-        /// <param name="IL">The <see cref="CilWorker"/> that will be used to create the instructions.</param>
-        /// <param name="type">The type that represents the <see cref="Type"/> that will be pushed onto the stack.</param>
-        /// <param name="module">The module that contains the host method.</param>
-        /// <param name="instructions">The list of new instructions.</param>
-        public static void PushType(this CilWorker IL, TypeReference type, ModuleDefinition module, Queue<Instruction> instructions)
-        {
-            var getTypeFromHandle = module.ImportMethod<Type>("GetTypeFromHandle", typeof(RuntimeTypeHandle));
-
-            // Instantiate the generic type before pushing it onto the stack
-            var declaringType = GetDeclaringType(type);
-
-            instructions.Enqueue(IL.Create(OpCodes.Ldtoken, declaringType));
-            instructions.Enqueue(IL.Create(OpCodes.Call, getTypeFromHandle));
-        }
+        }        
 
         /// <summary>
         /// Pushes the current <paramref name="field"/> onto the stack.
@@ -150,25 +113,6 @@ namespace LinFu.Reflection.Emit
             IL.Emit(OpCodes.Ldtoken, field);
             IL.Emit(OpCodes.Ldtoken, declaringType);
             IL.Emit(OpCodes.Call, getFieldFromHandle);
-        }
-
-        /// <summary>
-        /// Pushes the current <paramref name="field"/> onto the stack.
-        /// </summary>
-        /// <param name="IL">The <see cref="CilWorker"/> that will be used to create the instructions.</param>
-        /// <param name="field">The field that represents the <see cref="FieldInfo"/> that will be pushed onto the stack.</param>
-        /// <param name="module">The module that contains the target field.</param>
-        /// <param name="instructions">The list of new instructions.</param>
-        public static void PushField(this CilWorker IL, FieldReference field, ModuleDefinition module, Queue<Instruction> instructions)
-        {
-            var getFieldFromHandle = module.ImportMethod<FieldInfo>("GetFieldFromHandle",
-                typeof(RuntimeFieldHandle), typeof(RuntimeTypeHandle));
-
-            var declaringType = GetDeclaringType(field.DeclaringType);
-
-            instructions.Enqueue(IL.Create(OpCodes.Ldtoken, field));
-            instructions.Enqueue(IL.Create(OpCodes.Ldtoken, declaringType));
-            instructions.Enqueue(IL.Create(OpCodes.Call, getFieldFromHandle));
         }
 
         /// <summary>
@@ -249,7 +193,7 @@ namespace LinFu.Reflection.Emit
         /// <param name="method">The target method whose generic type arguments (if any) will be saved into the local variable .</param>
         /// <param name="module">The module that contains the host method.</param>
         /// <param name="parameterTypes">The local variable that will store the current method signature.</param>
-        public static void SaveParameterTypes(this CilWorker IL, MethodDefinition method, ModuleDefinition module,
+        public static void SaveParameterTypes(this CilWorker IL, MethodReference method, ModuleDefinition module,
              VariableDefinition parameterTypes)
         {
             var getTypeFromHandle = module.ImportMethod<Type>("GetTypeFromHandle", BindingFlags.Public | BindingFlags.Static);

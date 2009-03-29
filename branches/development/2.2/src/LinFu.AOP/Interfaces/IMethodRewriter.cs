@@ -19,12 +19,11 @@ namespace LinFu.AOP.Cecil.Interfaces
         void AddLocals(MethodDefinition hostMethod);
 
         /// <summary>
-        /// Obtains the new instructions for a particular method.
+        /// Rewrites a target method using the given CilWorker.
         /// </summary>
         /// <param name="method">The target method.</param>
-        /// <param name="IL">The <see cref="CilWorker"/> responsible for modifying the method body.</param>
-        /// <param name="oldInstructions">The list of old instructions.</param>
-        /// <returns>The new instructions that will be used to replace the old instructions in the target method body.</returns>
-        IEnumerable<Instruction> GetNewInstructions(MethodDefinition method, CilWorker IL, IEnumerable<Instruction> oldInstructions);
+        /// <param name="IL">The CilWorker that will be used to rewrite the target method.</param>
+        /// <param name="oldInstructions">The original instructions from the target method body.</param>
+        void Rewrite(MethodDefinition method, CilWorker IL, IEnumerable<Instruction> oldInstructions);
     }
 }

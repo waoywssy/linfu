@@ -46,9 +46,9 @@ namespace LinFu.Reflection.Emit
 
         /// <summary>
         /// Adds a named <see cref="VariableDefinition">local variable</see>
-        /// instance to the target <paramref name="methodDef">method definition</paramref>.
+        /// instance to the target <paramref name="method">method definition</paramref>.
         /// </summary>
-        /// <param name="method">The <paramref name="methodDef"/> instance which will contain the local variable.</param>
+        /// <param name="method">The <paramref name="method"/> instance which will contain the local variable.</param>
         /// <param name="variableName">The name of the local variable.</param>
         /// <param name="variableType">The object <see cref="System.Type">type</see> that describes the type of objects that will be stored by the local variable.</param>
         /// <returns></returns>
