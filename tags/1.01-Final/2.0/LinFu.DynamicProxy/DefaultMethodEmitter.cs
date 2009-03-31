@@ -182,18 +182,8 @@ namespace LinFu.DynamicProxy
 
         private void PushStackTrace(ILGenerator IL)
         {
-            // Push the stacktrace onto the stack
-            ConstructorInfo stackTraceConstructor =
-                typeof (StackTrace).GetConstructor(new Type[] {typeof (int), typeof (bool)});
-            Debug.Assert(stackTraceConstructor != null);
-#if DEBUG
-            OpCode addDebugSymbols = OpCodes.Ldc_I4_1;
-#else
-            OpCode addDebugSymbols = OpCodes.Ldc_I4_0;
-#endif
-            IL.Emit(OpCodes.Ldc_I4_1);
-            IL.Emit(addDebugSymbols);
-            IL.Emit(OpCodes.Newobj, stackTraceConstructor);
+            // NOTE: The stack trace has been disabled for performance reasons
+            IL.Emit(OpCodes.Ldnull);
         }
 
         private void PushGenericArguments(MethodInfo method, ILGenerator IL)
