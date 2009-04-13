@@ -9,18 +9,18 @@ namespace LinFu.DynamicProxy
     internal class DefaultMethodEmitter : IMethodBodyEmitter
     {
         private static MethodInfo getInterceptor = null;
-        
+
         private static MethodInfo getGenericMethodFromHandle = typeof(MethodBase).GetMethod("GetMethodFromHandle",
                     BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(RuntimeMethodHandle), typeof(RuntimeTypeHandle) }, null);
 
         private static MethodInfo getMethodFromHandle = typeof(MethodBase).GetMethod("GetMethodFromHandle", new Type[] { typeof(RuntimeMethodHandle) });
-        private static MethodInfo getTypeFromHandle = typeof (Type).GetMethod("GetTypeFromHandle");
-        private static MethodInfo handlerMethod = typeof (IInterceptor).GetMethod("Intercept");
+        private static MethodInfo getTypeFromHandle = typeof(Type).GetMethod("GetTypeFromHandle");
+        private static MethodInfo handlerMethod = typeof(IInterceptor).GetMethod("Intercept");
         private static ConstructorInfo infoConstructor;
-        private static PropertyInfo interceptorProperty = typeof (IProxy).GetProperty("Interceptor");
+        private static PropertyInfo interceptorProperty = typeof(IProxy).GetProperty("Interceptor");
 
         private static ConstructorInfo notImplementedConstructor =
-            typeof (NotImplementedException).GetConstructor(new Type[0]);
+            typeof(NotImplementedException).GetConstructor(new Type[0]);
 
         private static Dictionary<string, OpCode> stindMap = new Dictionary<string, OpCode>();
         private IArgumentHandler _argumentHandler;
@@ -34,13 +34,13 @@ namespace LinFu.DynamicProxy
                     typeof (StackTrace), typeof (Type[]), typeof (object[])
                 };
 
-            infoConstructor = typeof (InvocationInfo).GetConstructor(constructorTypes);
- 
+            infoConstructor = typeof(InvocationInfo).GetConstructor(constructorTypes);
+
 
             stindMap["Bool&"] = OpCodes.Stind_I1;
             stindMap["Int8&"] = OpCodes.Stind_I1;
             stindMap["Uint8&"] = OpCodes.Stind_I1;
-           
+
             stindMap["Int16&"] = OpCodes.Stind_I2;
             stindMap["Uint16&"] = OpCodes.Stind_I2;
 
@@ -54,7 +54,8 @@ namespace LinFu.DynamicProxy
             stindMap["Float64&"] = OpCodes.Stind_R8;
         }
 
-        public DefaultMethodEmitter() : this(new DefaultArgumentHandler())
+        public DefaultMethodEmitter()
+            : this(new DefaultArgumentHandler())
         {
         }
 
@@ -70,9 +71,9 @@ namespace LinFu.DynamicProxy
             bool isStatic = false;
 
             ParameterInfo[] parameters = method.GetParameters();
-            IL.DeclareLocal(typeof (object[]));
-            IL.DeclareLocal(typeof (InvocationInfo));
-            IL.DeclareLocal(typeof (Type[]));
+            IL.DeclareLocal(typeof(object[]));
+            IL.DeclareLocal(typeof(InvocationInfo));
+            IL.DeclareLocal(typeof(Type[]));
 
             IL.Emit(OpCodes.Ldarg_0);
             IL.Emit(OpCodes.Callvirt, getInterceptor);
@@ -95,7 +96,7 @@ namespace LinFu.DynamicProxy
 
             // Push the MethodInfo onto the stack            
             Type declaringType = method.DeclaringType;
-            
+
             IL.Emit(OpCodes.Ldtoken, method);
             if (declaringType.IsGenericType)
             {
@@ -107,7 +108,7 @@ namespace LinFu.DynamicProxy
                 IL.Emit(OpCodes.Call, getMethodFromHandle);
             }
 
-            IL.Emit(OpCodes.Castclass, typeof (MethodInfo));
+            IL.Emit(OpCodes.Castclass, typeof(MethodInfo));
 
             PushStackTrace(IL);
             PushGenericArguments(method, IL);
@@ -131,14 +132,14 @@ namespace LinFu.DynamicProxy
         private static void SaveRefArguments(ILGenerator IL, ParameterInfo[] parameters)
         {
             // Save the arguments returned from the handler method
-            MethodInfo getArguments = typeof (InvocationInfo).GetMethod("get_Arguments");
+            MethodInfo getArguments = typeof(InvocationInfo).GetMethod("get_Arguments");
             IL.Emit(OpCodes.Ldloc_1);
             IL.Emit(OpCodes.Call, getArguments);
             IL.Emit(OpCodes.Stloc_0);
 
             foreach (ParameterInfo param in parameters)
             {
-                string typeName = param.ParameterType.AssemblyQualifiedName;
+                string typeName = param.ParameterType.Name;
 
                 bool isRef = param.ParameterType.IsByRef && typeName.EndsWith("&");
                 if (!isRef)
@@ -196,7 +197,7 @@ namespace LinFu.DynamicProxy
 
             // Type[] genericTypeArgs = new Type[genericTypeCount];
             IL.Emit(OpCodes.Ldc_I4, genericTypeCount);
-            IL.Emit(OpCodes.Newarr, typeof (Type));
+            IL.Emit(OpCodes.Newarr, typeof(Type));
 
             if (genericTypeCount == 0)
                 return;
@@ -217,7 +218,7 @@ namespace LinFu.DynamicProxy
         {
             Type returnType = method.ReturnType;
             // Unbox the return value if necessary
-            if (returnType == typeof (void))
+            if (returnType == typeof(void))
             {
                 IL.Emit(OpCodes.Pop);
                 return;

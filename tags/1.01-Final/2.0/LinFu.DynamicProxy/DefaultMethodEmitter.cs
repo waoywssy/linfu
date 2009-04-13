@@ -138,7 +138,7 @@ namespace LinFu.DynamicProxy
 
             foreach (ParameterInfo param in parameters)
             {
-                string typeName = param.ParameterType.AssemblyQualifiedName;
+                string typeName = param.ParameterType.Name;
 
                 bool isRef = param.ParameterType.IsByRef && typeName.EndsWith("&");
                 if (!isRef)
