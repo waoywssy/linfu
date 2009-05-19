@@ -25,7 +25,7 @@ namespace LinFu.Proxy
         public ProxyFactory()
         {
             // Use the forwarding proxy type by default
-            ProxyBuilder = new ProxyBuilder();
+            ProxyBuilder = new SerializableProxyBuilder();
             InterfaceExtractor = new InterfaceExtractor();
             Cache = new ProxyCache();
         }
