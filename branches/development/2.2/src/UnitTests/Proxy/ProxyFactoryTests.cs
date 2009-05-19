@@ -15,6 +15,7 @@ using Moq;
 using NUnit.Framework;
 using SampleLibrary;
 using SampleLibrary.Proxy;
+using System.Runtime.Serialization;
 
 namespace LinFu.UnitTests.Proxy
 {
@@ -23,6 +24,7 @@ namespace LinFu.UnitTests.Proxy
     {
         private ServiceContainer container;
         private Loader loader;
+        private string filename = string.Empty;
         public override void Init()
         {
             loader = new Loader();
@@ -33,17 +35,18 @@ namespace LinFu.UnitTests.Proxy
             LoadAssemblyUsing(typeof(ProxyFactory));
             LoadAssemblyUsing(typeof(InvocationInfoEmitter));
 
+            filename = string.Format("{0}.dll", Guid.NewGuid().ToString());
             // Add the PEVerifier to the proxy generation process
-            container.AddService<IVerifier>(new PEVerifier());
+            container.AddService<IVerifier>(new PEVerifier(filename));
         }
 
         private void LoadAssemblyUsing(Type embeddedType)
         {
             var location = embeddedType.Assembly.Location;
             var directory = Path.GetDirectoryName(location);
-            var filename = Path.GetFileName(location);
+            var assemblyFilename = Path.GetFileName(location);
 
-            container.LoadFrom(directory, filename);
+            container.LoadFrom(directory, assemblyFilename);
         }
 
         public override void Term()
@@ -141,7 +144,7 @@ namespace LinFu.UnitTests.Proxy
             // The two given arguments should match
             Assert.AreEqual(54321, value);
         }
-       
+
         [Test]
         public void ShouldSupportMethodCallsWithGenericReturnValuesFromGenericMethodTypeArguments()
         {
@@ -201,7 +204,7 @@ namespace LinFu.UnitTests.Proxy
 
         [Test]
         public void ShouldSupportMethodCallsWithGenericParametersFromGenericMethodTypeArguments()
-        {            
+        {
             var genericParameterType = typeof(int);
             var proxy = CreateProxy<ClassWithParametersFromGenericMethodTypeArguments>(info =>
             {
@@ -241,7 +244,7 @@ namespace LinFu.UnitTests.Proxy
             var proxyType = proxy.GetType();
 
             // The proxy must implement all of the given interfaces
-            foreach(var currentType in interfaces)
+            foreach (var currentType in interfaces)
             {
                 Assert.IsTrue(currentType.IsAssignableFrom(proxyType));
             }
@@ -251,13 +254,13 @@ namespace LinFu.UnitTests.Proxy
         public void ShouldCacheProxyTypes()
         {
             var factory = container.GetService<IProxyFactory>();
-            var baseType = typeof (ISampleService);
+            var baseType = typeof(ISampleService);
 
             var proxyType = factory.CreateProxyType(baseType, new Type[0]);
             var runCount = 10;
-            
+
             // All subsequent results must return the same proxy type
-            for(int i = 0; i < runCount; i++)
+            for (int i = 0; i < runCount; i++)
             {
                 var currentType = factory.CreateProxyType(baseType, new Type[0]);
                 Assert.AreEqual(proxyType, currentType);
@@ -304,6 +307,22 @@ namespace LinFu.UnitTests.Proxy
             {
                 Assert.IsTrue(currentType.IsAssignableFrom(proxyType));
             }
+        }
+
+        [Test]
+        public void ProxyTypeShouldImplementISerializableInterface()
+        {
+            var factory = new ProxyFactory();
+            factory.ProxyBuilder = new SerializableProxyBuilder();
+
+            var sampleProxyType = factory.CreateProxyType(typeof(object), new Type[] { typeof(ISampleService) });
+
+            foreach (var interfaceType in sampleProxyType.GetInterfaces())
+            {
+                Console.WriteLine("The sample proxy implements the {0} interface", interfaceType.Name);
+            }
+
+            Assert.IsTrue(sampleProxyType.GetInterfaces().Contains(typeof(ISerializable)));
         }
 
         [Test]
