@@ -131,7 +131,18 @@ namespace LinFu.Proxy
             #region Compile the results
             var compiledAssembly = assembly.ToAssembly();
 
-            var result = (from t in compiledAssembly.GetTypes()
+            IEnumerable<Type> types = null;
+
+            try
+            {
+                types = compiledAssembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                types = ex.Types;
+            }
+
+            var result = (from t in types
                           where t != null && t.IsClass
                           select t).FirstOrDefault();
             #endregion
