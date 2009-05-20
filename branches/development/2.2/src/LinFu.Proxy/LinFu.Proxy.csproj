@@ -64,6 +64,7 @@
     <Compile Include="ProxyFactory.cs" />
     <Compile Include="ProxyImplementor.cs" />
     <Compile Include="ProxyMethodBuilder.cs" />
+    <Compile Include="ProxyObjectReference.cs" />
     <Compile Include="SerializableProxyBuilder.cs" />
   </ItemGroup>
   <ItemGroup>

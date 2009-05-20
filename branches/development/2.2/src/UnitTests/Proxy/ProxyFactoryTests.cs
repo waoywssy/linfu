@@ -16,6 +16,7 @@ using NUnit.Framework;
 using SampleLibrary;
 using SampleLibrary.Proxy;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace LinFu.UnitTests.Proxy
 {
@@ -310,27 +311,52 @@ namespace LinFu.UnitTests.Proxy
         }
 
         [Test]
-        public void ProxyTypeShouldImplementISerializableInterface()
+        public void ShouldHaveSerializableAttribute()
         {
             var factory = new ProxyFactory();
-            factory.ProxyBuilder = new SerializableProxyBuilder();
+            var proxyType = factory.CreateProxyType(typeof(ISampleService), new Type[0]);
 
-            var sampleProxyType = factory.CreateProxyType(typeof(object), new Type[] { typeof(ISampleService) });
-
-            foreach (var interfaceType in sampleProxyType.GetInterfaces())
-            {
-                Console.WriteLine("The sample proxy implements the {0} interface", interfaceType.Name);
-            }
-
-            Assert.IsTrue(sampleProxyType.GetInterfaces().Contains(typeof(ISerializable)));
+            var customAttributes = proxyType.GetCustomAttributes(typeof(SerializableAttribute), false);
+            Assert.IsTrue(customAttributes != null && customAttributes.Count() > 0);
         }
 
         [Test]
-        [Ignore("TODO: Implement this")]
         public void ShouldSupportSerialization()
         {
-            throw new NotImplementedException();
+            var factory = new ProxyFactory();
+
+            var interceptor = new SerializableInterceptor();
+            interceptor.Identifier = Guid.NewGuid();
+
+            var proxy = factory.CreateProxy<ISampleService>(interceptor);
+            var proxyType = proxy.GetType();
+
+            var proxyAssembly = proxyType.Assembly.Location;
+
+            var customAttributes = proxyType.GetCustomAttributes(typeof(SerializableAttribute), false);
+            Assert.IsTrue(customAttributes != null && customAttributes.Count() > 0);
+            Assert.IsTrue(proxy is ISerializable);
+
+            // Serialize the proxy
+            var stream = new MemoryStream();
+            var formatter = new BinaryFormatter();
+
+            var converter = new Mock<IFormatterConverter>();
+            SerializationInfo info = new SerializationInfo(proxyType, converter.Object);
+
+            var serializableProxy = proxy as ISerializable;
+            var context = new StreamingContext();
+            serializableProxy.GetObjectData(info, context);
+
+            formatter.Serialize(stream, proxy);
+
+            // Deserialize the proxy from the stream
+            IProxy restoredProxy = (IProxy)formatter.Deserialize(stream);
+            Assert.IsNotNull(restoredProxy);
+            Assert.IsNotNull(restoredProxy.Interceptor);
+            Assert.IsTrue(restoredProxy.Interceptor.GetType() == typeof(SerializableInterceptor));
         }
+
         private T CreateProxy<T>(Func<IInvocationInfo, object> implementation)
         {
             var factory = container.GetService<IProxyFactory>();

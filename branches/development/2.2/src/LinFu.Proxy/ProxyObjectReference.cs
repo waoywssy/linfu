@@ -13,30 +13,30 @@ namespace LinFu.Proxy
         private readonly Type _baseType;
         private readonly IProxy _proxy;
 
-        public ProxyObjectReference(SerializationInfo info, StreamingContext context)
+        protected ProxyObjectReference(SerializationInfo info, StreamingContext context)
         {
             // Deserialize the base type using its assembly qualified name
             string qualifiedName = info.GetString("__baseType");
             _baseType = Type.GetType(qualifiedName, true, false);
 
             // Rebuild the list of interfaces
-            var interfaceList = new List<Type>();
+            List<Type> interfaceList = new List<Type>();
             int interfaceCount = info.GetInt32("__baseInterfaceCount");
             for (int i = 0; i < interfaceCount; i++)
             {
-                var keyName = string.Format("__baseInterface{0}", i);
-                var currentQualifiedName = info.GetString(keyName);
+                string keyName = string.Format("__baseInterface{0}", i);
+                string currentQualifiedName = info.GetString(keyName);
                 Type interfaceType = Type.GetType(currentQualifiedName, true, false);
 
                 interfaceList.Add(interfaceType);
             }
 
             // Reconstruct the proxy
-            var factory = new ProxyFactory();
-            var proxyType = factory.CreateProxyType(_baseType, interfaceList.ToArray());
+            ProxyFactory factory = new ProxyFactory();
+            Type proxyType = factory.CreateProxyType(_baseType, interfaceList.ToArray());
 
             // Initialize the proxy with the deserialized data
-            var args = new object[] { info, context };
+            object[] args = new object[] { info, context };
             _proxy = (IProxy)Activator.CreateInstance(proxyType, args);
         }
 

@@ -99,6 +99,7 @@
     <Compile Include="IOC\SampleStronglyTypedFactory.cs" />
     <Compile Include="IOC\SecondOncePerRequestService.cs" />
     <Compile Include="IOC\SecondSingletonService.cs" />
+    <Compile Include="Proxy\SerializableInterceptor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.AOP.Interfaces\LinFu.AOP.Interfaces.csproj">
