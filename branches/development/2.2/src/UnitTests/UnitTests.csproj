@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AOP\CecilTests.cs" />
+    <Compile Include="AOP\FieldInterceptionTests.cs" />
     <Compile Include="AOP\ParameterDefinitionExtensionTests.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BaseTestFixture.cs" />
