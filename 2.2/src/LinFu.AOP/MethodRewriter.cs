@@ -13,14 +13,28 @@ namespace LinFu.AOP.Cecil
     /// </summary>
     public abstract class MethodRewriter : IMethodRewriter
     {
+        private HashSet<TypeDefinition> _modifiedTypes = new HashSet<TypeDefinition>();
+
         /// <summary>
         /// Initializes a new instance of the MethodRewriter class.
         /// </summary>
         protected MethodRewriter() { }
         
-
         public void Rewrite(MethodDefinition method, CilWorker IL, IEnumerable<Instruction> oldInstructions)
         {
+            var declaringType = method.DeclaringType;
+            var module = declaringType.Module;
+
+            ImportReferences(module);
+
+            AddLocals(method);
+
+            if (!_modifiedTypes.Contains(declaringType))
+            {
+                AddAdditionalMembers(declaringType);
+                _modifiedTypes.Add(declaringType);
+            }
+
             var newInstructions = new Queue<Instruction>();
             foreach (var instruction in oldInstructions)
             {
