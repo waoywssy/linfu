@@ -97,8 +97,8 @@
     <Compile Include="Reflection\DuckTypingTests.cs" />
     <Compile Include="Reflection\LateBindingTests.cs" />
     <Compile Include="Reflection\ReflectionEmitTests.cs" />
-    <Compile Include="Reflection\Tools\ITest.cs" />
-    <Compile Include="Reflection\Tools\PEVerifier.cs" />
+    <Compile Include="Tools\ITest.cs" />
+    <Compile Include="Tools\PEVerifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LinFu.AOP.Interfaces\LinFu.AOP.Interfaces.csproj">
