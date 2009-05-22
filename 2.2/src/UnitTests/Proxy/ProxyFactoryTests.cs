@@ -17,6 +17,7 @@ using SampleLibrary;
 using SampleLibrary.Proxy;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
 
 namespace LinFu.UnitTests.Proxy
 {
@@ -37,6 +38,7 @@ namespace LinFu.UnitTests.Proxy
             LoadAssemblyUsing(typeof(InvocationInfoEmitter));
 
             filename = string.Format("{0}.dll", Guid.NewGuid().ToString());
+            
             // Add the PEVerifier to the proxy generation process
             container.AddService<IVerifier>(new PEVerifier(filename));
         }
@@ -54,6 +56,15 @@ namespace LinFu.UnitTests.Proxy
         {
             loader = null;
             container = null;
+
+            try
+            {
+                File.Delete(filename);
+            }
+            catch 
+            {
+                // Do nothing
+            }
         }
 
         [Test]
@@ -348,8 +359,15 @@ namespace LinFu.UnitTests.Proxy
             var context = new StreamingContext();
             serializableProxy.GetObjectData(info, context);
 
-            formatter.Serialize(stream, proxy);
-
+            try
+            {
+                formatter.Serialize(stream, proxy);
+            }
+            catch (SerializationException ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
             // Deserialize the proxy from the stream
             IProxy restoredProxy = (IProxy)formatter.Deserialize(stream);
             Assert.IsNotNull(restoredProxy);

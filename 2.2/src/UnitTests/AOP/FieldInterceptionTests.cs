@@ -41,18 +41,18 @@ namespace LinFu.UnitTests.AOP
         public void ShouldSetAndGetTheSameFieldValue()
         {
             AssemblyDefinition myLibrary = AssemblyFactory.GetAssembly("SampleLibrary.dll");
+            var module = myLibrary.MainModule;
+
+            module.LoadSymbols();
             foreach (TypeDefinition type in myLibrary.MainModule.Types)
             {
                 if (!type.FullName.Contains("SampleClassWithReadOnlyField"))
                     continue;
 
-                var typeWeaver = new ImplementFieldInterceptionHostWeaver(t => true);
-                var fieldWeaver = new InterceptFieldAccess();
-
-                type.WeaveWith(fieldWeaver, f => true);
-                type.Accept(typeWeaver);                
+                type.InterceptFields(m => true);                
             }
 
+            module.SaveSymbols();
             var loadedAssembly = myLibrary.ToAssembly();
             var targetType = (from t in loadedAssembly.GetTypes()
                               where t.Name.Contains("SampleClassWithReadOnlyField")
