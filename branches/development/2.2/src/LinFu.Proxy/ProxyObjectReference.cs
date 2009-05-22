@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using LinFu.Proxy.Interfaces;
+using LinFu.AOP.Interfaces;
 
 namespace LinFu.Proxy
 {
@@ -38,6 +39,9 @@ namespace LinFu.Proxy
             // Initialize the proxy with the deserialized data
             object[] args = new object[] { info, context };
             _proxy = (IProxy)Activator.CreateInstance(proxyType, args);
+
+            IInterceptor interceptor = (IInterceptor)info.GetValue("__interceptor", typeof(IInterceptor));
+            _proxy.Interceptor = interceptor;
         }
 
         public object GetRealObject(StreamingContext context)

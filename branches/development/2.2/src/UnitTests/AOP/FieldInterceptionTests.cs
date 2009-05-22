@@ -43,7 +43,6 @@ namespace LinFu.UnitTests.AOP
             AssemblyDefinition myLibrary = AssemblyFactory.GetAssembly("SampleLibrary.dll");
             var module = myLibrary.MainModule;
 
-            module.LoadSymbols();
             foreach (TypeDefinition type in myLibrary.MainModule.Types)
             {
                 if (!type.FullName.Contains("SampleClassWithReadOnlyField"))
@@ -52,7 +51,6 @@ namespace LinFu.UnitTests.AOP
                 type.InterceptFields(m => true);                
             }
 
-            module.SaveSymbols();
             var loadedAssembly = myLibrary.ToAssembly();
             var targetType = (from t in loadedAssembly.GetTypes()
                               where t.Name.Contains("SampleClassWithReadOnlyField")

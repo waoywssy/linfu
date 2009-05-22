@@ -38,7 +38,7 @@ namespace LinFu.UnitTests.Proxy
             LoadAssemblyUsing(typeof(InvocationInfoEmitter));
 
             filename = string.Format("{0}.dll", Guid.NewGuid().ToString());
-            
+
             // Add the PEVerifier to the proxy generation process
             container.AddService<IVerifier>(new PEVerifier(filename));
         }
@@ -61,7 +61,7 @@ namespace LinFu.UnitTests.Proxy
             {
                 File.Delete(filename);
             }
-            catch 
+            catch
             {
                 // Do nothing
             }
@@ -265,7 +265,7 @@ namespace LinFu.UnitTests.Proxy
         [Test]
         public void ShouldCacheProxyTypes()
         {
-            var factory = container.GetService<IProxyFactory>();
+            var factory = new ProxyFactory();
             var baseType = typeof(ISampleService);
 
             var proxyType = factory.CreateProxyType(baseType, new Type[0]);
@@ -346,33 +346,22 @@ namespace LinFu.UnitTests.Proxy
 
             var customAttributes = proxyType.GetCustomAttributes(typeof(SerializableAttribute), false);
             Assert.IsTrue(customAttributes != null && customAttributes.Count() > 0);
-            Assert.IsTrue(proxy is ISerializable);
+            Assert.IsTrue(proxyType.IsSerializable);
 
             // Serialize the proxy
             var stream = new MemoryStream();
             var formatter = new BinaryFormatter();
+            formatter.Serialize(stream, proxy);
 
-            var converter = new Mock<IFormatterConverter>();
-            SerializationInfo info = new SerializationInfo(proxyType, converter.Object);
-
-            var serializableProxy = proxy as ISerializable;
-            var context = new StreamingContext();
-            serializableProxy.GetObjectData(info, context);
-
-            try
-            {
-                formatter.Serialize(stream, proxy);
-            }
-            catch (SerializationException ex)
-            {
-                Console.WriteLine(ex.ToString());
-                throw;
-            }
             // Deserialize the proxy from the stream
+            stream.Seek(0, SeekOrigin.Begin);
             IProxy restoredProxy = (IProxy)formatter.Deserialize(stream);
             Assert.IsNotNull(restoredProxy);
             Assert.IsNotNull(restoredProxy.Interceptor);
             Assert.IsTrue(restoredProxy.Interceptor.GetType() == typeof(SerializableInterceptor));
+
+            var otherInterceptor = (SerializableInterceptor)restoredProxy.Interceptor;
+            Assert.AreEqual(otherInterceptor.Identifier, interceptor.Identifier);
         }
 
         private T CreateProxy<T>(Func<IInvocationInfo, object> implementation)
