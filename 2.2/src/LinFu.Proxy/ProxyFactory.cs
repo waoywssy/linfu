@@ -106,6 +106,7 @@ namespace LinFu.Proxy
                                                               attributes, importedBaseType);
 
             proxyType.AddDefaultConstructor(actualBaseType);
+            proxyType.IsSerializable = true;
             #endregion
 
             if (ProxyBuilder == null)
