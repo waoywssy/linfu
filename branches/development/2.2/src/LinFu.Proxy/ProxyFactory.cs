@@ -89,7 +89,7 @@ namespace LinFu.Proxy
 
             #region Generate the assembly
 
-            var assemblyName = Guid.NewGuid().ToString();
+            var assemblyName = "LinFu.Proxy";
             var assembly = AssemblyFactory.DefineAssembly(assemblyName, AssemblyKind.Dll);
             var mainModule = assembly.MainModule;
             var importedBaseType = mainModule.Import(actualBaseType);
@@ -106,7 +106,6 @@ namespace LinFu.Proxy
                                                               attributes, importedBaseType);
 
             proxyType.AddDefaultConstructor(actualBaseType);
-            proxyType.IsSerializable = true;
             #endregion
 
             if (ProxyBuilder == null)

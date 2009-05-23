@@ -5,6 +5,7 @@ using System.Text;
 using System.Runtime.Serialization;
 using LinFu.Proxy.Interfaces;
 using LinFu.AOP.Interfaces;
+using System.Reflection;
 
 namespace LinFu.Proxy
 {
@@ -35,10 +36,7 @@ namespace LinFu.Proxy
             // Reconstruct the proxy
             ProxyFactory factory = new ProxyFactory();
             Type proxyType = factory.CreateProxyType(_baseType, interfaceList.ToArray());
-
-            // Initialize the proxy with the deserialized data
-            object[] args = new object[] { info, context };
-            _proxy = (IProxy)Activator.CreateInstance(proxyType, args);
+            _proxy = (IProxy)Activator.CreateInstance(proxyType);
 
             IInterceptor interceptor = (IInterceptor)info.GetValue("__interceptor", typeof(IInterceptor));
             _proxy.Interceptor = interceptor;

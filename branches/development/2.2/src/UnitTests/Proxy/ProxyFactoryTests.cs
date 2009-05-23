@@ -329,40 +329,7 @@ namespace LinFu.UnitTests.Proxy
 
             var customAttributes = proxyType.GetCustomAttributes(typeof(SerializableAttribute), false);
             Assert.IsTrue(customAttributes != null && customAttributes.Count() > 0);
-        }
-
-        [Test]
-        public void ShouldSupportSerialization()
-        {
-            var factory = new ProxyFactory();
-
-            var interceptor = new SerializableInterceptor();
-            interceptor.Identifier = Guid.NewGuid();
-
-            var proxy = factory.CreateProxy<ISampleService>(interceptor);
-            var proxyType = proxy.GetType();
-
-            var proxyAssembly = proxyType.Assembly.Location;
-
-            var customAttributes = proxyType.GetCustomAttributes(typeof(SerializableAttribute), false);
-            Assert.IsTrue(customAttributes != null && customAttributes.Count() > 0);
-            Assert.IsTrue(proxyType.IsSerializable);
-
-            // Serialize the proxy
-            var stream = new MemoryStream();
-            var formatter = new BinaryFormatter();
-            formatter.Serialize(stream, proxy);
-
-            // Deserialize the proxy from the stream
-            stream.Seek(0, SeekOrigin.Begin);
-            IProxy restoredProxy = (IProxy)formatter.Deserialize(stream);
-            Assert.IsNotNull(restoredProxy);
-            Assert.IsNotNull(restoredProxy.Interceptor);
-            Assert.IsTrue(restoredProxy.Interceptor.GetType() == typeof(SerializableInterceptor));
-
-            var otherInterceptor = (SerializableInterceptor)restoredProxy.Interceptor;
-            Assert.AreEqual(otherInterceptor.Identifier, interceptor.Identifier);
-        }
+        }   
 
         private T CreateProxy<T>(Func<IInvocationInfo, object> implementation)
         {

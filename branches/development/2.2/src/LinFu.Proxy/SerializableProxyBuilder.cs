@@ -31,10 +31,12 @@ namespace LinFu.Proxy
             base.Construct(originalBaseType, interfaces, module, targetType);
 
             // Add the Serializable attribute
+            targetType.IsSerializable = true;
+
             var serializableCtor = module.ImportConstructor<SerializableAttribute>();
             var serializableAttribute = new CustomAttribute(serializableCtor);
             targetType.CustomAttributes.Add(serializableAttribute);
-
+            
             ImplementGetObjectData(originalBaseType, baseInterfaces, module, targetType);
             DefineSerializationConstructor(module, targetType);
 
@@ -42,10 +44,6 @@ namespace LinFu.Proxy
             var interceptorGetterProperty = (from PropertyDefinition m in targetType.Properties
                                           where m.Name == "Interceptor" && m.PropertyType == interceptorType
                                           select m).First();
-
-            //var nonSerializableAttributeCtor = module.ImportConstructor<NonSerializedAttribute>();
-            //var customAttribute = new CustomAttribute(nonSerializableAttributeCtor);
-            //interceptorGetterProperty.CustomAttributes.Add(customAttribute);
         }
 
         private static void DefineSerializationConstructor(ModuleDefinition module, Mono.Cecil.TypeDefinition targetType)
@@ -58,7 +56,7 @@ namespace LinFu.Proxy
             var serializationCtor = targetType.AddDefaultConstructor();
             serializationCtor.AddParameters(parameterTypes);
 
-            serializationCtor.Attributes = MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName | MethodAttributes.Family | MethodAttributes.Public;
+            serializationCtor.Attributes = MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName | MethodAttributes.Public;
             var interceptorInterfaceType = module.ImportType<IInterceptor>();
             var interceptorTypeVariable = serializationCtor.AddLocal<Type>();
 
