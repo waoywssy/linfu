@@ -4,7 +4,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{E3B1686C-DCB3-44E7-BB25-9483592EA942}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -93,6 +93,7 @@
     <Compile Include="IOC\FluentExtensionTests.cs" />
     <Compile Include="IOC\FluentPropertyInjectionTests.cs" />
     <Compile Include="IOC\InversionOfControlTests.cs" />
+    <Compile Include="Proxy\ProxySerializationTests.cs" />
     <Compile Include="Reflection\BasePEVerifyTestCase.cs" />
     <Compile Include="Reflection\DuckTypingTests.cs" />
     <Compile Include="Reflection\LateBindingTests.cs" />
