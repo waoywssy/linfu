@@ -9,25 +9,33 @@ namespace LinFu.AOP.Interfaces
     /// Represents a registry that allows users to statically register <see cref="IMethodActivator"/>
     /// instances.
     /// </summary>
-    public static class MethodActivatorRegistry
+    public static class TypeActivatorRegistry
     {
         private static readonly object _lock = new object();
-        private static IMethodActivator _activator;
+        private static ITypeActivator _activator;
 
         /// <summary>
         /// Obtains an activator for the given <paramref name="context"/>.
         /// </summary>
         /// <param name="context">The <see cref="IMethodActivationContext"/> instance that describes the object to be created.</param>
         /// <returns>A method activator.</returns>
-        public static IMethodActivator GetActivator(IMethodActivationContext context)
+        public static ITypeActivator GetActivator(ITypeActivationContext context)
         {
             if (context == null)
                 throw new ArgumentNullException("context");
 
-            if (_activator == null || !_activator.CanActivate(context))
-                return null;
+            // Use the static activator by default
+            var currentActivator = _activator;
 
-            return _activator;
+            // Use the activator attached to the target if it exists
+            var host = context.Target as IActivatorHost;
+            if (host != null && host.Activator != null)
+                currentActivator = host.Activator;
+
+            if (currentActivator != null && currentActivator.CanActivate(context))
+                return currentActivator;
+
+            return null;
         }
 
         /// <summary>
@@ -35,7 +43,7 @@ namespace LinFu.AOP.Interfaces
         /// instantiate object instances.
         /// </summary>
         /// <param name="activator">The <see cref="IMethodActivator"/> that will instantiate types.</param>
-        public static void SetActivator(IMethodActivator activator)
+        public static void SetActivator(ITypeActivator activator)
         {
             lock (_lock)
             {

@@ -32,7 +32,7 @@ namespace LinFu.UnitTests.AOP
 
             // Intercept all calls to the System.Console.WriteLine method from the DoSomething method
             targetType.InterceptMethodCalls(t => t.Name.Contains(typeName), m => m.DeclaringType.Name.Contains(typeName) && m.Name == "DoSomething",
-                methodCall => methodCall.Name == "WriteLine");
+                methodCall => methodCall.DeclaringType.Name == "Console" && methodCall.Name == "WriteLine");
 
             var modifiedAssembly = assembly.ToAssembly();
             var modifiedTargetType = (from t in modifiedAssembly.GetTypes()

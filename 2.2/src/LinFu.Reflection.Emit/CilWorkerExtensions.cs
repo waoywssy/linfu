@@ -38,6 +38,22 @@ namespace LinFu.Reflection.Emit
         }
 
         /// <summary>
+        /// Emits a Console.WriteLine call using the current CilWorker.
+        /// </summary>
+        /// <param name="IL">The target CilWorker.</param>
+        /// <param name="text">The text that will be written to the console.</param>
+        public static void EmitWriteLine(this CilWorker IL, string text)
+        {
+            var body = IL.GetBody();
+            var method = body.Method;
+            var declaringType = method.DeclaringType;
+            var module = declaringType.Module;
+
+            var writeLineMethod = typeof(Console).GetMethod("WriteLine", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
+            IL.Emit(OpCodes.Ldstr, text);
+            IL.Emit(OpCodes.Call, module.Import(writeLineMethod));
+        }
+        /// <summary>
         /// Pushes the current <paramref name="method"/> onto the stack.
         /// </summary>
         /// <param name="IL">The <see cref="CilWorker"/> that will be used to create the instructions.</param>

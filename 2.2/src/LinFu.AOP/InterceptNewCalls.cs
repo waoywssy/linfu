@@ -57,6 +57,9 @@ namespace LinFu.AOP.Cecil
 
         protected override bool ShouldReplace(Instruction oldInstruction, MethodDefinition hostMethod)
         {
+            if (oldInstruction.OpCode != OpCodes.Newobj)
+                return false;
+
             var constructor = (MethodReference)oldInstruction.Operand;
             var declaringType = constructor.GetDeclaringType();
             return _emitter.ShouldIntercept(constructor, declaringType, hostMethod);

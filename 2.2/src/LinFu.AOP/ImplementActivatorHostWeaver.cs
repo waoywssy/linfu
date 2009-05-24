@@ -52,7 +52,7 @@ namespace LinFu.AOP.Cecil
         public void AddAdditionalMembers(ModuleDefinition module)
         {
             _hostInterfaceType = module.ImportType<IActivatorHost>();
-            _activatorPropertyType = module.ImportType<IMethodActivator>();
+            _activatorPropertyType = module.ImportType<ITypeActivator>();
 
         }
 
