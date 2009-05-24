@@ -31,6 +31,9 @@ namespace LinFu.AOP.Cecil
         /// <param name="type">A <see cref="TypeDefinition"/> object.</param>
         public override void VisitTypeDefinition(TypeDefinition type)
         {
+            if (type.IsEnum)
+                return;
+
             if (!_weaver.ShouldWeave(type))
                 return;
 

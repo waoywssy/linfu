@@ -68,13 +68,13 @@
     <Compile Include="IInterceptorProvider.cs" />
     <Compile Include="IInvocationInfo.cs" />
     <Compile Include="IInvokeWrapper.cs" />
-    <Compile Include="IMethodActivationContext.cs" />
-    <Compile Include="IMethodActivator.cs" />
+    <Compile Include="ITypeActivationContext.cs" />
+    <Compile Include="ITypeActivator.cs" />
     <Compile Include="IMethodReplacementHost.cs" />
     <Compile Include="IMethodReplacementProvider.cs" />
     <Compile Include="IModifiableType.cs" />
-    <Compile Include="MethodActivationContext.cs" />
-    <Compile Include="MethodActivatorRegistry.cs" />
+    <Compile Include="TypeActivationContext.cs" />
+    <Compile Include="TypeActivatorRegistry.cs" />
     <Compile Include="MethodReplacementProviderRegistry.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

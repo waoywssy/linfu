@@ -9,7 +9,7 @@ using Mono.Cecil;
 
 namespace LinFu.AOP.Cecil
 {
-    public class ImplementMethodReplacementHost : ITypeWeaver
+    internal class ImplementMethodReplacementHost : ITypeWeaver
     {
         private TypeReference _hostType;
         private readonly Func<TypeReference, bool> _filter;

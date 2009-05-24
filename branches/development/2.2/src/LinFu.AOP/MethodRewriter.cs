@@ -25,6 +25,10 @@ namespace LinFu.AOP.Cecil
             var declaringType = method.DeclaringType;
             var module = declaringType.Module;
 
+            // Interfaces and Enums cannot be modified
+            if (declaringType.IsInterface || declaringType.IsEnum)
+                return;
+
             ImportReferences(module);
 
             AddLocals(method);
