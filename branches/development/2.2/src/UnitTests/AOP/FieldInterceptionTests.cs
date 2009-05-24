@@ -66,7 +66,9 @@ namespace LinFu.UnitTests.AOP
 
             host.FieldInterceptor = new FieldInterceptorImpl();
 
-            var targetProperty = targetType.GetProperty("Value");            
+            var targetProperty = targetType.GetProperty("Value");
+            targetProperty.SetValue(instance, "OtherValue", null);
+
             object actualValue = targetProperty.GetValue(instance, null);
 
             Assert.AreEqual("freeze!", actualValue);

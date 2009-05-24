@@ -9,19 +9,18 @@ namespace LinFu.AOP.Cecil
 {
     public static class MethodCallInterceptionExtensions
     {
-        public static void InterceptMethodCalls(this AssemblyDefinition assembly,
-            Func<MethodReference, bool> methodWeaverFilter, Func<TypeReference, bool> typeFilter)
+        public static void InterceptMethodCalls(this IReflectionStructureVisitable target, Func<TypeReference, bool> typeFilter, Func<MethodReference, bool> hostMethodFilter, Func<MethodReference, bool> methodCallFilter)
         {
-            // Make the method filter consistent with the type filter
-            Func<MethodReference, bool> methodFilter =
-                method =>
-                {
-                    var declaringType = method.GetDeclaringType();
-                    return methodWeaverFilter(method) && typeFilter(declaringType);
-                };
+            var rewriter = new InterceptMethodCalls(hostMethodFilter, methodCallFilter);
+            target.Accept(new ImplementMethodReplacementHost(typeFilter));
+            target.WeaveWith(rewriter, hostMethodFilter);            
+        }
 
-            assembly.Accept(new ImplementMethodReplacementHost(typeFilter));
-            assembly.WeaveWith(new InterceptMethodCalls(methodFilter), methodFilter);
+        public static void InterceptMethodCalls(this IReflectionVisitable target, Func<TypeReference, bool> typeFilter, Func<MethodReference, bool> hostMethodFilter, Func<MethodReference, bool> methodCallFilter)
+        {
+            var rewriter = new InterceptMethodCalls(hostMethodFilter, methodCallFilter);
+            target.Accept(new ImplementMethodReplacementHost(typeFilter));
+            target.WeaveWith(rewriter, hostMethodFilter);
         }
     }
 }

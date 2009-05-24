@@ -14,7 +14,7 @@ namespace LinFu.AOP.Cecil
     /// Represents a <see cref="MethodRewriter"/> that intercepts calls to field getters and setters and redirects those calls to
     /// a <see cref="IFieldInterceptor"/> instance.
     /// </summary>
-    public class InterceptFieldAccess : MethodRewriter
+    internal class InterceptFieldAccess : MethodRewriter
     {
         private static readonly HashSet<OpCode> _fieldInstructions = new HashSet<OpCode>();
         private TypeReference _fieldContextType;

@@ -65,6 +65,7 @@
     <Compile Include="AOP\CecilTests.cs" />
     <Compile Include="AOP\FieldInterceptionTests.cs" />
     <Compile Include="AOP\ParameterDefinitionExtensionTests.cs" />
+    <Compile Include="AOP\ThirdPartyMethodCallInterceptionTests.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BaseTestFixture.cs" />
     <Compile Include="Finders\MethodFinderTests.cs" />
