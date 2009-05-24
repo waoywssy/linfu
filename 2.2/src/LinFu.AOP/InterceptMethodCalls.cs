@@ -11,9 +11,10 @@ using Mono.Cecil.Cil;
 
 namespace LinFu.AOP.Cecil
 {
-    public class InterceptMethodCalls : MethodRewriter
+    internal class InterceptMethodCalls : MethodRewriter
     {
-        private readonly Func<MethodReference, bool> _filter;
+        private readonly Func<MethodReference, bool> _hostMethodFilter;
+        private readonly Func<MethodReference, bool> _methodCallFilter;
 
         private MethodReference _stackCtor;
         private MethodReference _invocationInfoCtor;
@@ -43,16 +44,23 @@ namespace LinFu.AOP.Cecil
 
         private TypeReference _hostInterfaceType;
 
-        public InterceptMethodCalls(Func<MethodReference, bool> filter)
+        public InterceptMethodCalls(Func<MethodReference, bool> hostMethodFilter, Func<MethodReference, bool> methodCallFilter)
         {
-            _filter = filter;
+            _hostMethodFilter = hostMethodFilter;
+            _methodCallFilter = methodCallFilter;
         }
 
         protected override void Replace(Instruction oldInstruction, MethodDefinition hostMethod,
             CilWorker IL)
+        {            
+            var targetMethod = (MethodReference)oldInstruction.Operand;
+
+            Replace(oldInstruction, hostMethod, IL, targetMethod);
+        }
+
+        private void Replace(Instruction oldInstruction, MethodDefinition hostMethod, CilWorker IL, MethodReference targetMethod)
         {
             var callOriginalMethod = IL.Create(OpCodes.Nop);
-            var targetMethod = (MethodReference)oldInstruction.Operand;
             var returnType = targetMethod.ReturnType.ReturnType;
             var endLabel = IL.Create(OpCodes.Nop);
             var module = hostMethod.DeclaringType.Module;
@@ -60,6 +68,7 @@ namespace LinFu.AOP.Cecil
             // Create the stack that will hold the method arguments
             IL.Emit(OpCodes.Newobj, _stackCtor);
             IL.Emit(OpCodes.Stloc, _currentArguments);
+
             SaveInvocationInfo(IL, targetMethod, module, returnType);
 
             // Use the MethodReplacementProvider attached to the
@@ -75,6 +84,9 @@ namespace LinFu.AOP.Cecil
                 IL.Emit(OpCodes.Isinst, _hostInterfaceType);
                 IL.Emit(OpCodes.Callvirt, _getProvider);
                 IL.Emit(OpCodes.Stloc, _instanceProvider);
+
+                IL.Emit(OpCodes.Ldloc, _instanceProvider);
+                IL.Emit(OpCodes.Brtrue, skipInstanceProvider);
 
                 IL.Append(skipInstanceProvider);
             }
@@ -96,6 +108,7 @@ namespace LinFu.AOP.Cecil
 
             IL.Emit(OpCodes.Ldloc, _instanceProvider);
             IL.Emit(OpCodes.Brfalse, useStaticProvider);
+
 
             EmitCanReplace(IL, hostMethod, _instanceProvider);
             IL.Emit(OpCodes.Ldloc, _canReplaceFlag);
@@ -262,6 +275,18 @@ namespace LinFu.AOP.Cecil
             IL.Emit(OpCodes.Stloc, _replacement);
         }
 
+        private void EmitWriteLine(CilWorker IL, string text)
+        {
+            var body = IL.GetBody();
+            var method = body.Method;
+            var declaringType = method.DeclaringType;
+            var module = declaringType.Module;
+
+            var writeLineMethod = typeof(Console).GetMethod("WriteLine", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
+            IL.Emit(OpCodes.Ldstr, text);
+            IL.Emit(OpCodes.Call, module.Import(writeLineMethod));
+        }
+
         protected override bool ShouldReplace(Instruction oldInstruction, MethodDefinition hostMethod)
         {
             // Intercept the call and callvirt instructions
@@ -269,7 +294,8 @@ namespace LinFu.AOP.Cecil
             if (opCode != OpCodes.Callvirt && opCode != OpCodes.Call)
                 return false;
 
-            return _filter(hostMethod);
+            var targetMethod = (MethodReference)oldInstruction.Operand;
+            return _hostMethodFilter(hostMethod) && _methodCallFilter(targetMethod);
         }
 
         public override void ImportReferences(ModuleDefinition module)
