@@ -14,6 +14,7 @@ using LinFu.UnitTests.Tools;
 using Moq;
 using NUnit.Framework;
 using SampleLibrary;
+using SampleLibrary.IOC;
 using SampleLibrary.Proxy;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -154,6 +155,36 @@ namespace LinFu.UnitTests.Proxy
             proxy.DoSomething(out value);
 
             // The two given arguments should match
+            Assert.AreEqual(54321, value);
+        }
+
+        [Test]
+        public void ShouldCreateProxyWithVirtualSetterInitializedInCtor()
+        {
+            var factory = container.GetService<IProxyFactory>();
+
+            // Assign the ref/out value for the int argument
+            Func<IInvocationInfo, object> implementation = info =>
+            {
+                var methodName = info.TargetMethod.Name;
+
+                if (methodName == "DoSomething")
+                    info.Arguments[0] = 54321;
+
+                if (methodName == "get_SomeProp")
+                    return "blah";
+
+                return null;
+            };
+
+            var interceptor = new MockInterceptor(implementation);
+            var proxy = factory.CreateProxy<SampleClassWithPropertyInitializedInCtor>(interceptor);
+
+            int value;
+            proxy.DoSomething(out value);
+
+            // The two given arguments should match
+            Assert.AreEqual("blah", proxy.SomeProp);
             Assert.AreEqual(54321, value);
         }
 
@@ -329,7 +360,7 @@ namespace LinFu.UnitTests.Proxy
 
             var customAttributes = proxyType.GetCustomAttributes(typeof(SerializableAttribute), false);
             Assert.IsTrue(customAttributes != null && customAttributes.Count() > 0);
-        }   
+        }
 
         private T CreateProxy<T>(Func<IInvocationInfo, object> implementation)
         {

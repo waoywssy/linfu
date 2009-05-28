@@ -19,7 +19,13 @@ namespace LinFu.AOP.Cecil
         /// Initializes a new instance of the MethodRewriter class.
         /// </summary>
         protected MethodRewriter() { }
-        
+
+        /// <summary>
+        /// Rewrites a target method using the given CilWorker.
+        /// </summary>
+        /// <param name="method">The target method.</param>
+        /// <param name="IL">The CilWorker that will be used to rewrite the target method.</param>
+        /// <param name="oldInstructions">The original instructions from the target method body.</param>
         public void Rewrite(MethodDefinition method, CilWorker IL, IEnumerable<Instruction> oldInstructions)
         {
             var declaringType = method.DeclaringType;
