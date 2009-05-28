@@ -12,10 +12,23 @@ using LinFu.Proxy.Interfaces;
 
 using MethodAttributes = Mono.Cecil.MethodAttributes;
 using LinFu.AOP.Interfaces;
+using LinFu.IoC.Configuration;
 namespace LinFu.Proxy
 {
+    /// <summary>
+    /// Represents a <see cref="ProxyBuilder"/> type that can create serializable proxy types.
+    /// </summary>
+    [Implements(typeof(IProxyBuilder), LifecycleType.OncePerRequest)]
     public class SerializableProxyBuilder : ProxyBuilder
     {
+        /// <summary>
+        /// Generates a proxy that forwards all virtual method calls
+        /// to a single <see cref="IInterceptor"/> instance.
+        /// </summary>
+        /// <param name="originalBaseType">The base class of the type being constructed.</param>
+        /// <param name="baseInterfaces">The list of interfaces that the new type must implement.</param>
+        /// <param name="module">The module that will hold the brand new type.</param>
+        /// <param name="targetType">The <see cref="TypeDefinition"/> that represents the type to be created.</param>
         public override void Construct(Type originalBaseType, IEnumerable<Type> baseInterfaces, ModuleDefinition module, Mono.Cecil.TypeDefinition targetType)
         {
             var interfaces = new HashSet<Type>(baseInterfaces);
@@ -60,7 +73,11 @@ namespace LinFu.Proxy
             var interceptorInterfaceType = module.ImportType<IInterceptor>();
             var interceptorTypeVariable = serializationCtor.AddLocal<Type>();
 
+            var body = serializationCtor.Body;
+            body.InitLocals = true;
+
             var IL = serializationCtor.GetILGenerator();
+            
             IL.Emit(OpCodes.Ldtoken, interceptorInterfaceType);
             IL.Emit(OpCodes.Call, getTypeFromHandle);
             IL.Emit(OpCodes.Stloc, interceptorTypeVariable);

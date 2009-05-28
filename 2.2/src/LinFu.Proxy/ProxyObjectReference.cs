@@ -9,12 +9,20 @@ using System.Reflection;
 
 namespace LinFu.Proxy
 {
+    /// <summary>
+    /// Represents a helper class that deserializes proxy instances.
+    /// </summary>
     [Serializable]
     public class ProxyObjectReference : IObjectReference, ISerializable
     {
         private readonly Type _baseType;
         private readonly IProxy _proxy;
 
+        /// <summary>
+        /// Initializes a new instance of the ProxyObjectReference class.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> class that contains the serialized data.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that describes the serialization state.</param>
         protected ProxyObjectReference(SerializationInfo info, StreamingContext context)
         {
             // Deserialize the base type using its assembly qualified name
@@ -42,11 +50,22 @@ namespace LinFu.Proxy
             _proxy.Interceptor = interceptor;
         }
 
+        /// <summary>
+        /// Returns the deserialized proxy instance.
+        /// </summary>
+        /// <param name="context">The <see cref="StreamingContext"/> that describes the serialization state.</param>
+        /// <returns></returns>
         public object GetRealObject(StreamingContext context)
         {
             return _proxy;
         }
 
+        /// <summary>
+        /// Serializes the proxy to a stream. 
+        /// </summary>
+        /// <remarks>This method override does nothing.</remarks>
+        /// <param name="info">The <see cref="SerializationInfo"/> class that contains the serialized data.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that describes the serialization state.</param>
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
         }

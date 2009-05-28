@@ -14,7 +14,7 @@ namespace LinFu.AOP.Interfaces
         /// Determines whether or not a type can be instantiated using the 
         /// <paramref name="context"/>.
         /// </summary>
-        /// <param name="context">The <see cref="IMethodActivationContext"/> instance that describes the type to be created.</param>
+        /// <param name="context">The <see cref="ITypeActivationContext"/> instance that describes the type to be created.</param>
         /// <returns><c>true</c> if the type can be created; otherwise, it will return <c>false</c>.</returns>
         bool CanActivate(ITypeActivationContext context);
     }

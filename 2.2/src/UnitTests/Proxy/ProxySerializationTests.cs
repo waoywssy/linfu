@@ -33,10 +33,6 @@ namespace LinFu.UnitTests.Proxy
 
             var proxyAssembly = proxyType.Assembly.Location;
 
-            var customAttributes = proxyType.GetCustomAttributes(typeof(SerializableAttribute), false);
-            Assert.IsTrue(customAttributes != null && customAttributes.Count() > 0);
-            Assert.IsTrue(proxyType.IsSerializable);
-
             // The proxy type should have a default constructor
             // and a serialization constructor
             var constructorFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;

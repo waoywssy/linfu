@@ -17,7 +17,6 @@ namespace LinFu.Proxy
     /// proxies that forward all virtual method calls to a 
     /// single interceptor.
     /// </summary>
-    [Implements(typeof(IProxyBuilder), LifecycleType.OncePerRequest)]
     public class ProxyBuilder : IProxyBuilder, IInitialize
     {
         /// <summary>

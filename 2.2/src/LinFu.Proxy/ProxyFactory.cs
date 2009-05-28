@@ -105,7 +105,7 @@ namespace LinFu.Proxy
             var proxyType = mainModule.DefineClass(typeName, namespaceName,
                                                               attributes, importedBaseType);
 
-            proxyType.AddDefaultConstructor(actualBaseType);
+            proxyType.AddDefaultConstructor();
             #endregion
 
             if (ProxyBuilder == null)
@@ -194,8 +194,8 @@ namespace LinFu.Proxy
             if (source.Contains(typeof(IExtractInterfaces)))
                 InterfaceExtractor = source.GetService<IExtractInterfaces>();
 
-            if (source.Contains(typeof(IVerifier)))
-                Verifier = source.GetService<IVerifier>();
+            //if (source.Contains(typeof(IVerifier)))
+            //    Verifier = source.GetService<IVerifier>();
 
             if (source.Contains(typeof(IProxyCache)))
                 Cache = source.GetService<IProxyCache>();
