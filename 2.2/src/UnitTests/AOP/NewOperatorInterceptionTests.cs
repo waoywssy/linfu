@@ -27,7 +27,6 @@ namespace LinFu.UnitTests.AOP
         public void ShouldInterceptObjectInstantiation()
         {
             var assembly = AssemblyFactory.GetAssembly("SampleLibrary.dll");
-            //assembly.InterceptNewInstances((ctor, type, hostMethod) => hostMethod.Name.Contains("DoSomething") && ctor.DeclaringType.Name == "SampleServiceImplementation", m => m.Name.Contains("DoSomething"));
 
             var module = assembly.MainModule;
             var typeName = "SampleClassWithNewInstanceCall";
@@ -43,6 +42,8 @@ namespace LinFu.UnitTests.AOP
             var instance = Activator.CreateInstance(modifiedTargetType);
             Assert.IsNotNull(instance);
 
+            // The activator will return a new OtherSampleService() instance instead
+            // of a SampleServiceImplementation instance if the interception works
             var activator = new SampleTypeActivator(context => new OtherSampleService());
             var host = (IActivatorHost)instance;
             host.Activator = activator;
@@ -51,6 +52,7 @@ namespace LinFu.UnitTests.AOP
             var result = targetMethod.Invoke(instance, null);
 
             Assert.IsNotNull(result);
+            Assert.IsTrue(result is OtherSampleService);
         }
     }
 }
