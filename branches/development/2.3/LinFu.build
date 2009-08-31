@@ -31,6 +31,12 @@
     </msbuild>
   </target>
 
+  <target name="proxy" depends="compile-release, run-unit-tests">
+    <msbuild project="src\LinFu.Proxy.ILMerge.MSBuild">
+      <property name="Configuration" value="Release" />
+    </msbuild>
+  </target>
+  
   <target name="test" depends="compile, run-unit-tests"
 		description="Compile and Run Tests" />
 
