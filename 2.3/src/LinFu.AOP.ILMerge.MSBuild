@@ -1,6 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <MainAssembly>$(MSBuildProjectDirectory)\..\build\LinFu.Proxy.dll</MainAssembly>
+    <MainAssembly>$(MSBuildProjectDirectory)\..\build\LinFu.AOP.dll</MainAssembly>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <TargetDirectory>$(MSBuildProjectDirectory)\..\build\$(Configuration)</TargetDirectory>
   </PropertyGroup>

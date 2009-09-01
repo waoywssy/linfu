@@ -31,8 +31,8 @@
     </msbuild>
   </target>
 
-  <target name="proxy" depends="compile-release, run-unit-tests">
-    <msbuild project="src\LinFu.Proxy.ILMerge.MSBuild">
+  <target name="aop" depends="compile-release, run-unit-tests">
+    <msbuild project="src\LinFu.AOP.ILMerge.MSBuild">
       <property name="Configuration" value="Release" />
     </msbuild>
   </target>
