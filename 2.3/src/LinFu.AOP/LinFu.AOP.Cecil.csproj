@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{613B6547-DCBB-4505-82B8-B4179BFC95CE}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -75,6 +75,7 @@
     <Compile Include="Interfaces\IMethodWeaver.cs" />
     <Compile Include="Interfaces\IModuleWeaver.cs" />
     <Compile Include="Interfaces\INewObjectWeaver.cs" />
+    <Compile Include="Interfaces\IPdbLoader.cs" />
     <Compile Include="Interfaces\ITypeWeaver.cs" />
     <Compile Include="Interfaces\IWeaver.cs" />
     <Compile Include="InvocationInfo.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="InvocationInfoExtensions.cs" />
     <Compile Include="Interfaces\IVerifier.cs" />
     <Compile Include="Loaders\JITWeaver.cs" />
+    <Compile Include="Loaders\PdbLoader.cs" />
     <Compile Include="MethodCallInterceptionExtensions.cs" />
     <Compile Include="MethodRewriter.cs" />
     <Compile Include="MethodRewriterExtensions.cs" />
