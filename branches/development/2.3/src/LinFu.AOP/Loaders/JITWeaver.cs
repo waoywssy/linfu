@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using LinFu.AOP.Cecil.Interfaces;
 using LinFu.Reflection;
+using LinFu.Reflection.Emit;
 using Mono.Cecil;
 
 namespace LinFu.AOP.Cecil.Loaders
@@ -16,6 +17,23 @@ namespace LinFu.AOP.Cecil.Loaders
     public class JITWeaver : AssemblyLoader
     {
         private readonly List<Action<AssemblyDefinition>> _assemblyWeavers = new List<Action<AssemblyDefinition>>();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JITWeaver"/> class.
+        /// </summary>
+        public JITWeaver()
+            : this(new PdbLoader())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JITWeaver"/> class.
+        /// </summary>
+        /// <param name="pdbLoader">The loader that will be responsible for loading the program debugging information into memory.</param>
+        public JITWeaver(IPdbLoader pdbLoader)
+        {
+            PdbLoader = pdbLoader;
+        }
 
         /// <summary>
         /// Modifies a given assembly prior to being loaded from disk.
@@ -30,6 +48,10 @@ namespace LinFu.AOP.Cecil.Loaders
             if (targetAssembly.Name.HasPublicKey)
                 return base.Load(assemblyFile);
 
+            var assemblyFileName = Path.GetFileNameWithoutExtension(assemblyFile);
+
+            if (PdbLoader != null)
+                PdbLoader.LoadSymbols(assemblyFileName, targetAssembly);
 
             foreach (var action in AssemblyWeavers)
             {
@@ -42,13 +64,32 @@ namespace LinFu.AOP.Cecil.Loaders
                 AssemblyVerifier.Verify(targetAssembly);
             }
 
+            string pdbFile = string.Format("{0}.pdb", assemblyFileName);
+            bool hasSymbols = File.Exists(pdbFile);
+
             var memoryStream = new MemoryStream();
+
+            if (PdbLoader != null)
+            {
+                PdbLoader.SaveSymbols(targetAssembly, memoryStream, hasSymbols);
+            }
+
+            // Save the modifed assembly
             AssemblyFactory.SaveAssembly(targetAssembly, memoryStream);
 
-            // Load the modified assembly into memory
-            var assembly = Assembly.Load(memoryStream.ToArray());
+            if (PdbLoader != null)
+                return PdbLoader.LoadModifiedAssembly(pdbFile, memoryStream);
 
-            return assembly;
+            return targetAssembly.ToAssembly();
+        }
+
+        /// <summary>
+        /// Gets or sets the value indicating the <see cref="IPdbLoader"/> that will be used to load debug symbols into memory.
+        /// </summary>
+        public IPdbLoader PdbLoader
+        {
+            get;
+            set;
         }
 
         /// <summary>
