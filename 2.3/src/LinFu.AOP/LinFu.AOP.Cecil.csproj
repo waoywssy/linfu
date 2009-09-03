@@ -82,6 +82,7 @@
     <Compile Include="InvocationInfoEmitter.cs" />
     <Compile Include="InvocationInfoExtensions.cs" />
     <Compile Include="Interfaces\IVerifier.cs" />
+    <Compile Include="Loaders\AssemblyLoaderWithPdbSupport.cs" />
     <Compile Include="Loaders\JITWeaver.cs" />
     <Compile Include="Loaders\PdbLoader.cs" />
     <Compile Include="MethodCallInterceptionExtensions.cs" />
