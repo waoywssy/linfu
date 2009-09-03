@@ -14,46 +14,38 @@ namespace LinFu.AOP.Cecil.Loaders
     /// </summary>
     public class PdbLoader : IPdbLoader
     {
-        public Assembly LoadModifiedAssembly(string pdbFile, MemoryStream assemblyStream)
+        /// <summary>
+        /// Loads an assembly into memory.
+        /// </summary>
+        /// <param name="assemblyArray">The bytes that represent the target assembly.</param>
+        /// <param name="pdbBytes">The bytes that represent the PDB file.</param>
+        /// <returns>A <see cref="System.Reflection.Assembly"/> that represents the loaded assembly.</returns>
+        public Assembly LoadAssembly(byte[] assemblyArray, byte[] pdbBytes)
         {
-            // Load the modified assembly into memory
-            var assemblyArray = assemblyStream.ToArray();
-            bool hasSymbols = File.Exists(pdbFile);
-
-            // Load up the assembly into the current application domain
-            if (hasSymbols)
-            {
-                var pdbBytes = File.ReadAllBytes(pdbFile);
+            // Load the assembly into the current application domain
+            if (pdbBytes != null && pdbBytes.Length > 0)
                 return Assembly.Load(assemblyArray, pdbBytes);
-            }
 
             return Assembly.Load(assemblyArray);
         }
 
-        public void LoadSymbols(string assemblyFileName, AssemblyDefinition assembly)
+        /// <summary>
+        /// Loads the debug symbols from the target <paramref name="assembly"/>.
+        /// </summary>
+        /// <param name="assembly">The assembly that contains the symbols to be loaded.</param>
+        public void LoadSymbols(AssemblyDefinition assembly)
         {
-            string pdbFile = string.Format("{0}.pdb", assemblyFileName);
-            bool hasSymbols = File.Exists(pdbFile);
-
-            if (!hasSymbols)
-                return;
-
-            // Create a copy of the pdb file.
-            // Mono.Cecil can only update the actual file and create a backup that can be restored later.
-            // Again we want our original files to remain untouched.
-            var pdbTempFileName = Path.GetTempFileName();
-            File.Copy(pdbFile, pdbTempFileName, true);
-
             var mainModule = assembly.MainModule;
             mainModule.LoadSymbols();
         }
 
-        public void SaveSymbols(AssemblyDefinition targetAssembly, Stream stream, bool hasSymbols)
+        /// <summary>
+        /// Saves the debug symbols for the  target<paramref name="assembly"/>.
+        /// </summary>
+        /// <param name="targetAssembly">The assembly that contains the symbols to be saved.</param>
+        public void SaveSymbols(AssemblyDefinition targetAssembly)
         {
             // Update the debug symbols
-            if (!hasSymbols)
-                return;
-
             targetAssembly.MainModule.SaveSymbols();
         }
     }
