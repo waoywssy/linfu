@@ -65,7 +65,6 @@
     <Compile Include="IFieldInterceptionHost.cs" />
     <Compile Include="IFieldInterceptor.cs" />
     <Compile Include="IInterceptor.cs" />
-    <Compile Include="IInterceptorProvider.cs" />
     <Compile Include="IInvocationInfo.cs" />
     <Compile Include="IInvokeWrapper.cs" />
     <Compile Include="ITypeActivationContext.cs" />
