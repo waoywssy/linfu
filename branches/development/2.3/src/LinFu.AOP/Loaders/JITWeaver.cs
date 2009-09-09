@@ -79,7 +79,7 @@ namespace LinFu.AOP.Cecil.Loaders
             var memoryStream = new MemoryStream();
 
             if (PdbLoader != null && hasSymbols)
-                PdbLoader.SaveSymbols(targetAssembly, memoryStream);
+                PdbLoader.SaveSymbols(targetAssembly);
 
             // Save the modifed assembly
             AssemblyFactory.SaveAssembly(targetAssembly, memoryStream);
