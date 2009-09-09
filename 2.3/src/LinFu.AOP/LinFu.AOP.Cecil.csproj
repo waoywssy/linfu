@@ -68,6 +68,7 @@
     <Compile Include="InstructionProvider.cs" />
     <Compile Include="InstructionSwapper.cs" />
     <Compile Include="InterceptFieldAccess.cs" />
+    <Compile Include="InterceptMethodBody.cs" />
     <Compile Include="InterceptMethodCalls.cs" />
     <Compile Include="InterceptNewCalls.cs" />
     <Compile Include="Interfaces\IAroundMethodWeaver.cs" />
