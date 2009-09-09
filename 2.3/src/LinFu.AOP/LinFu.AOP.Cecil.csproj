@@ -55,6 +55,7 @@
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AssemblyDefinitionExtensions.cs" />
+    <Compile Include="BaseMethodRewriter.cs" />
     <Compile Include="BaseReflectionVisitor.cs" />
     <Compile Include="CecilVisitorExtensions.cs" />
     <Compile Include="Factories\AddInvocationInfoActionFactory.cs" />
@@ -63,7 +64,9 @@
     <Compile Include="ImplementActivatorHostWeaver.cs" />
     <Compile Include="ImplementFieldInterceptionHostWeaver.cs" />
     <Compile Include="ImplementMethodReplacementHost.cs" />
+    <Compile Include="ImplementModifiableType.cs" />
     <Compile Include="InstructionProvider.cs" />
+    <Compile Include="InstructionSwapper.cs" />
     <Compile Include="InterceptFieldAccess.cs" />
     <Compile Include="InterceptMethodCalls.cs" />
     <Compile Include="InterceptNewCalls.cs" />
@@ -85,6 +88,7 @@
     <Compile Include="Loaders\AssemblyLoaderWithPdbSupport.cs" />
     <Compile Include="Loaders\JITWeaver.cs" />
     <Compile Include="Loaders\PdbLoader.cs" />
+    <Compile Include="MethodBodyInterceptionExtensions.cs" />
     <Compile Include="MethodCallInterceptionExtensions.cs" />
     <Compile Include="MethodRewriter.cs" />
     <Compile Include="MethodRewriterExtensions.cs" />
