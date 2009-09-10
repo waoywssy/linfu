@@ -164,13 +164,15 @@ namespace LinFu.Reflection.Emit
         /// <param name="module">The module that contains the host method.</param>
         public static void PushStackTrace(this CilWorker IL, ModuleDefinition module)
         {
-            var stackTraceConstructor = typeof(StackTrace).GetConstructor(new Type[] { typeof(int), typeof(bool) });
-            var stackTraceCtor = module.Import(stackTraceConstructor);
+            //var stackTraceConstructor = typeof(StackTrace).GetConstructor(new Type[] { typeof(int), typeof(bool) });
+            //var stackTraceCtor = module.Import(stackTraceConstructor);
 
-            var addDebugSymbols = OpCodes.Ldc_I4_0;
-            IL.Emit(OpCodes.Ldc_I4_1);
-            IL.Emit(addDebugSymbols);
-            IL.Emit(OpCodes.Newobj, stackTraceCtor);
+            //var addDebugSymbols = OpCodes.Ldc_I4_0;
+            //IL.Emit(OpCodes.Ldc_I4_1);
+            //IL.Emit(addDebugSymbols);
+            //IL.Emit(OpCodes.Newobj, stackTraceCtor);
+
+            IL.Emit(OpCodes.Ldnull);
         }
 
         /// <summary>
