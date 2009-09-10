@@ -89,6 +89,7 @@
     <Compile Include="Loaders\AssemblyLoaderWithPdbSupport.cs" />
     <Compile Include="Loaders\JITWeaver.cs" />
     <Compile Include="Loaders\PdbLoader.cs" />
+    <Compile Include="MethodDefinitionExtensions.cs" />
     <Compile Include="MethodBodyInterceptionExtensions.cs" />
     <Compile Include="MethodCallInterceptionExtensions.cs" />
     <Compile Include="MethodRewriter.cs" />
