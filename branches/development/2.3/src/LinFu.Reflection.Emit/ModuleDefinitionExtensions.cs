@@ -87,7 +87,9 @@ namespace LinFu.Reflection.Emit
         /// <returns>A <see cref="MethodReference"/> that represents the method being imported.</returns>
         public static MethodReference ImportMethod<T>(this ModuleDefinition module, string methodName)
         {
-            return module.Import(typeof(T).GetMethod(methodName));
+            var targetMethod = typeof (T).GetMethod(methodName);
+
+            return module.Import(targetMethod);
         }
 
         /// <summary>

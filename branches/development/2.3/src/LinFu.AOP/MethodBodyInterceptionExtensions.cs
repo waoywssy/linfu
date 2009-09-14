@@ -11,7 +11,27 @@ namespace LinFu.AOP.Cecil
     /// </summary>
     public static class MethodBodyInterceptionExtensions
     {
-        public static void InterceptMethodBody(this IReflectionVisitable target, Func<MethodDefinition, bool> methodFilter)
+        public static void InterceptMethodBodies(this IReflectionVisitable target, Func<MethodDefinition, bool> methodFilter)
+        {
+            InterceptMethodBody interceptMethodBody;
+            Func<MethodReference, bool> methodInterceptionFilter;
+            Func<TypeReference, bool> typeFilter = AddMethodBodyInterception(methodFilter, out interceptMethodBody, out methodInterceptionFilter);
+            
+            target.WeaveWith(interceptMethodBody, methodInterceptionFilter);
+            target.Accept(new ImplementModifiableType(typeFilter));
+        }
+
+        public static void InterceptMethodBodies(this IReflectionStructureVisitable target, Func<MethodDefinition, bool> methodFilter)
+        {
+            InterceptMethodBody interceptMethodBody;
+            Func<MethodReference, bool> methodInterceptionFilter;
+            Func<TypeReference, bool> typeFilter = AddMethodBodyInterception(methodFilter, out interceptMethodBody, out methodInterceptionFilter);
+
+            target.WeaveWith(interceptMethodBody, methodInterceptionFilter);
+            target.Accept(new ImplementModifiableType(typeFilter));
+        }
+
+        private static Func<TypeReference, bool> AddMethodBodyInterception(Func<MethodDefinition, bool> methodFilter, out InterceptMethodBody interceptMethodBody, out Func<MethodReference, bool> methodInterceptionFilter)
         {
             Func<TypeReference, bool> typeFilter = type =>
                                                        {
@@ -22,7 +42,14 @@ namespace LinFu.AOP.Cecil
                                                            return actualType.IsClass;                                                           
                                                        };
 
-            target.Accept(new ImplementModifiableType(typeFilter));
+            // Ensure that the type filter is consistent with the method filter
+            Func<MethodDefinition, bool> actualFilter =
+                method => methodFilter(method) && typeFilter(method.DeclaringType);
+
+            methodInterceptionFilter = (method => actualFilter(method.Resolve()));
+
+            interceptMethodBody = new InterceptMethodBody(actualFilter);
+            return typeFilter;
         }
     }
 }

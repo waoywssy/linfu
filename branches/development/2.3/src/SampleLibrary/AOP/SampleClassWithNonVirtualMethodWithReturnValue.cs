@@ -5,10 +5,11 @@ using System.Text;
 
 namespace SampleLibrary.AOP
 {
-    public sealed class SampleClassWithNonVirtualMethod
+    public sealed class SampleClassWithNonVirtualMethodWithReturnValue
     {
-        public void DoSomething()
+        public int DoSomething(int a, int b)
         {
+            return a + b;
         }
     }
 }

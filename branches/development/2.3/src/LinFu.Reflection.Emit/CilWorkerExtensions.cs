@@ -53,6 +53,7 @@ namespace LinFu.Reflection.Emit
             IL.Emit(OpCodes.Ldstr, text);
             IL.Emit(OpCodes.Call, module.Import(writeLineMethod));
         }
+
         /// <summary>
         /// Pushes the current <paramref name="method"/> onto the stack.
         /// </summary>
