@@ -5,10 +5,11 @@ using System.Text;
 
 namespace SampleLibrary.AOP
 {
-    public sealed class SampleClassWithNonVirtualMethod
+    public sealed class SampleClassWithNonVirtualMethodThatThrowsExceptions
     {
         public void DoSomething()
         {
+            throw new NotImplementedException();
         }
     }
 }

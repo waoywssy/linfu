@@ -45,10 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AOP\SampleAroundInvokeProvider.cs" />
     <Compile Include="AOP\SampleClassWithByRefMethod.cs" />
     <Compile Include="AOP\SampleClassWithMethodHavingOutParameters.cs" />
     <Compile Include="AOP\SampleClassWithNewInstanceCall.cs" />
     <Compile Include="AOP\SampleClassWithNonVirtualMethod.cs" />
+    <Compile Include="AOP\SampleClassWithNonVirtualMethodThatThrowsExceptions.cs" />
+    <Compile Include="AOP\SampleClassWithNonVirtualMethodWithReturnValue.cs" />
     <Compile Include="AOP\SampleClassWithReadOnlyField.cs" />
     <Compile Include="AOP\SampleClassWithThirdPartyMethodCall.cs" />
     <Compile Include="AOP\SampleMethodReplacement.cs" />
