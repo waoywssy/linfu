@@ -9,9 +9,9 @@ using Mono.Cecil.Cil;
 
 namespace LinFu.AOP.Cecil
 {
-    public class InterceptMethodBody : BaseMethodRewriter
+    internal class InterceptMethodBody : BaseMethodRewriter
     {
-        private Func<MethodDefinition, bool> _methodFilter;
+        private readonly Func<MethodDefinition, bool> _methodFilter;
 
         private Instruction _skipProlog;
         private Instruction _skipEpilog;

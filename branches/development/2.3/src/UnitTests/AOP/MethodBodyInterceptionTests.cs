@@ -298,7 +298,7 @@ namespace LinFu.UnitTests.AOP
             {
                 targetMethod.Invoke(targetInstance, new object[0]);
             }
-            catch (NotImplementedException ex)
+            catch (NotImplementedException)
             {
                 Assert.Fail();
                 throw;
