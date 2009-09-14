@@ -7,8 +7,17 @@ using Mono.Cecil.Cil;
 
 namespace LinFu.AOP.Cecil
 {
+    /// <summary>
+    /// Represents a class that adds helper methods to the <see cref="MethodDefinition"/> class.
+    /// </summary>
     public static class MethodDefinitionExtensions
     {
+        /// <summary>
+        /// Adds a local variable to the target <paramref name="methodDef">method</paramref>.
+        /// </summary>
+        /// <param name="methodDef">The target method.</param>
+        /// <param name="localType">The <see cref="TypeReference"/> that represents the local variable type.</param>
+        /// <returns>A <see cref="VariableDefinition"/> instance that represents the newly-created local variable.</returns>
         public static VariableDefinition AddLocal(this MethodDefinition methodDef, Type localType)
         {
             var declaringType = methodDef.DeclaringType;

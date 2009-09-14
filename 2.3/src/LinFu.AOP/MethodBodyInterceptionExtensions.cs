@@ -11,6 +11,11 @@ namespace LinFu.AOP.Cecil
     /// </summary>
     public static class MethodBodyInterceptionExtensions
     {
+        /// <summary>
+        /// Modifies the methods contained in the <paramref name="target"/> instance to support method body interception.
+        /// </summary>
+        /// <param name="target">The target whose methods will be modified to support interception.</param>
+        /// <param name="methodFilter">The filter that determines which methods will be modified.</param>
         public static void InterceptMethodBodies(this IReflectionVisitable target, Func<MethodDefinition, bool> methodFilter)
         {
             InterceptMethodBody interceptMethodBody;
@@ -21,6 +26,11 @@ namespace LinFu.AOP.Cecil
             target.Accept(new ImplementModifiableType(typeFilter));
         }
 
+        /// <summary>
+        /// Modifies the methods contained in the <paramref name="target"/> instance to support method body interception.
+        /// </summary>
+        /// <param name="target">The target whose methods will be modified to support interception.</param>
+        /// <param name="methodFilter">The filter that determines which methods will be modified.</param>
         public static void InterceptMethodBodies(this IReflectionStructureVisitable target, Func<MethodDefinition, bool> methodFilter)
         {
             InterceptMethodBody interceptMethodBody;

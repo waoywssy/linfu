@@ -8,14 +8,12 @@ using Mono.Cecil.Cil;
 
 namespace LinFu.AOP.Cecil
 {
+    /// <summary>
+    /// Represents a class that implements the basic behavior for rewriting a given method.
+    /// </summary>
     public abstract class BaseMethodRewriter : IMethodRewriter
     {
-        private HashSet<TypeDefinition> _modifiedTypes = new HashSet<TypeDefinition>();
-
-        /// <summary>
-        /// Initializes a new instance of the MethodRewriter class.
-        /// </summary>
-        protected BaseMethodRewriter() { }
+        private readonly HashSet<TypeDefinition> _modifiedTypes = new HashSet<TypeDefinition>();
 
         /// <summary>
         /// Rewrites a target method using the given CilWorker.

@@ -14,10 +14,11 @@ namespace LinFu.AOP.Cecil
     public abstract class InstructionSwapper : BaseMethodRewriter
     {
         /// <summary>
-        /// Initializes a new instance of the MethodRewriter class.
+        /// Rewrites a target method using the given CilWorker.
         /// </summary>
-        protected InstructionSwapper() { }
-        
+        /// <param name="method">The target method.</param>
+        /// <param name="IL">The CilWorker that will be used to rewrite the target method.</param>
+        /// <param name="oldInstructions">The original instructions from the target method body.</param>   
         protected override void RewriteMethodBody(MethodDefinition method, CilWorker IL, IEnumerable<Instruction> oldInstructions)
         {
             var newInstructions = new Queue<Instruction>();
