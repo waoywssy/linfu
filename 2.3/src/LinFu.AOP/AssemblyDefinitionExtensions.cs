@@ -27,5 +27,21 @@ namespace LinFu.AOP.Cecil
             nameDef.Flags = ~AssemblyFlags.PublicKey;
             nameDef.HasPublicKey = false;
         }
+
+        /// <summary>
+        /// Gets a type from the given assembly.
+        /// </summary>
+        /// <param name="assembly">The assembly that contains the target type.</param>
+        /// <param name="className">The type name of the type to be retrieved from the assembly.</param>
+        /// <returns>A type that matches the given <paramref name="className"/>.</returns>
+        public static TypeDefinition GetType(this AssemblyDefinition assembly, string className)
+        {
+            var module = assembly.MainModule;
+            var targetTypeDefinition = (from TypeDefinition t in module.Types
+                                        where t.Name == className
+                                        select t).First();
+
+            return targetTypeDefinition;
+        }
     }
 }

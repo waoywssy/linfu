@@ -94,7 +94,7 @@ namespace LinFu.Proxy
 
             IL.PackageReturnValue(module, returnType);
 
-            SaveRefArguments(IL, parameters, invocationInfo, arguments);
+            IL.SaveRefArguments(parameters, invocationInfo, arguments);
             IL.Emit(OpCodes.Br, endLabel);
 
             // This code at this point will execute if no implementation
@@ -136,57 +136,7 @@ namespace LinFu.Proxy
             IL.Emit(OpCodes.Newobj, notImplementedConstructor);
             IL.Emit(OpCodes.Throw);
         }
-
-        /// <summary>
-        /// Saves the ref arguments of a given method using the
-        /// <paramref name="arguments"/> from the <paramref name="invocationInfo"/>
-        /// object.
-        /// </summary>
-        /// <param name="IL">The <see cref="CilWorker"/> that will emit the method body.</param>
-        /// <param name="parameters">The parameters of the target method.</param>
-        /// <param name="invocationInfo">The local variable that contains the <see cref="IInvocationInfo"/> instance.</param>
-        /// <param name="arguments">The local variable that will store the arguments from the <see cref="IInvocationInfo"/> instance.</param>
-        private static void SaveRefArguments(CilWorker IL, IEnumerable<ParameterDefinition> parameters,
-            VariableDefinition invocationInfo, VariableDefinition arguments)
-        {
-            var body = IL.GetBody();
-            var targetMethod = body.Method;
-            var declaringType = targetMethod.DeclaringType;
-            var module = declaringType.Module;
-
-            // Save the arguments returned from the handler method
-            var getArguments = module.ImportMethod<IInvocationInfo>("get_Arguments");
-
-            IL.Emit(OpCodes.Ldloc, invocationInfo);
-            IL.Emit(OpCodes.Callvirt, getArguments);
-            IL.Emit(OpCodes.Stloc, arguments);
-
-            int index = 0;
-            foreach (var param in parameters)
-            {
-                if (!param.IsByRef())
-                {
-                    index++;
-                    continue;
-                }
-                // Load the destination address
-                IL.Emit(OpCodes.Ldarg, index + 1);
-
-                // Load the argument value
-                IL.Emit(OpCodes.Ldloc, arguments);
-                IL.Emit(OpCodes.Ldc_I4, index++);
-                IL.Emit(OpCodes.Ldelem_Ref);
-
-                // Determine the actual parameter type
-                var referenceType = param.ParameterType as ReferenceType;
-                if (referenceType == null)
-                    continue;
-
-                var actualParameterType = referenceType.ElementType;
-                IL.Emit(OpCodes.Unbox_Any, actualParameterType);
-                IL.Stind(param.ParameterType);
-            }
-        }
+        
         /// <summary>
         /// Initializes the MethodBodyEmitter class.
         /// </summary>

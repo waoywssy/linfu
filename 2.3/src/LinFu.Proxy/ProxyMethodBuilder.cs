@@ -76,7 +76,7 @@ namespace LinFu.Proxy
                                   select importedType).ToArray();
             
             
-            //Build the list of generic parameter types
+            // Build the list of generic parameter types
             var genericParameterTypes = method.GetGenericArguments();
 
             var newMethod = targetType.DefineMethod(methodName, attributes,

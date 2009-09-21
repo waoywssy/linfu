@@ -7,10 +7,10 @@ namespace SampleLibrary.AOP
 {
     public class SampleClassWithByRefMethod
     {
-        public void ByRefMethod(ref object a)
+        public void ByRefMethod(ref int a)
         {
         }
-        public void NonByRefMethod(object a)
+        public void NonByRefMethod(int a)
         {            
         }
     }

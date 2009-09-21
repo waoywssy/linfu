@@ -59,6 +59,7 @@
     <Compile Include="BaseMethodRewriter.cs" />
     <Compile Include="BaseReflectionVisitor.cs" />
     <Compile Include="CecilVisitorExtensions.cs" />
+    <Compile Include="CilWorkerExtensions.cs" />
     <Compile Include="Factories\AddInvocationInfoActionFactory.cs" />
     <Compile Include="Factories\AssemblyWeaverActionFactory.cs" />
     <Compile Include="Factories\TypeWeaverActionFactory.cs" />

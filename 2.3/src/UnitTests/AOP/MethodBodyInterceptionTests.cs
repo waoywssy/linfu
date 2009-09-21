@@ -6,6 +6,7 @@ using LinFu.AOP.Interfaces;
 using LinFu.IoC.Reflection;
 using LinFu.Reflection;
 using LinFu.Reflection.Emit;
+using LinFu.UnitTests.Proxy;
 using Mono.Cecil;
 using Moq;
 using NUnit.Framework;
@@ -343,10 +344,86 @@ namespace LinFu.UnitTests.AOP
             var targetMethod = targetType.GetMethod("DoSomething");
             Assert.IsNotNull(targetMethod);
 
-            object result = targetMethod.Invoke(targetInstance, new object[]{1, 1});
+            object result = targetMethod.Invoke(targetInstance, new object[] { 1, 1 });
 
             Assert.AreEqual(42, result);
             provider.VerifyAll();
+        }
+
+        [Test]
+        public void ShouldBeAbleToModifyRefArgumentsUsingInterceptor()
+        {
+            var assembly = AssemblyFactory.GetAssembly("SampleLibrary.dll");
+
+            var targetTypeDef = assembly.GetType("SampleClassWithByRefMethod");
+            targetTypeDef.InterceptMethodBodies(m => m.Name == "ByRefMethod");
+
+            var modifiedAssembly = assembly.ToAssembly();
+            var targetType = (from t in modifiedAssembly.GetTypes()
+                              where t.Name == "ByRefMethodInvoker"
+                              select t).First();
+
+
+            // Create the interceptor
+            Func<IInvocationInfo, object> implementation = info =>
+            {
+                info.Arguments[0] = 54321;
+                return null;
+            };
+
+            var interceptor = new MockInterceptor(implementation);
+
+
+            // Make sure the provider returns the mock interceptor
+            var provider = new Mock<IMethodReplacementProvider>();
+            provider.Expect(p => p.CanReplace(It.IsAny<object>(), It.IsAny<IInvocationInfo>())).Returns(true);
+            provider.Expect(p => p.GetMethodReplacement(It.IsAny<object>(), It.IsAny<IInvocationInfo>())).Returns(interceptor);
+
+            var targetMethod = targetType.GetMethod("DoInvoke");
+            Assert.IsNotNull(targetMethod);
+
+            var arguments = new object[] {54321, provider.Object};
+            var result = (bool)targetMethod.Invoke(null, arguments);
+
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void ShouldBeAbleToModifyOutParameterWithMethodBodyReplacement()
+        {
+            var assembly = AssemblyFactory.GetAssembly("SampleLibrary.dll");
+
+            var targetTypeDef = assembly.GetType("SampleClassWithMethodHavingOutParameters");
+            targetTypeDef.InterceptMethodBodies(m => m.Name == "DoSomething");
+
+            var modifiedAssembly = assembly.ToAssembly();
+            var targetType = (from t in modifiedAssembly.GetTypes()
+                              where t.Name == "OutMethodInvoker"
+                              select t).First();
+
+
+            // Create the interceptor
+            Func<IInvocationInfo, object> implementation = info =>
+            {
+                info.Arguments[0] = 54321;
+                return null;
+            };
+
+            var interceptor = new MockInterceptor(implementation);
+
+
+            // Make sure the provider returns the mock interceptor
+            var provider = new Mock<IMethodReplacementProvider>();
+            provider.Expect(p => p.CanReplace(It.IsAny<object>(), It.IsAny<IInvocationInfo>())).Returns(true);
+            provider.Expect(p => p.GetMethodReplacement(It.IsAny<object>(), It.IsAny<IInvocationInfo>())).Returns(interceptor);
+
+            var targetMethod = targetType.GetMethod("DoInvoke");
+            Assert.IsNotNull(targetMethod);
+
+            var arguments = new object[] { 54321, provider.Object };
+            var result = (bool)targetMethod.Invoke(null, arguments);
+
+            Assert.IsTrue(result);
         }
     }
 }
