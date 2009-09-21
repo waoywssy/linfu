@@ -111,6 +111,11 @@ namespace LinFu.AOP.Cecil
 
             AddEpilog(IL, module, returnType);
 
+            // Save the ref/out arguments
+            var arguments = method.AddLocal(typeof(object[]));
+            var parameters = method.Parameters.Cast<ParameterDefinition>();
+            IL.SaveRefArguments(parameters, _invocationInfo, arguments);
+
             IL.Emit(OpCodes.Ret);
         }
 

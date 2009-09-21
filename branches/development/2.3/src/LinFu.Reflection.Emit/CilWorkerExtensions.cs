@@ -262,7 +262,8 @@ namespace LinFu.Reflection.Emit
             opCode = !stindMap.ContainsKey(typeName) ? OpCodes.Stind_Ref : stindMap[typeName];
 
             IL.Emit(opCode);
-        }
+        }        
+
         /// <summary>
         /// Stores the <paramref name="param">current parameter value</paramref>
         /// into the array of method <paramref name="arguments"/>.
