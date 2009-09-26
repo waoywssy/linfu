@@ -411,7 +411,6 @@ namespace LinFu.UnitTests.AOP
 
             var interceptor = new MockInterceptor(implementation);
 
-
             // Make sure the provider returns the mock interceptor
             var provider = new Mock<IMethodReplacementProvider>();
             provider.Expect(p => p.CanReplace(It.IsAny<object>(), It.IsAny<IInvocationInfo>())).Returns(true);
