@@ -308,6 +308,17 @@ namespace LinFu.AOP.Cecil
                 lastInstruction.OpCode = OpCodes.Nop;
             }
 
+            RedirectReturnsToLastInstruction(originalInstructions, lastInstruction);
+
+            // Emit the original instructions
+            foreach (var instruction in originalInstructions)
+            {
+                IL.Append(instruction);
+            }
+        }
+
+        private void RedirectReturnsToLastInstruction(List<Instruction> originalInstructions, Instruction lastInstruction)
+        {
             foreach (var instruction in originalInstructions)
             {
                 if (instruction.OpCode != OpCodes.Ret || instruction == lastInstruction)
@@ -317,12 +328,6 @@ namespace LinFu.AOP.Cecil
                 // the epilog after execution
                 instruction.OpCode = OpCodes.Br;
                 instruction.Operand = lastInstruction;
-            }
-
-            // Emit the original instructions
-            foreach (var instruction in originalInstructions)
-            {
-                IL.Append(instruction);
             }
         }
     }
