@@ -34,6 +34,10 @@ namespace LinFu.AOP.Weavers.Cecil
             if (declaringType == _modifiableType)
                 return false;
 
+            // Value types should never be modified
+            if (declaringType.IsValueType)
+                return false;
+
             List<string> ignoreList = new List<string> 
                 { 
                     "AroundInvokeProvider",
@@ -192,7 +196,6 @@ namespace LinFu.AOP.Weavers.Cecil
 
             instructions.Enqueue(_skipOriginalCall);
             instructions.Enqueue(skipEarlyReturn);
-
 
             if (returnType != _voidType && returnType.IsValueType)
                 instructions.Enqueue(IL.Create(OpCodes.Box, returnType));
