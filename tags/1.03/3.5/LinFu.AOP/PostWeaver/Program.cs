@@ -37,11 +37,16 @@ namespace PostWeaver
             var loader = new Loader(container);
             loader.LoadDirectory(programLocation, "*.dll");
 
-            IMethodFilter filter = null;
-            filter = container.GetService<IMethodFilter>(false);
+            // Use the type filter if it exists
+            LinFu.AOP.CecilExtensions.ITypeFilter typeFilter = null;
+            if (container.Contains(typeof(LinFu.AOP.CecilExtensions.ITypeFilter)))
+                typeFilter = container.GetService<LinFu.AOP.CecilExtensions.ITypeFilter>();
+
+            IMethodFilter methodFilter = null;
+            methodFilter = container.GetService<IMethodFilter>(false);
 
             var assembly = AssemblyFactory.GetAssembly(targetFile);
-            assembly.InjectAspectFramework(filter, true);
+            assembly.InjectAspectFramework(typeFilter, methodFilter, true);
             assembly.Save(targetFile); 
         }
 

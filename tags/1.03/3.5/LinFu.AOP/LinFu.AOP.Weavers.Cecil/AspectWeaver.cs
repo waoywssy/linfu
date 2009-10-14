@@ -34,10 +34,6 @@ namespace LinFu.AOP.Weavers.Cecil
             if (declaringType == _modifiableType)
                 return false;
 
-            // Value types should never be modified
-            if (declaringType.IsValueType)
-                return false;
-
             List<string> ignoreList = new List<string> 
                 { 
                     "AroundInvokeProvider",

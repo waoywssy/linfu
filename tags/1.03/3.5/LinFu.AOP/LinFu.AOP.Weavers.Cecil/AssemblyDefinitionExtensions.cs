@@ -11,12 +11,13 @@ namespace LinFu.AOP.Weavers.Cecil
     public static class AssemblyDefinitionExtensions
     {
         public static void InjectAspectFramework(this AssemblyDefinition assembly, 
+            LinFu.AOP.CecilExtensions.ITypeFilter typeFilter,
             IMethodFilter methodFilter,
             bool shouldInjectConstructors)
         {
             AspectWeaver weaver = new AspectWeaver();
-            assembly.WeaveWith(weaver);
             weaver.MethodFilter = methodFilter;
+            assembly.WeaveWith(typeFilter, weaver);
             if (!shouldInjectConstructors)
                 return;
 
@@ -26,7 +27,8 @@ namespace LinFu.AOP.Weavers.Cecil
         public static void InjectAspectFramework(this AssemblyDefinition assembly,
             bool shouldInjectConstructors)
         {
-            InjectAspectFramework(assembly, null, shouldInjectConstructors);
+            // Use default type and method filters
+            InjectAspectFramework(assembly, null, null, shouldInjectConstructors);
         }
         public static void InjectAspectFramework(this AssemblyDefinition assembly)
         {
