@@ -45,18 +45,40 @@ namespace LinFu.AOP.CecilExtensions
 
             matches.ForEach(type => type.WeaveWith(methodWeaver));
         }
-        public static void WeaveWith(this AssemblyDefinition assembly, IMethodWeaver methodWeaver)
+
+        private class DefaultTypeFilter : ITypeFilter
+        {
+            #region ITypeFilter Members
+
+            public bool ShouldWeave(TypeDefinition type)
+            {
+                // Allow all types
+                return true;
+            }
+
+            #endregion
+        }
+
+        public static void WeaveWith(this AssemblyDefinition assembly, ITypeFilter typeFilter, IMethodWeaver methodWeaver)
         {
             if (assembly == null)
                 throw new ArgumentNullException("assembly");
 
+            if (typeFilter == null)
+            {
+                // Use a default which allows all types
+                typeFilter = new DefaultTypeFilter();
+            }
+
             if (methodWeaver == null)
                 throw new ArgumentNullException("methodWeaver");
+
 
             ModuleDefinition module = assembly.MainModule;
             var matches = (from TypeDefinition t in module.Types
                            where t != null && t.Name != "<Module>"
-                           && t.IsClass
+                           && t.IsClass && !t.IsEnum
+                           && typeFilter.ShouldWeave(t)
                            select t).ToList();
 
             matches.ForEach(type => type.WeaveWith(methodWeaver));

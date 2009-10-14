@@ -42,12 +42,17 @@ namespace LinFu.AOP.Tasks
                 var loader = new Loader(container);
                 loader.LoadDirectory(taskLocation, "*.dll");
 
-                IMethodFilter filter = null;
-                filter = container.GetService<IMethodFilter>(false);
+                // Use the type filter if it exists
+                LinFu.AOP.CecilExtensions.ITypeFilter typeFilter = null;
+                if (container.Contains(typeof(LinFu.AOP.CecilExtensions.ITypeFilter)))
+                    typeFilter = container.GetService<LinFu.AOP.CecilExtensions.ITypeFilter>();
                 
-                // Modify the assembly and apply the filter, if necessary
+                IMethodFilter methodFilter = null;
+                methodFilter = container.GetService<IMethodFilter>(false);
+                
+                // Modify the assembly and apply the filters, if necessary
                 var assembly = AssemblyFactory.GetAssembly(TargetFile);
-                assembly.InjectAspectFramework(filter, InjectConstructors);
+                assembly.InjectAspectFramework(typeFilter, methodFilter, InjectConstructors);
 
                 assembly.Save(outputFile);
             }
