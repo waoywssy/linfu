@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Mono.Cecil;
 
-namespace LinFu.AOP.Weavers.Cecil
+namespace LinFu.AOP.CecilExtensions
 {
     public interface ITypeFilter
     {
