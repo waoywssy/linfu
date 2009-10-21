@@ -62,9 +62,7 @@
     <Compile Include="AssemblyDefinitionExtensions.cs" />
     <Compile Include="CilWorkerExtensions.cs" />
     <Compile Include="ConstructorCrossCutter.cs" />
-    <Compile Include="IMethodFilter.cs" />
     <Compile Include="InvocationContextBuilder.cs" />
-    <Compile Include="ITypeFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
