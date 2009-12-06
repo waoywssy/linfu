@@ -21,8 +21,6 @@ namespace LinFu.AOP.Cecil
         private TypeReference _fieldInterceptionHostType;
 
         private MethodReference _fieldContextCtor;
-        private MethodReference _getFieldFromHandle;
-        private MethodReference _getType;
         private MethodReference _getInterceptor;
         private MethodReference _getInstanceInterceptor;
         private MethodReference _canIntercept;
@@ -84,8 +82,8 @@ namespace LinFu.AOP.Cecil
             _fieldInterceptionHostType = module.ImportType<IFieldInterceptionHost>();
 
             _fieldContextCtor = module.ImportConstructor<FieldInterceptionContext>(parameterTypes);
-            _getFieldFromHandle = module.ImportMethod<FieldInfo>("GetFieldFromHandle", new Type[] { typeof(RuntimeFieldHandle), typeof(RuntimeTypeHandle) });
-            _getType = module.ImportMethod<object>("GetType");
+            module.ImportMethod<FieldInfo>("GetFieldFromHandle", new Type[] { typeof(RuntimeFieldHandle), typeof(RuntimeTypeHandle) });
+            module.ImportMethod<object>("GetType");
             _getInterceptor = module.ImportMethod<FieldInterceptorRegistry>("GetInterceptor");
             _getInstanceInterceptor = module.ImportMethod<IFieldInterceptionHost>("get_FieldInterceptor");
             _canIntercept = module.ImportMethod<IFieldInterceptor>("CanIntercept");
