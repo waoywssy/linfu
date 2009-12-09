@@ -8,9 +8,12 @@ using Mono.Cecil.Cil;
 
 namespace LinFu.AOP.Cecil
 {
+    /// <summary>
+    /// Represents the basic implementation of a method rewriter class.
+    /// </summary>
     public abstract class BaseMethodRewriter : IMethodRewriter
     {
-        private HashSet<TypeDefinition> _modifiedTypes = new HashSet<TypeDefinition>();
+        private readonly HashSet<TypeDefinition> _modifiedTypes = new HashSet<TypeDefinition>();
 
         /// <summary>
         /// Initializes a new instance of the MethodRewriter class.
@@ -43,6 +46,16 @@ namespace LinFu.AOP.Cecil
             }
 
             RewriteMethodBody(method, IL, oldInstructions);
+        }
+
+        /// <summary>
+        /// Determines whether or not the given method should be modified.
+        /// </summary>
+        /// <param name="targetMethod">The target method.</param>
+        /// <returns>A <see cref="bool"/> indicating whether or not a method should be rewritten.</returns>
+        protected virtual bool ShouldRewrite(MethodDefinition targetMethod)
+        {
+            return true;
         }
 
         /// <summary>
