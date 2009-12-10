@@ -14,7 +14,7 @@ namespace LinFu.AOP.Cecil
     /// </summary>
     public class InterceptMethodBody : BaseMethodRewriter
     {
-        private Func<MethodDefinition, bool> _methodFilter;
+        private Func<MethodReference, bool> _methodFilter;
 
         private VariableDefinition _interceptionDisabled;
         private VariableDefinition _invocationInfo;
@@ -28,7 +28,7 @@ namespace LinFu.AOP.Cecil
         /// Initializes a new instance of the <see cref="InterceptMethodBody"/> class.
         /// </summary>
         /// <param name="methodFilter">The method filter that will determine the methods with the method bodies that will be intercepted.</param>
-        public InterceptMethodBody(Func<MethodDefinition, bool> methodFilter)
+        public InterceptMethodBody(Func<MethodReference, bool> methodFilter)
         {
             _methodFilter = methodFilter;
         }
@@ -203,7 +203,7 @@ namespace LinFu.AOP.Cecil
 
         private void EmitAfterInvoke(CilWorker IL, ModuleDefinition module)
         {
-            var aroundInvoke = module.ImportMethod<IAroundInvoke>("AfterInvoke");
+            var aroundInvoke = module.ImportMethod<IAfterInvoke>("AfterInvoke");
             IL.Emit(OpCodes.Ldloc, _surroundingImplementation);
             IL.Emit(OpCodes.Ldloc, _invocationInfo);
             IL.Emit(OpCodes.Ldloc, _returnValue);
@@ -267,7 +267,7 @@ namespace LinFu.AOP.Cecil
             IL.Emit(OpCodes.Brfalse, skipGetSurroundingImplementation);
 
             // var surroundingImplementation = this.GetSurroundingImplementation(this, invocationInfo);
-            var getSurroundingImplementation = module.ImportMethod<IMethodReplacementProvider>("GetSurroundingImplementation");
+            var getSurroundingImplementation = module.ImportMethod<IAroundInvokeProvider>("GetSurroundingImplementation");
             IL.Emit(OpCodes.Ldloc, _aroundInvokeProvider);
             IL.Emit(OpCodes.Ldloc, _invocationInfo);
             IL.Emit(OpCodes.Callvirt, getSurroundingImplementation);
@@ -276,13 +276,11 @@ namespace LinFu.AOP.Cecil
 
         private void GetAroundInvokeProvider(MethodDefinition method, ModuleDefinition module, CilWorker IL)
         {
-            var methodReplacementProviderType = module.ImportType<IMethodReplacementProvider>();
             // var aroundInvokeProvider = this.AroundInvokeProvider;
             _aroundInvokeProvider = method.AddLocal<IAroundInvokeProvider>();
-            var getAroundInvokeProvider = module.ImportMethod<IMethodReplacementProvider>("get_AroundInvokeProvider");
+            var getAroundInvokeProvider = module.ImportMethod<IModifiableType>("get_AroundInvokeProvider");
 
             IL.Emit(OpCodes.Ldarg_0);
-            IL.Emit(OpCodes.Isinst, methodReplacementProviderType);
             IL.Emit(OpCodes.Callvirt, getAroundInvokeProvider);
             IL.Emit(OpCodes.Stloc, _aroundInvokeProvider);
         }
@@ -291,11 +289,10 @@ namespace LinFu.AOP.Cecil
         {
             var methodReplacementProviderType = module.ImportType<IMethodReplacementProvider>();
             _methodReplacementProvider = method.AddLocal<IMethodReplacementProvider>();
-            var getMethodReplacement = module.ImportMethod<IMethodReplacementProvider>("get_MethodReplacementProvider");
 
+            var getProvider = module.ImportMethod<IMethodReplacementHost>("get_MethodReplacementProvider");
             IL.Emit(OpCodes.Ldarg_0);
-            IL.Emit(OpCodes.Isinst, methodReplacementProviderType);
-            IL.Emit(OpCodes.Callvirt, getMethodReplacement);
+            IL.Emit(OpCodes.Callvirt, getProvider);
             IL.Emit(OpCodes.Stloc, _methodReplacementProvider);
         }
 

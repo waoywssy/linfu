@@ -28,6 +28,12 @@ namespace LinFu.AOP.Cecil
         /// <param name="oldInstructions">The original instructions from the target method body.</param>
         public void Rewrite(MethodDefinition method, CilWorker IL, IEnumerable<Instruction> oldInstructions)
         {
+            if (!ShouldRewrite(method))
+                return;
+
+            var body = IL.GetBody();
+            body.InitLocals = true;
+
             var declaringType = method.DeclaringType;
             var module = declaringType.Module;
 

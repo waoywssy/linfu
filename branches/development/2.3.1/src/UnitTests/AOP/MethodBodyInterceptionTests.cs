@@ -1,38 +1,88 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using LinFu.AOP.Cecil;
 using LinFu.AOP.Interfaces;
+using LinFu.IoC.Reflection;
 using LinFu.Reflection.Emit;
+using LinFu.UnitTests.Reflection;
 using Mono.Cecil;
+using Moq;
 using NUnit.Framework;
+using SampleLibrary.AOP;
 
 namespace LinFu.UnitTests.AOP
 {
     [TestFixture]
-    public class MethodBodyInterceptionTests
+    public class MethodBodyInterceptionTests 
     {
         [Test]
         public void ShouldImplementIModifiableTypeOnModifiedSampleClass()
         {
-            Action<object> testInstance = (instance) =>
+            Action<object> condition = (instance) =>
                            {
                                Assert.IsNotNull(instance);
                                Assert.IsTrue(instance is IModifiableType);
                            };
 
-            Test(testInstance);
+            Test(condition);
         }
 
+        [Test]
+        public void ShouldInvokeMethodBodyReplacementIfInterceptionIsEnabled()
+        {
+            var sampleInterceptor = new SampleInterceptor();
+            var sampleProvider = new SampleMethodReplacementProvider(sampleInterceptor);
+
+            Action<object> condition = (instance) =>
+                                           {
+                                               Assert.IsNotNull(instance);
+                                               Assert.IsTrue(instance is IModifiableType);
+
+                                               var modifiableType = (IModifiableType) instance;
+                                               modifiableType.MethodReplacementProvider = sampleProvider;
+                                               modifiableType.IsInterceptionDisabled = false;
+
+                                               instance.Invoke("DoSomething");
+                                           };
+
+            Test(condition);
+            Assert.IsTrue(sampleInterceptor.WasInvoked);
+        }
+
+        [Test]
+        public void ShouldNotInvokeMethodBodyReplacementIfInterceptionIsDisabled()
+        {
+            var sampleInterceptor = new SampleInterceptor();
+            var sampleProvider = new SampleMethodReplacementProvider(sampleInterceptor);
+
+            Action<object> condition = (instance) =>
+            {
+                Assert.IsNotNull(instance);
+                Assert.IsTrue(instance is IModifiableType);
+
+                var modifiableType = (IModifiableType)instance;
+                modifiableType.MethodReplacementProvider = sampleProvider;
+                modifiableType.IsInterceptionDisabled = true;
+
+                instance.Invoke("DoSomething");
+            };
+
+            Test(condition);
+            Assert.IsFalse(sampleInterceptor.WasInvoked);
+        }
+
+        #region Private Implementation
         private void Test(Action<object> testInstance)
         {
             var libraryFileName = "SampleLibrary.dll";
             var typeName = "SampleClassWithNonVirtualMethod";
-            Func<MethodDefinition, bool> methodFilter = m => m.Name == "DoSomething";
+            Func<MethodReference, bool> methodFilter = m => m.Name == "DoSomething";
 
 
             Test(libraryFileName, typeName, methodFilter, type => Test(type, testInstance));
         }
-        private void Test(string libraryFileName, string typeName, Func<MethodDefinition, bool> methodFilter, Action<Type> testTargetType)
+        private void Test(string libraryFileName, string typeName, Func<MethodReference, bool> methodFilter, Action<Type> testTargetType)
         {
             var assembly = AssemblyFactory.GetAssembly(libraryFileName);
             var module = assembly.MainModule;
@@ -43,7 +93,8 @@ namespace LinFu.UnitTests.AOP
 
             Assert.IsNotNull(targetType);
 
-            ModifyType(targetType, methodFilter);
+            ModifyType(targetType, methodFilter);           
+
             Type modifiedTargetType = CreateModifiedType(assembly, typeName);
 
             testTargetType(modifiedTargetType);
@@ -62,9 +113,10 @@ namespace LinFu.UnitTests.AOP
                     where t.Name == typeName
                     select t).First();
         }
-        private void ModifyType(TypeDefinition targetType, Func<MethodDefinition, bool> methodFilter)
+        private void ModifyType(TypeDefinition targetType, Func<MethodReference, bool> methodFilter)
         {
             targetType.InterceptMethodBody(methodFilter);
         }
+        #endregion
     }
 }

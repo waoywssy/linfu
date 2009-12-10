@@ -51,6 +51,7 @@
     <Compile Include="AOP\SampleClassWithNonVirtualMethod.cs" />
     <Compile Include="AOP\SampleClassWithReadOnlyField.cs" />
     <Compile Include="AOP\SampleClassWithThirdPartyMethodCall.cs" />
+    <Compile Include="AOP\SampleInterceptor.cs" />
     <Compile Include="AOP\SampleMethodReplacement.cs" />
     <Compile Include="AOP\SampleMethodReplacementProvider.cs" />
     <Compile Include="AOP\SampleServiceImplementation.cs" />
