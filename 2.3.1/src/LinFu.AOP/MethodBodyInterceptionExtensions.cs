@@ -11,7 +11,7 @@ namespace LinFu.AOP.Cecil
     /// </summary>
     public static class MethodBodyInterceptionExtensions
     {
-        public static void InterceptMethodBody(this IReflectionVisitable target, Func<MethodDefinition, bool> methodFilter)
+        public static void InterceptMethodBody(this IReflectionVisitable target, Func<MethodReference, bool> methodFilter)
         {
             Func<TypeReference, bool> typeFilter = type =>
                                                        {
@@ -23,6 +23,9 @@ namespace LinFu.AOP.Cecil
                                                        };
 
             target.Accept(new ImplementModifiableType(typeFilter));
+            
+            var interceptMethodBody = new InterceptMethodBody(methodFilter);
+            target.WeaveWith(interceptMethodBody, methodFilter);
         }
     }
 }
