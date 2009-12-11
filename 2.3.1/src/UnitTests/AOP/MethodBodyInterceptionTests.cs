@@ -17,6 +17,48 @@ namespace LinFu.UnitTests.AOP
     public class MethodBodyInterceptionTests 
     {
         [Test]
+        public void ShouldInvokeAroundInvokeProviderIfInterceptionIsEnabled()
+        {
+            var aroundInvoke = new SampleAroundInvoke();
+            var provider = new SampleAroundInvokeProvider(aroundInvoke);
+            Action<object> condition = (instance) =>
+            {
+                Assert.IsNotNull(instance);
+
+                var modifiedInstance = (IModifiableType) instance;
+                modifiedInstance.AroundInvokeProvider = provider;
+
+                instance.Invoke("DoSomething");
+
+                Assert.IsTrue(aroundInvoke.BeforeInvokeWasCalled);
+                Assert.IsTrue(aroundInvoke.AfterInvokeWasCalled);
+            };
+
+            Test(condition);
+        }
+        [Test]
+        public void ShouldNotInvokeAroundInvokeProviderIfInterceptionIsDisabled()
+        {
+            var aroundInvoke = new SampleAroundInvoke();
+            var provider = new SampleAroundInvokeProvider(aroundInvoke);
+            Action<object> condition = (instance) =>
+            {
+                Assert.IsNotNull(instance);
+
+                var modifiedInstance = (IModifiableType)instance;
+                modifiedInstance.AroundInvokeProvider = provider;
+                modifiedInstance.IsInterceptionDisabled = true;
+
+                instance.Invoke("DoSomething");
+
+                Assert.IsFalse(aroundInvoke.BeforeInvokeWasCalled);
+                Assert.IsFalse(aroundInvoke.AfterInvokeWasCalled);
+            };
+
+            Test(condition);
+        }
+
+        [Test]
         public void ShouldImplementIModifiableTypeOnModifiedSampleClass()
         {
             Action<object> condition = (instance) =>
