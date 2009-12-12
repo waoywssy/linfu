@@ -32,6 +32,9 @@ namespace LinFu.AOP.Cecil
             // Make sure that the IModifiableType interface is only implemented once
             shouldWeave &= !item.Interfaces.Contains(_modifiableInterfaceType);
 
+            var isStaticClass = item.IsAbstract && item.IsSealed;
+            shouldWeave &= !isStaticClass;
+
             return shouldWeave;
         }
 

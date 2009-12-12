@@ -35,6 +35,30 @@ namespace LinFu.UnitTests.AOP
 
             Test(condition);
         }
+
+        [Test]
+        public void ShouldNotInvokeClassAroundInvokeProviderIfInterceptionIsDisabled()
+        {
+            var aroundInvoke = new SampleAroundInvoke();
+            var provider = new SampleAroundInvokeProvider(aroundInvoke);
+
+            Action<object> condition = (instance) =>
+            {
+                Assert.IsNotNull(instance);
+
+                var modified = (IModifiableType) instance;
+                modified.IsInterceptionDisabled = true;
+
+                AroundInvokeRegistry.AddProvider(provider);
+                instance.Invoke("DoSomething");
+
+                Assert.IsFalse(aroundInvoke.BeforeInvokeWasCalled);
+                Assert.IsFalse(aroundInvoke.AfterInvokeWasCalled);
+            };
+
+            Test(condition);
+        }
+
         [Test]
         public void ShouldInvokeAroundInvokeProviderIfInterceptionIsEnabled()
         {
@@ -133,13 +157,34 @@ namespace LinFu.UnitTests.AOP
             Assert.IsFalse(sampleInterceptor.WasInvoked);
         }
 
+        [Test]
+        public void ShouldInterceptStaticMethodWithAroundInvokeProvider()
+        {
+            Func<MethodReference, bool> methodFilter = m => m.Name == "DoSomething";
+
+            var aroundInvoke = new SampleAroundInvoke();
+            var provider = new SampleAroundInvokeProvider(aroundInvoke);
+
+            AroundInvokeRegistry.AddProvider(provider);
+            Action<Type> doTest = type =>
+                                      {
+                                          var doSomethingMethod = type.GetMethod("DoSomething");
+                                          Assert.IsNotNull(doSomethingMethod);
+
+                                          doSomethingMethod.Invoke(null, new object[0]);
+                                          Assert.IsTrue(aroundInvoke.BeforeInvokeWasCalled);
+                                          Assert.IsTrue(aroundInvoke.AfterInvokeWasCalled);
+                                      };
+
+            Test("SampleLibrary.dll", "SampleStaticClassWithStaticMethod",methodFilter, doTest );
+        }
+
         #region Private Implementation
         private void Test(Action<object> testInstance)
         {
             var libraryFileName = "SampleLibrary.dll";
             var typeName = "SampleClassWithNonVirtualMethod";
             Func<MethodReference, bool> methodFilter = m => m.Name == "DoSomething";
-
 
             Test(libraryFileName, typeName, methodFilter, type => Test(type, testInstance));
         }
@@ -170,6 +215,7 @@ namespace LinFu.UnitTests.AOP
         private Type CreateModifiedType(AssemblyDefinition assembly, string typeName)
         {
             var modifiedAssembly = assembly.ToAssembly();
+
             return (from t in modifiedAssembly.GetTypes()
                     where t.Name == typeName
                     select t).First();
