@@ -293,6 +293,19 @@ namespace LinFu.Reflection.Emit
         }
 
         /// <summary>
+        /// Obtains the method definition that contains the current <see cref="CilWorker"/>.
+        /// </summary>
+        /// <param name="IL">The <see cref="CilWorker"/> responsible for the method body.</param>
+        /// <returns>A method definition.</returns>
+        public static MethodDefinition GetMethod(this CilWorker IL)
+        {
+            var body = IL.GetBody();
+            var targetMethod = body.Method;
+
+            return targetMethod;
+        }
+
+        /// <summary>
         /// Obtains the declaring type for a given type reference.
         /// </summary>
         /// <param name="declaringType">The declaring ty pe.</param>
