@@ -14,7 +14,7 @@ using SampleLibrary.AOP;
 namespace LinFu.UnitTests.AOP
 {
     [TestFixture]
-    public class MethodBodyInterceptionTests 
+    public class MethodBodyInterceptionTests
     {
         [Test]
         public void ShouldInvokeClassAroundInvokeProviderIfInterceptionIsEnabled()
@@ -37,6 +37,26 @@ namespace LinFu.UnitTests.AOP
         }
 
         [Test]
+        public void ShouldInvokeClassMethodReplacementProviderIfInterceptionIsEnabled()
+        {
+            Func<MethodReference, bool> methodFilter = m => m.Name == "DoSomething";
+            var replacement = new SampleMethodReplacement();
+            var provider = new SampleMethodReplacementProvider(replacement);
+
+            MethodReplacementProviderRegistry.SetProvider(provider);
+            Action<Type> doTest = type =>
+            {
+                var doSomethingMethod = type.GetMethod("DoSomething");
+                Assert.IsNotNull(doSomethingMethod);
+
+                doSomethingMethod.Invoke(null, new object[0]);
+            };
+
+            Test("SampleLibrary.dll", "SampleStaticClassWithStaticMethod", methodFilter, doTest);
+            Assert.IsTrue(replacement.HasBeenCalled);
+        }
+
+        [Test]
         public void ShouldNotInvokeClassAroundInvokeProviderIfInterceptionIsDisabled()
         {
             var aroundInvoke = new SampleAroundInvoke();
@@ -46,7 +66,7 @@ namespace LinFu.UnitTests.AOP
             {
                 Assert.IsNotNull(instance);
 
-                var modified = (IModifiableType) instance;
+                var modified = (IModifiableType)instance;
                 modified.IsInterceptionDisabled = true;
 
                 AroundInvokeRegistry.AddProvider(provider);
@@ -68,7 +88,7 @@ namespace LinFu.UnitTests.AOP
             {
                 Assert.IsNotNull(instance);
 
-                var modifiedInstance = (IModifiableType) instance;
+                var modifiedInstance = (IModifiableType)instance;
                 modifiedInstance.AroundInvokeProvider = provider;
 
                 instance.Invoke("DoSomething");
@@ -124,7 +144,7 @@ namespace LinFu.UnitTests.AOP
                                                Assert.IsNotNull(instance);
                                                Assert.IsTrue(instance is IModifiableType);
 
-                                               var modifiableType = (IModifiableType) instance;
+                                               var modifiableType = (IModifiableType)instance;
                                                modifiableType.MethodReplacementProvider = sampleProvider;
                                                modifiableType.IsInterceptionDisabled = false;
 
@@ -176,7 +196,7 @@ namespace LinFu.UnitTests.AOP
                                           Assert.IsTrue(aroundInvoke.AfterInvokeWasCalled);
                                       };
 
-            Test("SampleLibrary.dll", "SampleStaticClassWithStaticMethod",methodFilter, doTest );
+            Test("SampleLibrary.dll", "SampleStaticClassWithStaticMethod", methodFilter, doTest);
         }
 
         #region Private Implementation
@@ -199,7 +219,7 @@ namespace LinFu.UnitTests.AOP
 
             Assert.IsNotNull(targetType);
 
-            ModifyType(targetType, methodFilter);           
+            ModifyType(targetType, methodFilter);
 
             Type modifiedTargetType = CreateModifiedType(assembly, typeName);
 
