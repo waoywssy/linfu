@@ -17,6 +17,25 @@ namespace LinFu.UnitTests.AOP
     public class MethodBodyInterceptionTests 
     {
         [Test]
+        public void ShouldInvokeClassAroundInvokeProviderIfInterceptionIsEnabled()
+        {
+            var aroundInvoke = new SampleAroundInvoke();
+            var provider = new SampleAroundInvokeProvider(aroundInvoke);
+
+            Action<object> condition = (instance) =>
+            {
+                Assert.IsNotNull(instance);
+
+                AroundInvokeRegistry.AddProvider(provider);
+                instance.Invoke("DoSomething");
+
+                Assert.IsTrue(aroundInvoke.BeforeInvokeWasCalled);
+                Assert.IsTrue(aroundInvoke.AfterInvokeWasCalled);
+            };
+
+            Test(condition);
+        }
+        [Test]
         public void ShouldInvokeAroundInvokeProviderIfInterceptionIsEnabled()
         {
             var aroundInvoke = new SampleAroundInvoke();
