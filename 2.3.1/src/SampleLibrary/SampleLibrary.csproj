@@ -57,6 +57,7 @@
     <Compile Include="AOP\SampleMethodReplacement.cs" />
     <Compile Include="AOP\SampleMethodReplacementProvider.cs" />
     <Compile Include="AOP\SampleServiceImplementation.cs" />
+    <Compile Include="AOP\SampleStaticClassWithStaticMethod.cs" />
     <Compile Include="AOP\SampleTypeActivator.cs" />
     <Compile Include="IOC\ISampleInterceptedInterface.cs" />
     <Compile Include="IOC\ISampleServiceWithGenericMethods.cs" />
