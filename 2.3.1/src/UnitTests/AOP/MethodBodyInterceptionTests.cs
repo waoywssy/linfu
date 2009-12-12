@@ -57,6 +57,27 @@ namespace LinFu.UnitTests.AOP
         }
 
         [Test]
+        public void ShouldNotInvokeClassMethodReplacementProviderIfInterceptionIsDisabled()
+        {
+            var sampleInterceptor = new SampleInterceptor();
+            var sampleProvider = new SampleMethodReplacementProvider(sampleInterceptor);
+            MethodReplacementProviderRegistry.SetProvider(sampleProvider);
+
+            Action<object> condition = (instance) =>
+            {
+                Assert.IsNotNull(instance);
+
+                var modified = (IModifiableType)instance;
+                modified.IsInterceptionDisabled = true;
+
+                
+                instance.Invoke("DoSomething");
+                Assert.IsFalse(sampleInterceptor.HasBeenInvoked);
+            };
+
+            Test(condition);
+        }
+        [Test]
         public void ShouldNotInvokeClassAroundInvokeProviderIfInterceptionIsDisabled()
         {
             var aroundInvoke = new SampleAroundInvoke();
@@ -152,7 +173,7 @@ namespace LinFu.UnitTests.AOP
                                            };
 
             Test(condition);
-            Assert.IsTrue(sampleInterceptor.WasInvoked);
+            Assert.IsTrue(sampleInterceptor.HasBeenInvoked);
         }
 
         [Test]
@@ -174,7 +195,7 @@ namespace LinFu.UnitTests.AOP
             };
 
             Test(condition);
-            Assert.IsFalse(sampleInterceptor.WasInvoked);
+            Assert.IsFalse(sampleInterceptor.HasBeenInvoked);
         }
 
         [Test]
@@ -195,6 +216,25 @@ namespace LinFu.UnitTests.AOP
                                           Assert.IsTrue(aroundInvoke.BeforeInvokeWasCalled);
                                           Assert.IsTrue(aroundInvoke.AfterInvokeWasCalled);
                                       };
+
+            Test("SampleLibrary.dll", "SampleStaticClassWithStaticMethod", methodFilter, doTest);
+        }
+
+        [Test]
+        public void ShouldNotImplementIModifiableTypeOnStaticClasses()
+        {
+            Func<MethodReference, bool> methodFilter = m => m.Name == "DoSomething";
+
+            var aroundInvoke = new SampleAroundInvoke();
+            var provider = new SampleAroundInvokeProvider(aroundInvoke);
+
+            AroundInvokeRegistry.AddProvider(provider);
+            Action<Type> doTest = type =>
+            {
+                var doSomethingMethod = type.GetMethod("DoSomething");
+                Assert.IsNotNull(doSomethingMethod);
+                Assert.IsFalse(type.GetInterfaces().Contains(typeof(IModifiableType)));
+            };
 
             Test("SampleLibrary.dll", "SampleStaticClassWithStaticMethod", methodFilter, doTest);
         }
