@@ -8,14 +8,14 @@ namespace SampleLibrary.AOP
 {
     public class SampleInterceptor : IInterceptor
     {
-        public bool WasInvoked
+        public bool HasBeenInvoked
         {
             get; set;
         }
 
         public object Intercept(IInvocationInfo info)
         {
-            WasInvoked = true;
+            HasBeenInvoked = true;
             return null;
         }
     }
